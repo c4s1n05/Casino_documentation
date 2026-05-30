@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sop>
+
+  <metadata>
+    <id>SOP-MKT-001</id>
+    <title>Marketing Campaign Cross-Team Communication Protocol</title>
+    <version>1.0</version>
+    <effective_date>[DATE]</effective_date>
+    <review_date>[DATE + 1 YEAR]</review_date>
+    <owner>Marketing Manager</owner>
+    <approved_by>[Name / Title]</approved_by>
+    <classification>Confidential – Internal Use Only</classification>
+    <applies_to>All marketing campaigns</applies_to>
+  </metadata>
+
+  <section id="1" title="Purpose">
+    <body>
+      This SOP defines the mandatory process for notifying and preparing the Payments Team and
+      Customer Service (CS) Team whenever the Marketing Team launches or schedules a promotional
+      campaign. Its goals are to ensure operational readiness, minimise risk exposure, detect
+      bonus abuse early, and deliver a consistent player experience across all touchpoints.
+    </body>
+  </section>
+
+  <section id="2" title="Scope">
+    <body>Applies to all marketing campaigns including but not limited to:</body>
+    <items>
+      <item>Welcome and sign-up bonuses</item>
+      <item>Reload and deposit-match promotions</item>
+      <item>Free spins, free bets, and no-deposit offers</item>
+      <item>Loyalty, VIP, and tiered reward campaigns</item>
+      <item>Seasonal or event-based promotions (e.g. tournaments, jackpots)</item>
+      <item>Referral and affiliate-driven campaigns</item>
+      <item>Retargeting and re-engagement campaigns</item>
+    </items>
+    <teams_in_scope>
+      <team>Marketing</team>
+      <team>Payments</team>
+      <team>Customer Service</team>
+    </teams_in_scope>
+  </section>
+
+  <section id="3" title="Roles and Responsibilities">
+    <role id="marketing_manager">
+      <name>Marketing Manager</name>
+      <responsibilities>
+        <item>Owns the campaign brief and initiates cross-team notification</item>
+        <item>Ensures the Campaign Brief Pack is complete and distributed on time</item>
+        <item>Monitors for bonus abuse patterns and coordinates a cross-team response</item>
+        <item>Holds authority to pause or terminate the campaign if abuse or risk thresholds are breached</item>
+        <item>Chairs pre-launch sign-off and post-campaign debrief meetings</item>
+      </responsibilities>
+    </role>
+    <role id="payments_lead">
+      <name>Payments Team Lead</name>
+      <responsibilities>
+        <item>Receives briefing and configures deposit rules for the campaign period</item>
+        <item>Briefs Payments agents on campaign mechanics and escalation path</item>
+        <item>Oversees real-time transaction monitoring throughout the campaign</item>
+        <item>Escalates anomalies and fraud patterns to the Marketing Manager immediately</item>
+        <item>Compiles post-campaign transaction report</item>
+      </responsibilities>
+    </role>
+    <role id="payments_agents">
+      <name>Payments Agents</name>
+      <responsibilities>
+        <item>Apply campaign-specific deposit rules correctly</item>
+        <item>Monitor higher-value transactions in real time</item>
+        <item>Log and escalate any flagged accounts or suspicious patterns to the Payments Lead</item>
+      </responsibilities>
+    </role>
+    <role id="cs_lead">
+      <name>Customer Service Team Lead</name>
+      <responsibilities>
+        <item>Receives briefing and trains CS agents on promotion FAQs before launch</item>
+        <item>Ensures consistent and accurate query resolution across the team</item>
+        <item>Escalates unresolved complaints and abuse flags to the Marketing Manager</item>
+        <item>Compiles post-campaign CS query summary</item>
+      </responsibilities>
+    </role>
+    <role id="cs_agents">
+      <name>Customer Service Agents</name>
+      <responsibilities>
+        <item>Answer all player queries on the promotion accurately and consistently</item>
+        <item>Follow approved FAQ scripts; never speculate outside approved content</item>
+        <item>Flag suspected player abuse patterns to the CS Lead immediately</item>
+        <item>Escalate complaints, mis-sell allegations, and regulatory threats promptly</item>
+      </responsibilities>
+    </role>
+    <role id="crm_bi">
+      <name>CRM / BI Analyst</name>
+      <responsibilities>
+        <item>Provides live reporting dashboards for the duration of the campaign</item>
+        <item>Flags unusual behavioural or financial metrics to the Marketing Manager</item>
+      </responsibilities>
+    </role>
+  </section>
+
+  <section id="4" title="Notification and Briefing Timeline">
+    <body>
+      All briefings must be completed before the campaign goes live. The following minimum lead
+      times are mandatory.
+    </body>
+    <timeline>
+      <milestone timeframe="5+ working days before launch" owner="Marketing Manager">
+        Marketing shares the Campaign Brief Pack with the Payments Lead and CS Lead
+      </milestone>
+      <milestone timeframe="3 working days before launch" owner="Payments Lead">
+        Payments Lead confirms deposit thresholds, monitoring plan, and abuse detection setup
+      </milestone>
+      <milestone timeframe="3 working days before launch" owner="CS Lead">
+        CS Lead distributes the FAQ document and runs the team briefing session
+      </milestone>
+      <milestone timeframe="1 working day before launch" owner="Marketing Manager">
+        Final confirmation call and sign-off across all three teams
+      </milestone>
+      <milestone timeframe="Launch day" owner="All Leads">
+        Payments monitoring activated; CS agents ready; Marketing confirms go-live
+      </milestone>
+      <milestone timeframe="24 hours post-launch" owner="All Leads">
+        Initial performance and incident check-in meeting
+      </milestone>
+      <milestone timeframe="72 hours post-launch" owner="Marketing Manager">
+        Full campaign health review; escalate any unresolved issues
+      </milestone>
+      <milestone timeframe="Campaign end + 2 days" owner="Marketing Manager">
+        Post-campaign debrief; SOP improvement notes recorded
+      </milestone>
+    </timeline>
+  </section>
+
+  <section id="5" title="Campaign Brief Pack (Mandatory Document)">
+    <body>
+      Marketing must produce and distribute a Campaign Brief Pack for every campaign.
+      The pack must include all of the following sections.
+    </body>
+
+    <subsection id="5.1" title="General Campaign Information">
+      <items>
+        <item>Campaign name and unique reference ID</item>
+        <item>Campaign type (bonus, free spins, referral, reload, etc.)</item>
+        <item>Start date, end date, and active hours with time zone</item>
+        <item>Targeted player segments (new, existing, VIP, geography)</item>
+        <item>Channels used (email, SMS, push notification, paid social, affiliate)</item>
+        <item>Estimated reach and expected uplift in player activity</item>
+      </items>
+    </subsection>
+
+    <subsection id="5.2" title="Promotion Mechanics">
+      <items>
+        <item>Full Terms and Conditions — plain-English summary and legal version</item>
+        <item>Trigger conditions (minimum deposit, opt-in required, promo code)</item>
+        <item>Bonus value, structure, and award timing</item>
+        <item>Wagering requirements and game restrictions</item>
+        <item>Maximum withdrawal from bonus winnings</item>
+        <item>Expiry periods for bonus credits and free spins</item>
+        <item>Exclusions (payment methods, countries, player segments)</item>
+      </items>
+    </subsection>
+
+    <subsection id="5.3" title="Player-Facing Content">
+      <items>
+        <item>Approved FAQs and scripted answers for CS agents</item>
+        <item>Links to landing page, banner creative, and email template</item>
+        <item>Key messaging and tone guidance (what to say and what not to say)</item>
+        <item>Escalation wording for players unhappy with the promotion</item>
+      </items>
+    </subsection>
+
+    <subsection id="5.4" title="Abuse Risk Parameters (set by Marketing)">
+      <items>
+        <item>Defined bonus abuse indicators for this campaign (e.g. structuring deposits, rapid withdrawal post-bonus)</item>
+        <item>Maximum number of promotional accounts per household or device</item>
+        <item>Payment methods excluded from the promotion</item>
+        <item>Velocity thresholds that trigger a manual review</item>
+        <item>Escalation contact within Marketing for confirmed abuse cases</item>
+      </items>
+    </subsection>
+  </section>
+
+  <section id="6" title="Payments Team – Specific Responsibilities">
+
+    <subsection id="6.1" title="Pre-Launch Actions">
+      <items>
+        <item>Review Campaign Brief Pack and confirm deposit bonus thresholds</item>
+        <item>Configure or verify payment system rules for the promotion period</item>
+        <item>Set up real-time monitoring alerts based on abuse risk parameters provided by Marketing</item>
+        <item>Brief all Payments agents on campaign mechanics and escalation path</item>
+      </items>
+    </subsection>
+
+    <subsection id="6.2" title="During the Campaign – Transaction Monitoring">
+      <body>
+        The Payments Team is specifically responsible for monitoring higher-value deposit
+        activity throughout the campaign period.
+      </body>
+      <items>
+        <item>Track unusual spikes in deposit volume or average deposit value against baseline</item>
+        <item>Identify players making multiple deposits at or near bonus trigger thresholds (structuring behaviour)</item>
+        <item>Flag accounts depositing via multiple payment methods in a short window</item>
+        <item>Monitor for rapid bonus-to-withdrawal patterns</item>
+        <item>Report all flagged activity to the Marketing Manager without delay</item>
+      </items>
+    </subsection>
+
+    <subsection id="6.3" title="Escalation Triggers – Payments">
+      <escalation_rule>
+        <trigger>Transaction volumes exceed [X]% of baseline within a 2-hour window</trigger>
+        <action>Notify Marketing Manager immediately via phone and #campaigns-live channel</action>
+      </escalation_rule>
+      <escalation_rule>
+        <trigger>Single player depositing above [defined threshold]</trigger>
+        <action>Log in Incident Register and notify Marketing Manager within 30 minutes</action>
+      </escalation_rule>
+      <escalation_rule>
+        <trigger>Confirmed or suspected multi-accounting or promotional abuse</trigger>
+        <action>Notify Marketing Manager immediately; Marketing Manager decides on campaign action</action>
+      </escalation_rule>
+      <notes>
+        <item>All escalations logged in the Incident Register within 30 minutes of detection</item>
+        <item>Marketing Manager owns the abuse investigation and any decisions to restrict accounts or pause the campaign</item>
+      </notes>
+    </subsection>
+
+    <subsection id="6.4" title="Post-Campaign – Payments">
+      <items>
+        <item>Compile transaction volume report for the full campaign period</item>
+        <item>Document all flagged and investigated accounts</item>
+        <item>Submit summary findings to Marketing Manager within 2 business days of campaign end</item>
+      </items>
+    </subsection>
+  </section>
+
+  <section id="7" title="Customer Service Team – Specific Responsibilities">
+
+    <subsection id="7.1" title="Pre-Launch Actions">
+      <items>
+        <item>CS Lead reviews Campaign Brief Pack and raises any ambiguities with Marketing before launch</item>
+        <item>CS Lead drafts or approves the player-facing FAQ document (template from Marketing)</item>
+        <item>Mandatory team briefing session held at least 1 working day before launch</item>
+        <item>All CS agents complete a knowledge check on campaign mechanics</item>
+        <item>Escalation contact for complex queries confirmed and circulated to the team</item>
+      </items>
+    </subsection>
+
+    <subsection id="7.2" title="During the Campaign – Query Handling">
+      <body>CS agents must be equipped to handle all promotion-related player queries, including:</body>
+      <items>
+        <item>How to qualify (eligibility, opt-in steps, promo codes)</item>
+        <item>When and how the bonus or free spins will be credited</item>
+        <item>Wagering requirements and which games count towards them</item>
+        <item>Withdrawal conditions and maximum bonus winnings</item>
+        <item>What to do if a bonus has not appeared as expected</item>
+        <item>Promotion expiry and consequences of not using the bonus in time</item>
+        <item>Why a player may have been excluded from the promotion</item>
+      </items>
+    </subsection>
+
+    <subsection id="7.3" title="Tone and Accuracy Standards">
+      <golden_rule>
+        Agents must never speculate or provide information not in the approved FAQ.
+        If unsure, confirm with the CS Lead before responding. Incorrect information
+        given to players about promotions constitutes an operational and reputational risk.
+      </golden_rule>
+      <items>
+        <item>All responses must align with approved campaign wording</item>
+        <item>Agents must not make exceptions to campaign T&amp;Cs without authorisation from the CS Lead</item>
+        <item>Any player complaint about the fairness of a promotion must be escalated to the CS Lead</item>
+      </items>
+    </subsection>
+
+    <subsection id="7.4" title="Abuse Indicators – CS Observations">
+      <body>
+        CS agents are often the first point of contact with players attempting to exploit a
+        promotion. Agents must flag the following behaviours to the CS Lead immediately, who
+        will escalate to the Marketing Manager:
+      </body>
+      <items>
+        <item>Player enquiring about how to use multiple accounts to access the promotion</item>
+        <item>Player asking whether they can transfer a bonus to another account</item>
+        <item>Player with a pattern of claiming bonuses and immediately requesting withdrawals</item>
+        <item>Multiple contacts from the same device, IP, or household regarding the same promotion</item>
+        <item>Player attempting to circumvent an exclusion from the promotion</item>
+      </items>
+    </subsection>
+
+    <subsection id="7.5" title="Escalation Triggers – CS">
+      <escalation_rule>
+        <trigger>Player has not received bonus after meeting all stated conditions</trigger>
+        <action>Escalate to Payments Lead if unresolved within 24 hours</action>
+      </escalation_rule>
+      <escalation_rule>
+        <trigger>Player alleges the promotion was mis-sold or misleading</trigger>
+        <action>Escalate to CS Lead and Marketing Manager</action>
+      </escalation_rule>
+      <escalation_rule>
+        <trigger>Player threatens a regulatory complaint</trigger>
+        <action>Escalate to CS Lead and Marketing Manager immediately; document in full</action>
+      </escalation_rule>
+      <escalation_rule>
+        <trigger>Promotion-related contacts exceed [X] per hour</trigger>
+        <action>CS Lead to notify Marketing Manager; assess whether FAQ update is required</action>
+      </escalation_rule>
+    </subsection>
+
+    <subsection id="7.6" title="Post-Campaign – CS">
+      <items>
+        <item>CS Lead compiles summary of promotion-related queries: volume, top issues, resolution rate</item>
+        <item>Flag any recurring ambiguities in campaign T&amp;Cs for future improvement</item>
+        <item>Submit CS summary report to Marketing Manager within 2 business days of campaign end</item>
+      </items>
+    </subsection>
+  </section>
+
+  <section id="8" title="Bonus Abuse Management (Marketing-Led)">
+    <body>
+      The Marketing Team owns bonus abuse detection and response for all campaigns.
+      Payments and CS feed intelligence upward; Marketing investigates and acts.
+    </body>
+
+    <subsection id="8.1" title="Abuse Detection Sources">
+      <items>
+        <item>Payments Team: transaction monitoring alerts and flagged account reports</item>
+        <item>CS Team: player behaviour observations reported during live support interactions</item>
+        <item>CRM / BI dashboards: unusual conversion spikes, deposit patterns, and withdrawal velocity</item>
+      </items>
+    </subsection>
+
+    <subsection id="8.2" title="Common Abuse Patterns to Monitor">
+      <items>
+        <item>Multiple accounts per player (multi-accounting) claiming the same bonus</item>
+        <item>Structured deposits designed to trigger bonus thresholds repeatedly</item>
+        <item>Immediate or near-immediate withdrawal following bonus clearance</item>
+        <item>Coordinated group abuse (gnoming) across linked accounts</item>
+        <item>Use of excluded payment methods to circumvent promotion restrictions</item>
+        <item>Arbitrage play — targeting low house-edge games to meet wagering requirements</item>
+      </items>
+    </subsection>
+
+    <subsection id="8.3" title="Marketing Response Actions">
+      <items>
+        <item>Review flagged accounts against campaign eligibility criteria</item>
+        <item>Void bonuses for accounts in confirmed breach of T&amp;Cs</item>
+        <item>Restrict future promotional eligibility for confirmed abusers</item>
+        <item>Pause or modify campaign parameters if systemic abuse is detected</item>
+        <item>Document all abuse cases in the Abuse Log for pattern analysis</item>
+        <item>Update campaign T&amp;Cs and abuse risk parameters for future campaigns based on findings</item>
+      </items>
+    </subsection>
+  </section>
+
+  <section id="9" title="Communication Channels and Tools">
+    <channels>
+      <channel>
+        <type>Campaign Brief Pack distribution</type>
+        <method>Email to all leads plus shared drive folder (link in email)</method>
+      </channel>
+      <channel>
+        <type>Pre-launch briefing meetings</type>
+        <method>Video call — calendar invite sent by Marketing Manager</method>
+      </channel>
+      <channel>
+        <type>Live campaign updates</type>
+        <method>Dedicated Slack or Teams channel: #campaigns-live</method>
+      </channel>
+      <channel>
+        <type>Urgent escalations during campaign</type>
+        <method>Phone call to Marketing Manager plus message in #campaigns-live</method>
+      </channel>
+      <channel>
+        <type>Post-campaign reports</type>
+        <method>Email to Marketing Manager plus upload to shared drive</method>
+      </channel>
+      <channel>
+        <type>Incident and abuse logging</type>
+        <method>Incident Register and Abuse Log (shared documents — links in brief pack)</method>
+      </channel>
+    </channels>
+  </section>
+
+  <section id="10" title="Incident Management">
+    <body>
+      Any operational issue during a campaign — technical fault, unusual player behaviour,
+      abuse pattern, or significant query spike — must be treated as a campaign incident.
+    </body>
+    <steps>
+      <step number="1">Detecting team (Payments or CS) logs the incident in the Incident Register immediately</step>
+      <step number="2">Team Lead notifies Marketing Manager via phone and #campaigns-live within 30 minutes</step>
+      <step number="3">Marketing Manager convenes an urgent cross-team call within 1 hour of notification</step>
+      <step number="4">Decision made to continue, modify, or pause the campaign based on severity</step>
+      <step number="5">All decisions and actions documented in the Incident Register</step>
+      <step number="6">Post-incident review held within 3 business days; learnings fed back into this SOP</step>
+    </steps>
+  </section>
+
+  <section id="11" title="Post-Campaign Debrief">
+    <body>
+      A debrief meeting must be held within 5 working days of campaign close.
+      Attendees: Marketing Manager, Payments Lead, CS Lead.
+    </body>
+    <agenda_items>
+      <item>Campaign performance vs. targets (impressions, conversions, deposit uplift)</item>
+      <item>Payments review: transaction volumes, flagged accounts, confirmed abuse cases</item>
+      <item>CS review: query volume, top issues, resolution rate, player sentiment</item>
+      <item>Abuse review: patterns detected, actions taken, T&amp;C gaps identified</item>
+      <item>Lessons learned and recommended SOP updates</item>
+    </agenda_items>
+    <note>
+      Debrief notes must be saved to the shared campaign archive folder. Agreed process
+      improvements must be reflected in this SOP within 10 working days.
+    </note>
+  </section>
+
+  <section id="12" title="Document Control and Version History">
+    <review_cycle>
+      This SOP must be reviewed and re-approved every 12 months, or immediately following
+      any significant campaign incident. Owner: Marketing Manager.
+    </review_cycle>
+    <version_history>
+      <entry>
+        <version>1.0</version>
+        <date>[DATE]</date>
+        <summary>Initial version. Marketing-led abuse management. No separate compliance role.</summary>
+      </entry>
+    </version_history>
+  </section>
+
+  <sign_off>
+    <approver role="Marketing Manager">
+      <name>[Name]</name>
+      <date>[Date]</date>
+    </approver>
+    <approver role="Payments Team Lead">
+      <name>[Name]</name>
+      <date>[Date]</date>
+    </approver>
+    <approver role="Customer Service Team Lead">
+      <name>[Name]</name>
+      <date>[Date]</date>
+    </approver>
+  </sign_off>
+
+</sop>
