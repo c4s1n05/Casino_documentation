@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Launch SOP & Checklist — Casino Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #f6f8fb;
+    --surface:   #ffffff;
+    --border:    #e2e7ef;
+    --text:      #1a2030;
+    --muted:     #6b7a94;
+    --subtle:    #f0f3f8;
+
+    --blue:      #1248c9;
+    --blue-bg:   #eef3ff;
+    --blue-bd:   #c0d0f8;
+    --blue-dot:  #3b6ef0;
+
+    --green:     #0a7c52;
+    --green-bg:  #eafaf3;
+    --green-bd:  #a3e0c5;
+    --green-dot: #12b76a;
+
+    --amber:     #a16207;
+    --amber-bg:  #fffbeb;
+    --amber-bd:  #fcd34d;
+    --amber-dot: #f59e0b;
+
+    --red:       #b91c1c;
+    --red-bg:    #fef2f2;
+    --red-bd:    #fca5a5;
+
+    --purple:    #6d28d9;
+    --purple-bg: #f3eeff;
+    --purple-bd: #c9b0f4;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── LAYOUT ────────────────────────────────────────────────────────────── */
+  .layout {
+    display: grid;
+    grid-template-columns: 230px 1fr 200px;
+    min-height: 100vh;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  /* ── LEFT SIDEBAR ──────────────────────────────────────────────────────── */
+  .sidebar-left {
+    border-right: 1px solid var(--border);
+    padding: 32px 0;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+
+  .wiki-logo { padding: 0 20px 24px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+  .wiki-logo a { text-decoration: none; }
+  .wiki-logo-icon { font-size: 26px; margin-bottom: 4px; display: block; }
+  .wiki-logo-title { font-family: 'Lora', serif; font-size: 16px; font-weight: 700; color: var(--text); }
+  .wiki-logo-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .sb-section { padding: 0 12px; margin-bottom: 20px; }
+  .sb-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 0 8px; margin-bottom: 4px; }
+
+  .sb-link {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; border-radius: 6px;
+    font-size: 12.5px; font-weight: 500; color: var(--muted);
+    text-decoration: none; transition: all .15s; cursor: pointer;
+  }
+  .sb-link:hover { background: var(--subtle); color: var(--text); }
+  .sb-link.active { background: var(--blue-bg); color: var(--blue); font-weight: 600; }
+  .sb-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── MAIN ──────────────────────────────────────────────────────────────── */
+  .main { padding: 48px 56px; min-width: 0; }
+
+  /* ── PAGE HEADER ───────────────────────────────────────────────────────── */
+  .page-header {
+    padding-bottom: 28px;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 40px;
+  }
+  .page-breadcrumb {
+    font-size: 12px; color: var(--muted); margin-bottom: 10px;
+  }
+  .page-breadcrumb a { color: var(--blue); text-decoration: none; }
+  .page-breadcrumb a:hover { text-decoration: underline; }
+  .page-title {
+    font-family: 'Lora', serif;
+    font-size: 34px; font-weight: 700;
+    color: var(--text); line-height: 1.15;
+    margin-bottom: 12px; letter-spacing: -.01em;
+  }
+  .page-intro { font-size: 14.5px; color: var(--muted); line-height: 1.7; font-weight: 300; max-width: 620px; margin-bottom: 18px; }
+  .page-meta { display: flex; gap: 18px; flex-wrap: wrap; }
+  .page-meta-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .page-meta-item strong { color: var(--text); font-weight: 600; }
+
+  /* ── CALLOUT BOX ───────────────────────────────────────────────────────── */
+  .callout {
+    display: flex; gap: 14px;
+    padding: 16px 18px;
+    border-radius: 10px;
+    border: 1.5px solid;
+    margin-bottom: 28px;
+  }
+  .callout.blue   { background: var(--blue-bg);   border-color: var(--blue-bd); }
+  .callout.green  { background: var(--green-bg);  border-color: var(--green-bd); }
+  .callout.amber  { background: var(--amber-bg);  border-color: var(--amber-bd); }
+  .callout.red    { background: var(--red-bg);    border-color: var(--red-bd); }
+  .callout.purple { background: var(--purple-bg); border-color: var(--purple-bd); }
+  .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .callout-body {}
+  .callout-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+  .callout.blue   .callout-label { color: var(--blue); }
+  .callout.green  .callout-label { color: var(--green); }
+  .callout.amber  .callout-label { color: var(--amber); }
+  .callout.red    .callout-label { color: var(--red); }
+  .callout.purple .callout-label { color: var(--purple); }
+  .callout p { font-size: 13.5px; color: var(--text); line-height: 1.65; }
+
+  /* ── SECTION ───────────────────────────────────────────────────────────── */
+  .section { margin-bottom: 52px; scroll-margin-top: 24px; }
+
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px; padding-bottom: 14px;
+    border-bottom: 2px solid var(--blue-bd);
+  }
+  .section-num {
+    font-size: 11px; font-weight: 700;
+    background: var(--blue); color: #fff;
+    width: 30px; height: 30px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-title { font-family: 'Lora', serif; font-size: 22px; font-weight: 700; color: var(--text); }
+
+  /* ── PHASE FLOW ─────────────────────────────────────────────────────────── */
+  .phase-flow { display: flex; gap: 0; margin-bottom: 32px; overflow-x: auto; padding-bottom: 4px; }
+
+  .phase-step {
+    display: flex; align-items: center; flex-shrink: 0;
+  }
+  .phase-box {
+    padding: 12px 18px;
+    border-radius: 10px;
+    border: 1.5px solid;
+    text-align: center;
+    min-width: 130px;
+    background: var(--surface);
+    transition: all .2s;
+  }
+  .phase-box.p1 { border-color: var(--blue-bd);   background: var(--blue-bg); }
+  .phase-box.p2 { border-color: var(--purple-bd); background: var(--purple-bg); }
+  .phase-box.p3 { border-color: var(--amber-bd);  background: var(--amber-bg); }
+  .phase-box.p4 { border-color: var(--blue-bd);   background: var(--blue-bg); }
+  .phase-box.p5 { border-color: var(--green-bd);  background: var(--green-bg); }
+  .phase-box.p6 { border-color: var(--green-bd);  background: var(--green-bg); }
+
+  .phase-num { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 4px; }
+  .phase-box.p1 .phase-num, .phase-box.p4 .phase-num { color: var(--blue); }
+  .phase-box.p2 .phase-num { color: var(--purple); }
+  .phase-box.p3 .phase-num { color: var(--amber); }
+  .phase-box.p5 .phase-num, .phase-box.p6 .phase-num { color: var(--green); }
+  .phase-name { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .phase-sub  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .phase-arrow { font-size: 18px; color: var(--border); padding: 0 6px; }
+
+  /* ── PROCESS TABLE ──────────────────────────────────────────────────────── */
+  .proc-table {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 20px;
+  }
+  .proc-table thead tr { background: var(--subtle); }
+  .proc-table thead th {
+    padding: 10px 16px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .07em; text-transform: uppercase;
+    color: var(--muted); text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .proc-table tbody tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
+  .proc-table tbody tr:nth-child(even) { background: var(--subtle); }
+  .proc-table tbody tr:hover { background: var(--blue-bg); }
+  .proc-table td { padding: 11px 16px; vertical-align: top; font-size: 13px; line-height: 1.55; }
+  .td-step { font-weight: 700; color: var(--blue); white-space: nowrap; }
+  .td-who { font-weight: 600; color: var(--purple); white-space: nowrap; font-size: 12px; }
+  .td-aggr { font-weight: 600; color: var(--amber); font-size: 12px; }
+  .td-timing { color: var(--muted); font-size: 12px; white-space: nowrap; }
+
+  /* ── CHECKLIST ──────────────────────────────────────────────────────────── */
+  .checklist-intro {
+    background: var(--blue);
+    color: #fff;
+    border-radius: 12px 12px 0 0;
+    padding: 20px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .checklist-intro-left {}
+  .checklist-intro-title { font-family: 'Lora', serif; font-size: 20px; font-weight: 700; }
+  .checklist-intro-sub { font-size: 12.5px; opacity: .75; margin-top: 3px; }
+  .checklist-intro-right { display: flex; gap: 20px; }
+  .checklist-stat { text-align: center; }
+  .checklist-stat-num { font-size: 24px; font-weight: 700; display: block; }
+  .checklist-stat-label { font-size: 10px; opacity: .7; text-transform: uppercase; letter-spacing: .08em; }
+
+  .checklist-game-meta {
+    background: var(--surface);
+    border: 1.5px solid var(--blue-bd);
+    border-top: none;
+    padding: 16px 24px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .meta-field label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); display: block; margin-bottom: 4px; }
+  .meta-field input {
+    width: 100%; padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px; font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    background: var(--subtle); color: var(--text);
+    outline: none; transition: border-color .15s;
+  }
+  .meta-field input:focus { border-color: var(--blue-dot); background: #fff; }
+
+  .phase-group {
+    border: 1.5px solid var(--border);
+    border-top: none;
+    overflow: hidden;
+  }
+  .phase-group:last-child { border-radius: 0 0 12px 12px; }
+
+  .phase-group-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 20px;
+    cursor: pointer;
+    user-select: none;
+    transition: background .15s;
+    border-bottom: 1px solid var(--border);
+  }
+  .phase-group-header:hover { background: var(--subtle); }
+
+  .phase-group-icon {
+    width: 28px; height: 28px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+  .ph1 .phase-group-icon { background: var(--blue-bg); border: 1px solid var(--blue-bd); }
+  .ph2 .phase-group-icon { background: var(--purple-bg); border: 1px solid var(--purple-bd); }
+  .ph3 .phase-group-icon { background: var(--amber-bg); border: 1px solid var(--amber-bd); }
+  .ph4 .phase-group-icon { background: var(--blue-bg); border: 1px solid var(--blue-bd); }
+  .ph5 .phase-group-icon { background: var(--green-bg); border: 1px solid var(--green-bd); }
+  .ph6 .phase-group-icon { background: var(--green-bg); border: 1px solid var(--green-bd); }
+
+  .phase-group-label { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; }
+  .ph1 .phase-group-label { color: var(--blue); }
+  .ph2 .phase-group-label { color: var(--purple); }
+  .ph3 .phase-group-label { color: var(--amber); }
+  .ph4 .phase-group-label { color: var(--blue); }
+  .ph5 .phase-group-label { color: var(--green); }
+  .ph6 .phase-group-label { color: var(--green); }
+
+  .phase-group-progress { display: flex; align-items: center; gap: 8px; }
+  .progress-bar { width: 80px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; background: var(--green-dot); width: 0%; transition: width .3s; }
+  .progress-count { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .phase-group-toggle { font-size: 12px; color: var(--muted); transition: transform .2s; }
+
+  .phase-group-body { display: block; }
+  .phase-group-body.collapsed { display: none; }
+
+  .checklist-item {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 11px 20px;
+    border-bottom: 1px solid var(--border);
+    transition: background .1s;
+  }
+  .checklist-item:last-child { border-bottom: none; }
+  .checklist-item:hover { background: var(--subtle); }
+  .checklist-item.done { background: #f0fdf8; }
+  .checklist-item.done .ci-text { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--green-dot); }
+
+  .ci-checkbox {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+    margin-top: 1px;
+    background: var(--surface);
+  }
+  .checklist-item.done .ci-checkbox {
+    background: var(--green-dot);
+    border-color: var(--green-dot);
+  }
+  .ci-tick { color: #fff; font-size: 11px; font-weight: 700; opacity: 0; transition: opacity .15s; }
+  .checklist-item.done .ci-tick { opacity: 1; }
+
+  .ci-content { flex: 1; min-width: 0; }
+  .ci-text { font-size: 13px; color: var(--text); line-height: 1.5; transition: color .15s; }
+  .ci-meta { display: flex; gap: 10px; margin-top: 3px; flex-wrap: wrap; }
+  .ci-tag {
+    font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 10px;
+  }
+  .tag-aggregator { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-bd); }
+  .tag-internal   { background: var(--blue-bg);  color: var(--blue);  border: 1px solid var(--blue-bd); }
+  .tag-softswiss  { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-bd); }
+  .tag-crm        { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); }
+  .tag-critical   { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-bd); }
+
+  .ci-owner { font-size: 11px; color: var(--muted); font-style: italic; }
+
+  /* ── RESET + PRINT BAR ──────────────────────────────────────────────────── */
+  .checklist-actions {
+    display: flex; gap: 10px; margin-bottom: 16px; align-items: center;
+  }
+  .btn {
+    padding: 8px 18px; border-radius: 7px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; border: none;
+    font-family: 'Inter', sans-serif;
+    transition: all .15s;
+  }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: #0d3aab; }
+  .btn-ghost { background: var(--surface); color: var(--muted); border: 1.5px solid var(--border); }
+  .btn-ghost:hover { background: var(--subtle); color: var(--text); }
+  .checklist-overall {
+    margin-left: auto; font-size: 13px; color: var(--muted);
+  }
+  .checklist-overall strong { color: var(--green); font-size: 15px; }
+
+  /* ── RIGHT TOC ──────────────────────────────────────────────────────────── */
+  .sidebar-right {
+    border-left: 1px solid var(--border);
+    padding: 48px 18px;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+  .toc-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .toc-link {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 12px; font-weight: 500; color: var(--muted);
+    text-decoration: none; padding: 5px 0;
+    transition: color .15s;
+  }
+  .toc-link:hover { color: var(--text); }
+  .toc-link.active { color: var(--blue); font-weight: 600; }
+  .toc-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+  .toc-divider { height: 1px; background: var(--border); margin: 12px 0; }
+  .toc-stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+  .toc-stat-val { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px; margin-top: 1px; }
+
+  @media (max-width: 960px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar-left, .sidebar-right { display: none; }
+    .main { padding: 28px 20px; }
+  }
+  @media print {
+    .sidebar-left, .sidebar-right, .checklist-actions { display: none; }
+    .main { padding: 20px; }
+    .phase-group-body.collapsed { display: block !important; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ── LEFT SIDEBAR ──────────────────────────────────────────────────────────── -->
+<aside class="sidebar-left">
+  <div class="wiki-logo">
+    <a href="index.html">
+      <span class="wiki-logo-icon">🃏</span>
+      <div class="wiki-logo-title">Casino Ops Wiki</div>
+      <div class="wiki-logo-sub">New Brand · v1.0 · 2026</div>
+    </a>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">Casino Operations</div>
+    <a class="sb-link" href="casino_manager_sop.html"><span class="sb-dot" style="background:var(--blue-dot)"></span>Casino Manager SOP</a>
+    <a class="sb-link active" href="#"><span class="sb-dot" style="background:var(--blue-dot)"></span>Game Launch SOP</a>
+    <a class="sb-link" href="#checklist"><span class="sb-dot" style="background:var(--green-dot)"></span>Launch Checklist</a>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">On This Page</div>
+    <a class="sb-link" href="#overview"><span class="sb-dot" style="background:var(--muted)"></span>Overview</a>
+    <a class="sb-link" href="#sop"><span class="sb-dot" style="background:var(--blue-dot)"></span>SOP — Phase by Phase</a>
+    <a class="sb-link" href="#aggregator"><span class="sb-dot" style="background:var(--amber-dot)"></span>Aggregator Process</a>
+    <a class="sb-link" href="#checklist"><span class="sb-dot" style="background:var(--green-dot)"></span>Launch Checklist</a>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">Marketing</div>
+    <a class="sb-link" href="V1_Marketing_Campaign_Communication.html"><span class="sb-dot" style="background:var(--green-dot)"></span>Campaign Comms</a>
+    <a class="sb-link" href="crm_journey.html"><span class="sb-dot" style="background:var(--green-dot)"></span>CRM Journey</a>
+    <a class="sb-link" href="crm_overall_view.html"><span class="sb-dot" style="background:var(--green-dot)"></span>CRM Overall View</a>
+  </div>
+</aside>
+
+<!-- ── MAIN ──────────────────────────────────────────────────────────────────── -->
+<main class="main">
+
+  <div class="page-header" id="overview">
+    <div class="page-breadcrumb"><a href="index.html">Casino Ops Wiki</a> › <a href="casino_manager_sop.html">Casino Operations</a> › Game Launch SOP</div>
+    <h1 class="page-title">Game Launch SOP &amp; Checklist</h1>
+    <p class="page-intro">End-to-end process for launching new games from a third-party aggregator into the live casino lobby. Covers the full workflow from aggregator request through to post-launch monitoring, with a per-game interactive checklist.</p>
+    <div class="page-meta">
+      <div class="page-meta-item">📅 <strong>May 2026</strong></div>
+      <div class="page-meta-item">👤 Owner: <strong>Casino Manager</strong></div>
+      <div class="page-meta-item">🔗 Aggregator: <strong>SoftSwiss</strong></div>
+      <div class="page-meta-item">📋 Version: <strong>1.0</strong></div>
+    </div>
+  </div>
+
+  <!-- Overview callouts -->
+  <div class="callout blue">
+    <div class="callout-icon">ℹ️</div>
+    <div class="callout-body">
+      <div class="callout-label">Third-Party Aggregator</div>
+      <p>All games are sourced through <strong>SoftSwiss</strong> as the platform aggregator. The Casino Manager does not directly contract with individual game studios — all game requests, availability checks, metadata, assets and technical go-lives are managed through the SoftSwiss back office and account manager. Direct contact with individual studios should only occur for commercial discussions, and must be copied to your SoftSwiss account manager.</p>
+    </div>
+  </div>
+
+  <div class="callout amber">
+    <div class="callout-icon">⚠️</div>
+    <div class="callout-body">
+      <div class="callout-label">Target Cadence</div>
+      <p>Minimum <strong>4 new game launches per month</strong>. The Casino Manager should maintain a rolling 90-day launch calendar and keep at least 2 games in active pipeline with SoftSwiss at all times. Pipeline is reviewed weekly and reported monthly to the COO.</p>
+    </div>
+  </div>
+
+  <!-- Phase Flow -->
+  <div class="section" id="sop">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <div class="section-title">Launch Phases Overview</div>
+    </div>
+
+    <div class="phase-flow">
+      <div class="phase-step">
+        <div class="phase-box p1">
+          <div class="phase-num">Phase 1</div>
+          <div class="phase-name">Game Selection &amp; Request</div>
+          <div class="phase-sub">Via aggregator</div>
+        </div>
+      </div>
+      <div class="phase-arrow">→</div>
+      <div class="phase-step">
+        <div class="phase-box p2">
+          <div class="phase-num">Phase 2</div>
+          <div class="phase-name">Game Information &amp; Assets</div>
+          <div class="phase-sub">Aggregator delivers</div>
+        </div>
+      </div>
+      <div class="phase-arrow">→</div>
+      <div class="phase-step">
+        <div class="phase-box p3">
+          <div class="phase-num">Phase 3</div>
+          <div class="phase-name">Internal Briefing</div>
+          <div class="phase-sub">CRM &amp; SEO</div>
+        </div>
+      </div>
+      <div class="phase-arrow">→</div>
+      <div class="phase-step">
+        <div class="phase-box p4">
+          <div class="phase-num">Phase 4</div>
+          <div class="phase-name">Lobby Setup &amp; QA</div>
+          <div class="phase-sub">Back office config</div>
+        </div>
+      </div>
+      <div class="phase-arrow">→</div>
+      <div class="phase-step">
+        <div class="phase-box p5">
+          <div class="phase-num">Phase 5</div>
+          <div class="phase-name">Go-Live</div>
+          <div class="phase-sub">Launch &amp; promote</div>
+        </div>
+      </div>
+      <div class="phase-arrow">→</div>
+      <div class="phase-step">
+        <div class="phase-box p6">
+          <div class="phase-num">Phase 6</div>
+          <div class="phase-name">Post-Launch Review</div>
+          <div class="phase-sub">7 &amp; 30-day checks</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 1 -->
+    <h3 style="font-size:15px;font-weight:700;color:var(--blue);margin-bottom:12px;margin-top:28px;">Phase 1 — Game Selection &amp; Request</h3>
+    <table class="proc-table">
+      <thead><tr><th style="width:32px">#</th><th style="width:42%">Action</th><th style="width:18%">Who</th><th style="width:18%">Via</th><th>Timing</th></tr></thead>
+      <tbody>
+        <tr><td class="td-step">1.1</td><td>Review SoftSwiss game catalogue — identify titles suitable for target player base, game mix gaps and upcoming provider promotions</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss Portal</td><td class="td-timing">Ongoing / weekly</td></tr>
+        <tr><td class="td-step">1.2</td><td>Confirm game availability in target jurisdictions — check geo-restrictions with SoftSwiss before progressing any title</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss AM</td><td class="td-timing">Before request</td></tr>
+        <tr><td class="td-step">1.3</td><td>Validate game RTP, variance level, min/max bet limits and mobile compatibility via SoftSwiss game sheet</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss Portal</td><td class="td-timing">Before request</td></tr>
+        <tr><td class="td-step">1.4</td><td>Submit formal game activation request to SoftSwiss via back office or account manager — include target go-live date</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss AM</td><td class="td-timing">D-21 before launch</td></tr>
+        <tr><td class="td-step">1.5</td><td>Log game in the 90-day launch calendar and assign a launch owner from the Casino team</td><td class="td-who">Casino Mgr</td><td>Internal</td><td class="td-timing">Same day as request</td></tr>
+      </tbody>
+    </table>
+
+    <!-- PHASE 2 -->
+    <h3 style="font-size:15px;font-weight:700;color:var(--purple);margin-bottom:12px;margin-top:28px;">Phase 2 — Game Information &amp; Assets</h3>
+    <div class="callout purple" style="margin-bottom:16px;">
+      <div class="callout-icon">📦</div>
+      <div class="callout-body">
+        <div class="callout-label">Aggregator Responsibility</div>
+        <p>SoftSwiss supplies all game metadata, assets and technical configuration. The Casino Manager is responsible for requesting and chasing — not producing. If assets are delayed, escalate to your SoftSwiss account manager with the target launch date as context.</p>
+      </div>
+    </div>
+    <table class="proc-table">
+      <thead><tr><th style="width:32px">#</th><th style="width:42%">Action</th><th style="width:18%">Who</th><th style="width:18%">Via</th><th>Timing</th></tr></thead>
+      <tbody>
+        <tr><td class="td-step">2.1</td><td>Request full game information pack from SoftSwiss: game name, studio, RTP, variance, min/max bet, paylines, features, release date</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss AM</td><td class="td-timing">D-18</td></tr>
+        <tr><td class="td-step">2.2</td><td>Request all marketing assets from SoftSwiss: game thumbnail, banner images, background, demo link, promotional copy from studio</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss AM</td><td class="td-timing">D-18</td></tr>
+        <tr><td class="td-step">2.3</td><td>Confirm wagering contribution weighting for this game — check SoftSwiss default setting and adjust if required for bonus mechanics</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss Portal</td><td class="td-timing">D-14</td></tr>
+        <tr><td class="td-step">2.4</td><td>Verify game is active in SoftSwiss back office and assigned to the brand's game library — confirm with account manager if not visible</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss Portal</td><td class="td-timing">D-10</td></tr>
+        <tr><td class="td-step">2.5</td><td>Confirm game metadata is complete in back office: title, studio tag, category tags, RTP display value, device compatibility flags</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss Portal</td><td class="td-timing">D-10</td></tr>
+      </tbody>
+    </table>
+
+    <!-- PHASE 3 -->
+    <h3 style="font-size:15px;font-weight:700;color:var(--amber);margin-bottom:12px;margin-top:28px;">Phase 3 — Internal Briefing</h3>
+    <table class="proc-table">
+      <thead><tr><th style="width:32px">#</th><th style="width:42%">Action</th><th style="width:18%">Who</th><th style="width:18%">Via</th><th>Timing</th></tr></thead>
+      <tbody>
+        <tr><td class="td-step">3.1</td><td>Brief CRM Manager on upcoming launch — provide game name, studio, key features, RTP, launch date and any provider-funded promotion available via SoftSwiss</td><td class="td-who">Casino Mgr</td><td>Internal</td><td class="td-timing">D-14</td></tr>
+        <tr><td class="td-step">3.2</td><td>Brief SEO Manager — provide game name, studio, keywords, game description copy and any long-tail content opportunities for the launch</td><td class="td-who">Casino Mgr</td><td>Internal</td><td class="td-timing">D-14</td></tr>
+        <tr><td class="td-step">3.3</td><td>Confirm whether the game warrants a homepage banner feature — if yes, brief the design team with assets from SoftSwiss and go-live date</td><td class="td-who">Casino Mgr</td><td>Internal</td><td class="td-timing">D-10</td></tr>
+        <tr><td class="td-step">3.4</td><td>Determine bonus eligibility — confirm with CRM whether game will be included in welcome bonus, free spins or reload promotions</td><td class="td-who">Casino Mgr + CRM</td><td>Internal</td><td class="td-timing">D-10</td></tr>
+        <tr><td class="td-step">3.5</td><td>Confirm VIP communication plan if game is high-variance or high-limit — notify VIP team of launch for targeted player outreach</td><td class="td-who">Casino Mgr</td><td>Internal</td><td class="td-timing">D-7</td></tr>
+      </tbody>
+    </table>
+
+    <!-- PHASE 4 -->
+    <h3 style="font-size:15px;font-weight:700;color:var(--blue);margin-bottom:12px;margin-top:28px;">Phase 4 — Lobby Setup &amp; QA</h3>
+    <table class="proc-table">
+      <thead><tr><th style="width:32px">#</th><th style="width:42%">Action</th><th style="width:18%">Who</th><th style="width:18%">Via</th><th>Timing</th></tr></thead>
+      <tbody>
+        <tr><td class="td-step">4.1</td><td>Configure lobby placement in SoftSwiss back office — assign to correct categories (New Games + primary category), set sort order and thumbnail</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss Portal</td><td class="td-timing">D-5</td></tr>
+        <tr><td class="td-step">4.2</td><td>Set game to hidden/staging mode — do not go live until QA is complete</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss Portal</td><td class="td-timing">D-5</td></tr>
+        <tr><td class="td-step">4.3</td><td>Play game in fun mode — verify it loads correctly on desktop and mobile, check animations, sound, paytable and feature triggers</td><td class="td-who">Casino Mgr</td><td>Direct</td><td class="td-timing">D-3</td></tr>
+        <tr><td class="td-step">4.4</td><td>Verify real-money mode is active via SoftSwiss and minimum/maximum bet limits display correctly in the game UI</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss Portal</td><td class="td-timing">D-3</td></tr>
+        <tr><td class="td-step">4.5</td><td>Confirm game thumbnail, title and studio name display correctly in lobby on both desktop and mobile views</td><td class="td-who">Casino Mgr</td><td>Direct QA</td><td class="td-timing">D-2</td></tr>
+        <tr><td class="td-step">4.6</td><td>Test game load speed — flag to SoftSwiss if load time exceeds 5 seconds on a standard connection</td><td class="td-who">Casino Mgr</td><td>Direct QA</td><td class="td-timing">D-2</td></tr>
+        <tr><td class="td-step">4.7</td><td>Verify wagering contribution is set correctly in SoftSwiss bonus configuration for this game</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss Portal</td><td class="td-timing">D-2</td></tr>
+        <tr><td class="td-step">4.8</td><td>Sign off QA — if any issues found, raise ticket with SoftSwiss immediately and do not proceed to go-live until resolved</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss Support</td><td class="td-timing">D-1</td></tr>
+      </tbody>
+    </table>
+
+    <!-- PHASE 5 -->
+    <h3 style="font-size:15px;font-weight:700;color:var(--green);margin-bottom:12px;margin-top:28px;">Phase 5 — Go-Live</h3>
+    <table class="proc-table">
+      <thead><tr><th style="width:32px">#</th><th style="width:42%">Action</th><th style="width:18%">Who</th><th style="width:18%">Via</th><th>Timing</th></tr></thead>
+      <tbody>
+        <tr><td class="td-step">5.1</td><td>Set game to live in SoftSwiss back office at agreed launch time — confirm in lobby immediately after enabling</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss Portal</td><td class="td-timing">Launch day</td></tr>
+        <tr><td class="td-step">5.2</td><td>Activate homepage banner (if featured launch) — confirm banner is live and linking correctly to game</td><td class="td-who">Casino Mgr</td><td>Internal</td><td class="td-timing">Launch day</td></tr>
+        <tr><td class="td-step">5.3</td><td>Confirm CRM launch communications are sent — email, push notification and/or on-site banner per the brief</td><td class="td-who">CRM Mgr</td><td>CRM Platform</td><td class="td-timing">Launch day</td></tr>
+        <tr><td class="td-step">5.4</td><td>Confirm SEO page or content is published — game landing page live and indexed</td><td class="td-who">SEO Mgr</td><td>CMS</td><td class="td-timing">Launch day</td></tr>
+        <tr><td class="td-step">5.5</td><td>Notify COO that game is live — include game name, studio, category and any promotional activity running at launch</td><td class="td-who">Casino Mgr</td><td>Internal</td><td class="td-timing">Launch day</td></tr>
+        <tr><td class="td-step">5.6</td><td>Monitor game performance in SoftSwiss reporting dashboard for the first 4 hours post-launch — flag any technical issues to SoftSwiss immediately</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss Portal</td><td class="td-timing">D+0 to D+1</td></tr>
+      </tbody>
+    </table>
+
+    <!-- PHASE 6 -->
+    <h3 style="font-size:15px;font-weight:700;color:var(--green);margin-bottom:12px;margin-top:28px;">Phase 6 — Post-Launch Review</h3>
+    <table class="proc-table">
+      <thead><tr><th style="width:32px">#</th><th style="width:42%">Action</th><th style="width:18%">Who</th><th style="width:18%">Via</th><th>Timing</th></tr></thead>
+      <tbody>
+        <tr><td class="td-step">6.1</td><td>7-day review — pull GGR, sessions, unique players and average session duration from SoftSwiss reports. Compare to lobby average.</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss Reports</td><td class="td-timing">D+7</td></tr>
+        <tr><td class="td-step">6.2</td><td>Assess lobby placement — if game is underperforming at D+7, reposition in lobby or run a targeted promotion to boost visibility</td><td class="td-who">Casino Mgr</td><td>Internal</td><td class="td-timing">D+7</td></tr>
+        <tr><td class="td-step">6.3</td><td>30-day review — full performance report: GGR contribution as % of total, hold vs theoretical RTP, player retention on game, bonus cost if applicable</td><td class="td-who">Casino Mgr</td><td class="td-aggr">SoftSwiss Reports</td><td class="td-timing">D+30</td></tr>
+        <tr><td class="td-step">6.4</td><td>Decision gate — retain in New Games category, move to primary category, run promotion, or flag for early retirement review if generating &lt;0.1% of GGR</td><td class="td-who">Casino Mgr</td><td>Internal</td><td class="td-timing">D+30</td></tr>
+        <tr><td class="td-step">6.5</td><td>Log final performance outcome in the game launch log — used for future launch prioritisation and provider performance reviews</td><td class="td-who">Casino Mgr</td><td>Internal</td><td class="td-timing">D+30</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- AGGREGATOR NOTES -->
+  <div class="section" id="aggregator">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <div class="section-title">Working with the Aggregator (SoftSwiss)</div>
+    </div>
+
+    <div class="callout red">
+      <div class="callout-icon">🔴</div>
+      <div class="callout-body">
+        <div class="callout-label">Key Rule</div>
+        <p>All game technical issues — including games not loading, incorrect RTP display, bet limit errors, asset display problems or feed outages — must be raised as a ticket with <strong>SoftSwiss Support</strong>. Never attempt to directly contact the game studio for technical resolution. Always log the SoftSwiss ticket reference number in the incident record.</p>
+      </div>
+    </div>
+
+    <table class="proc-table">
+      <thead><tr><th style="width:220px">Scenario</th><th style="width:44%">Action</th><th>SoftSwiss Contact</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Game not showing in back office</td><td>Confirm activation request was submitted correctly. Raise support ticket with game name and request reference.</td><td class="td-aggr">SoftSwiss Support</td></tr>
+        <tr><td style="font-weight:600">Missing or incorrect assets</td><td>Request updated asset pack from account manager. Provide spec: thumbnail dimensions, banner sizes required.</td><td class="td-aggr">SoftSwiss AM</td></tr>
+        <tr><td style="font-weight:600">Geo restriction issue</td><td>Raise with account manager — SoftSwiss manages provider geo-block configuration. Do not go live until confirmed resolved.</td><td class="td-aggr">SoftSwiss AM</td></tr>
+        <tr><td style="font-weight:600">Game not loading for players</td><td>Raise urgent support ticket immediately. Monitor SoftSwiss status page. Post player-facing comms if outage exceeds 15 minutes.</td><td class="td-aggr">SoftSwiss Support (urgent)</td></tr>
+        <tr><td style="font-weight:600">RTP displaying incorrectly</td><td>Do not go live. Raise ticket with SoftSwiss immediately. If already live, set game to hidden until resolved.</td><td class="td-aggr">SoftSwiss Support (urgent)</td></tr>
+        <tr><td style="font-weight:600">Wagering contribution wrong</td><td>Check configuration in SoftSwiss bonus management. Raise ticket if back office settings are not saving correctly.</td><td class="td-aggr">SoftSwiss Support</td></tr>
+        <tr><td style="font-weight:600">New provider request</td><td>Submit request through SoftSwiss account manager — they manage all provider relationship and contracting on the aggregator side.</td><td class="td-aggr">SoftSwiss AM</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div class="section" id="checklist">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <div class="section-title">Interactive Launch Checklist</div>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--muted);margin-bottom:20px;line-height:1.65;">Complete this checklist for every game launch. Tick each item as it is confirmed. The checklist tracks progress per phase. Print or screenshot when complete as a record of the launch sign-off.</p>
+
+    <div class="checklist-actions">
+      <button class="btn btn-primary" onclick="resetChecklist()">↺ Reset Checklist</button>
+      <button class="btn btn-ghost" onclick="window.print()">🖨 Print</button>
+      <button class="btn btn-ghost" onclick="expandAll()">Expand All</button>
+      <div class="checklist-overall">Overall: <strong id="overall-pct">0%</strong> complete</div>
+    </div>
+
+    <!-- Game meta fields -->
+    <div class="checklist-intro">
+      <div class="checklist-intro-left">
+        <div class="checklist-intro-title">Game Launch Record</div>
+        <div class="checklist-intro-sub">Fill in game details before starting — one checklist per game</div>
+      </div>
+      <div class="checklist-intro-right">
+        <div class="checklist-stat"><span class="checklist-stat-num" id="total-done">0</span><span class="checklist-stat-label">Done</span></div>
+        <div class="checklist-stat"><span class="checklist-stat-num" id="total-items">36</span><span class="checklist-stat-label">Total</span></div>
+      </div>
+    </div>
+
+    <div class="checklist-game-meta">
+      <div class="meta-field"><label>Game Title</label><input type="text" placeholder="e.g. Gates of Olympus"></div>
+      <div class="meta-field"><label>Game Studio</label><input type="text" placeholder="e.g. Pragmatic Play"></div>
+      <div class="meta-field"><label>Target Launch Date</label><input type="date"></div>
+      <div class="meta-field"><label>Casino Manager</label><input type="text" placeholder="Your name"></div>
+      <div class="meta-field"><label>RTP</label><input type="text" placeholder="e.g. 96.50%"></div>
+      <div class="meta-field"><label>Variance</label><input type="text" placeholder="Low / Medium / High"></div>
+      <div class="meta-field"><label>Category</label><input type="text" placeholder="e.g. Slots — Megaways"></div>
+      <div class="meta-field"><label>SoftSwiss Ticket Ref</label><input type="text" placeholder="e.g. SS-12345"></div>
+    </div>
+
+    <!-- Phase 1 -->
+    <div class="phase-group ph1" id="pg1">
+      <div class="phase-group-header" onclick="togglePhase('pg1')">
+        <div class="phase-group-icon">🔍</div>
+        <div class="phase-group-label">Phase 1 — Game Selection &amp; Request</div>
+        <div class="phase-group-progress">
+          <div class="progress-bar"><div class="progress-fill" id="prog-pg1"></div></div>
+          <div class="progress-count" id="count-pg1">0 / 5</div>
+        </div>
+        <div class="phase-group-toggle" id="tog-pg1">▲</div>
+      </div>
+      <div class="phase-group-body" id="body-pg1">
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Game identified from SoftSwiss catalogue — confirmed suitable for player base and fills a gap in current game mix</div><div class="ci-meta"><span class="ci-tag tag-aggregator">SoftSwiss Portal</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Geo-restrictions confirmed with SoftSwiss — game is available in all target jurisdictions</div><div class="ci-meta"><span class="ci-tag tag-aggregator">SoftSwiss AM</span><span class="ci-tag tag-critical">Critical</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">RTP, variance, min/max bet limits and mobile compatibility verified via SoftSwiss game information sheet</div><div class="ci-meta"><span class="ci-tag tag-aggregator">SoftSwiss Portal</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Formal game activation request submitted to SoftSwiss with target go-live date — confirmation received and ticket reference logged</div><div class="ci-meta"><span class="ci-tag tag-aggregator">SoftSwiss AM</span><span class="ci-tag tag-critical">Critical</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Game added to the 90-day launch calendar with assigned owner and target date</div><div class="ci-meta"><span class="ci-tag tag-internal">Internal</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="phase-group ph2" id="pg2">
+      <div class="phase-group-header" onclick="togglePhase('pg2')">
+        <div class="phase-group-icon">📦</div>
+        <div class="phase-group-label">Phase 2 — Game Information &amp; Assets</div>
+        <div class="phase-group-progress">
+          <div class="progress-bar"><div class="progress-fill" id="prog-pg2"></div></div>
+          <div class="progress-count" id="count-pg2">0 / 5</div>
+        </div>
+        <div class="phase-group-toggle" id="tog-pg2">▲</div>
+      </div>
+      <div class="phase-group-body" id="body-pg2">
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Full game information pack received from SoftSwiss: game name, studio, RTP, variance, min/max bet, features, release date</div><div class="ci-meta"><span class="ci-tag tag-aggregator">SoftSwiss AM</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">All marketing assets received from SoftSwiss: thumbnail image, banner assets, demo link and promotional copy from studio</div><div class="ci-meta"><span class="ci-tag tag-aggregator">SoftSwiss AM</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Wagering contribution weighting confirmed in SoftSwiss back office bonus configuration — adjusted if required</div><div class="ci-meta"><span class="ci-tag tag-softswiss">SoftSwiss Config</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Game confirmed as active in SoftSwiss back office and assigned to the brand's game library</div><div class="ci-meta"><span class="ci-tag tag-aggregator">SoftSwiss Portal</span><span class="ci-tag tag-critical">Critical</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Game metadata complete in back office: title, studio tag, categories, RTP display value and device compatibility flags all correct</div><div class="ci-meta"><span class="ci-tag tag-softswiss">SoftSwiss Config</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="phase-group ph3" id="pg3">
+      <div class="phase-group-header" onclick="togglePhase('pg3')">
+        <div class="phase-group-icon">📣</div>
+        <div class="phase-group-label">Phase 3 — Internal Briefing</div>
+        <div class="phase-group-progress">
+          <div class="progress-bar"><div class="progress-fill" id="prog-pg3"></div></div>
+          <div class="progress-count" id="count-pg3">0 / 6</div>
+        </div>
+        <div class="phase-group-toggle" id="tog-pg3">▲</div>
+      </div>
+      <div class="phase-group-body" id="body-pg3">
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">CRM Manager briefed: game name, studio, key features, RTP, launch date and any provider-funded promotion available via SoftSwiss</div><div class="ci-meta"><span class="ci-tag tag-crm">CRM</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">SEO Manager briefed: game name, studio, keywords, game description copy and content opportunities for the launch</div><div class="ci-meta"><span class="ci-tag tag-internal">SEO</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Homepage banner decision made — if featured, design team briefed with SoftSwiss assets and go-live date confirmed</div><div class="ci-meta"><span class="ci-tag tag-internal">Internal</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Bonus eligibility agreed with CRM — confirmed whether game is included in welcome bonus, free spins or reload offer</div><div class="ci-meta"><span class="ci-tag tag-crm">CRM</span><span class="ci-owner">Casino Mgr + CRM</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">VIP team notified if game is high-variance or high-limit — VIP outreach plan confirmed</div><div class="ci-meta"><span class="ci-tag tag-internal">VIP</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">All internal teams confirmed ready for launch date — no blockers raised by CRM, SEO or design</div><div class="ci-meta"><span class="ci-tag tag-internal">Internal</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="phase-group ph4" id="pg4">
+      <div class="phase-group-header" onclick="togglePhase('pg4')">
+        <div class="phase-group-icon">🔧</div>
+        <div class="phase-group-label">Phase 4 — Lobby Setup &amp; QA</div>
+        <div class="phase-group-progress">
+          <div class="progress-bar"><div class="progress-fill" id="prog-pg4"></div></div>
+          <div class="progress-count" id="count-pg4">0 / 9</div>
+        </div>
+        <div class="phase-group-toggle" id="tog-pg4">▲</div>
+      </div>
+      <div class="phase-group-body" id="body-pg4">
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Lobby placement configured in SoftSwiss back office — correct categories assigned, sort order set and thumbnail correct</div><div class="ci-meta"><span class="ci-tag tag-softswiss">SoftSwiss Config</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Game set to hidden/staging mode in SoftSwiss — confirmed NOT live to players during QA phase</div><div class="ci-meta"><span class="ci-tag tag-softswiss">SoftSwiss Config</span><span class="ci-tag tag-critical">Critical</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Game tested in fun/demo mode on desktop — loads correctly, animations work, paytable accessible, features trigger</div><div class="ci-meta"><span class="ci-tag tag-internal">QA — Desktop</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Game tested in fun/demo mode on mobile — loads correctly, UI fits screen, touch controls responsive, no display issues</div><div class="ci-meta"><span class="ci-tag tag-internal">QA — Mobile</span><span class="ci-tag tag-critical">Critical</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Real-money mode confirmed active via SoftSwiss — min and max bet limits display correctly in game UI</div><div class="ci-meta"><span class="ci-tag tag-softswiss">SoftSwiss Portal</span><span class="ci-tag tag-critical">Critical</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Thumbnail, game title and studio name display correctly in lobby on both desktop and mobile</div><div class="ci-meta"><span class="ci-tag tag-internal">QA — Lobby</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Game load speed acceptable — under 5 seconds on standard connection. If slow, ticket raised with SoftSwiss.</div><div class="ci-meta"><span class="ci-tag tag-aggregator">SoftSwiss (if issue)</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Wagering contribution setting verified in SoftSwiss bonus management — matches agreed configuration with CRM</div><div class="ci-meta"><span class="ci-tag tag-softswiss">SoftSwiss Config</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">QA signed off by Casino Manager — all checks passed, no outstanding SoftSwiss tickets, cleared to go live</div><div class="ci-meta"><span class="ci-tag tag-critical">Critical Sign-Off</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+      </div>
+    </div>
+
+    <!-- Phase 5 -->
+    <div class="phase-group ph5" id="pg5">
+      <div class="phase-group-header" onclick="togglePhase('pg5')">
+        <div class="phase-group-icon">🚀</div>
+        <div class="phase-group-label">Phase 5 — Go-Live</div>
+        <div class="phase-group-progress">
+          <div class="progress-bar"><div class="progress-fill" id="prog-pg5"></div></div>
+          <div class="progress-count" id="count-pg5">0 / 6</div>
+        </div>
+        <div class="phase-group-toggle" id="tog-pg5">▲</div>
+      </div>
+      <div class="phase-group-body" id="body-pg5">
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Game set to live in SoftSwiss back office at agreed launch time — confirmed visible in lobby immediately after enabling</div><div class="ci-meta"><span class="ci-tag tag-softswiss">SoftSwiss Portal</span><span class="ci-tag tag-critical">Critical</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Homepage banner live and linking correctly to the game (if featured launch)</div><div class="ci-meta"><span class="ci-tag tag-internal">Internal</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">CRM launch communications confirmed sent — email, push notification and/or on-site banner live</div><div class="ci-meta"><span class="ci-tag tag-crm">CRM Platform</span><span class="ci-owner">CRM Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">SEO game page or content confirmed published and live</div><div class="ci-meta"><span class="ci-tag tag-internal">SEO / CMS</span><span class="ci-owner">SEO Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">COO notified of go-live — game name, studio, category and any active promotion included in notification</div><div class="ci-meta"><span class="ci-tag tag-internal">Internal</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">First 4-hour performance check complete — game loading correctly, no technical issues, SoftSwiss dashboard showing game activity</div><div class="ci-meta"><span class="ci-tag tag-aggregator">SoftSwiss Reports</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+      </div>
+    </div>
+
+    <!-- Phase 6 -->
+    <div class="phase-group ph6" id="pg6">
+      <div class="phase-group-header" onclick="togglePhase('pg6')">
+        <div class="phase-group-icon">📊</div>
+        <div class="phase-group-label">Phase 6 — Post-Launch Review</div>
+        <div class="phase-group-progress">
+          <div class="progress-bar"><div class="progress-fill" id="prog-pg6"></div></div>
+          <div class="progress-count" id="count-pg6">0 / 5</div>
+        </div>
+        <div class="phase-group-toggle" id="tog-pg6">▲</div>
+      </div>
+      <div class="phase-group-body" id="body-pg6">
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">7-day review completed — GGR, sessions, unique players and average session duration pulled from SoftSwiss reports and compared to lobby average</div><div class="ci-meta"><span class="ci-tag tag-aggregator">SoftSwiss Reports</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Lobby placement assessed at D+7 — repositioned or promotion planned if game is underperforming vs lobby average</div><div class="ci-meta"><span class="ci-tag tag-internal">Internal</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">30-day review completed — full performance report: GGR contribution %, player retention on game, bonus cost if applicable</div><div class="ci-meta"><span class="ci-tag tag-aggregator">SoftSwiss Reports</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Decision gate completed — game retained in New Games, moved to category, earmarked for promotion or flagged for retirement review</div><div class="ci-meta"><span class="ci-tag tag-internal">Internal</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+        <div class="checklist-item" onclick="toggleItem(this)"><div class="ci-checkbox"><span class="ci-tick">✓</span></div><div class="ci-content"><div class="ci-text">Launch outcome logged in game launch record — performance summary added for use in future provider and launch prioritisation reviews</div><div class="ci-meta"><span class="ci-tag tag-internal">Internal</span><span class="ci-owner">Casino Mgr</span></div></div></div>
+      </div>
+    </div>
+
+  </div><!-- /section checklist -->
+
+</main>
+
+<!-- ── RIGHT SIDEBAR ──────────────────────────────────────────────────────────── -->
+<aside class="sidebar-right">
+  <div class="toc-label">On This Page</div>
+  <a class="toc-link" href="#overview"><span class="toc-dot" style="background:var(--muted)"></span>Overview</a>
+  <a class="toc-link" href="#sop"><span class="toc-dot" style="background:var(--blue-dot)"></span>Launch Phases SOP</a>
+  <a class="toc-link" href="#aggregator"><span class="toc-dot" style="background:var(--amber-dot)"></span>Aggregator Process</a>
+  <a class="toc-link" href="#checklist"><span class="toc-dot" style="background:var(--green-dot)"></span>Launch Checklist</a>
+
+  <div class="toc-divider"></div>
+
+  <div class="toc-stat-label">Checklist Items</div>
+  <div class="toc-stat-val">36 total</div>
+  <div class="toc-stat-label">Phases</div>
+  <div class="toc-stat-val">6 phases</div>
+  <div class="toc-stat-label">Aggregator</div>
+  <div class="toc-stat-val">SoftSwiss</div>
+  <div class="toc-stat-label">Launch Target</div>
+  <div class="toc-stat-val">4+ per month</div>
+  <div class="toc-stat-label">Post-Launch Reviews</div>
+  <div class="toc-stat-val">D+7 and D+30</div>
+</aside>
+
+</div><!-- /layout -->
+
+<script>
+  const phases = ['pg1','pg2','pg3','pg4','pg5','pg6'];
+
+  function toggleItem(el) {
+    el.classList.toggle('done');
+    updateProgress();
+  }
+
+  function togglePhase(id) {
+    const body = document.getElementById('body-' + id);
+    const tog  = document.getElementById('tog-' + id);
+    body.classList.toggle('collapsed');
+    tog.textContent = body.classList.contains('collapsed') ? '▼' : '▲';
+  }
+
+  function expandAll() {
+    phases.forEach(id => {
+      document.getElementById('body-' + id).classList.remove('collapsed');
+      document.getElementById('tog-' + id).textContent = '▲';
+    });
+  }
+
+  function updateProgress() {
+    let totalDone = 0, totalItems = 0;
+    phases.forEach(id => {
+      const body  = document.getElementById('body-' + id);
+      const items = body.querySelectorAll('.checklist-item');
+      const done  = body.querySelectorAll('.checklist-item.done').length;
+      const pct   = items.length > 0 ? (done / items.length * 100) : 0;
+      document.getElementById('prog-' + id).style.width = pct + '%';
+      document.getElementById('count-' + id).textContent = done + ' / ' + items.length;
+      totalDone += done; totalItems += items.length;
+    });
+    document.getElementById('total-done').textContent = totalDone;
+    document.getElementById('total-items').textContent = totalItems;
+    document.getElementById('overall-pct').textContent =
+      totalItems > 0 ? Math.round(totalDone / totalItems * 100) + '%' : '0%';
+  }
+
+  function resetChecklist() {
+    document.querySelectorAll('.checklist-item').forEach(el => el.classList.remove('done'));
+    updateProgress();
+  }
+
+  // TOC scroll highlight
+  const sections = ['overview','sop','aggregator','checklist'];
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        document.querySelectorAll('.toc-link').forEach(l =>
+          l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(id => { const el = document.getElementById(id); if(el) obs.observe(el); });
+
+  updateProgress();
+</script>
+</body>
+</html>
