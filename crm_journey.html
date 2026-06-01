@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM Player Journey Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: #1e2330;
+    --border2: #2a3040;
+    --text: #e8eaf0;
+    --muted: #6b7591;
+    --accent-new: #00d4aa;
+    --accent-active: #3b82f6;
+    --accent-lapsing: #f59e0b;
+    --accent-lapsed: #ef4444;
+    --accent-inactive: #8b5cf6;
+    --accent-rnd: #ec4899;
+    --tag-bg: rgba(255,255,255,0.05);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 32px 40px 28px;
+    display: flex;
+    align-items: flex-end;
+    gap: 32px;
+    flex-wrap: wrap;
+    background: linear-gradient(135deg, #0a0c10 0%, #0e1320 100%);
+  }
+
+  .header-title h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #fff;
+  }
+
+  .header-title p {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .lifecycle-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-left: auto;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+    border: 1px solid;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Syne', sans-serif;
+  }
+  .pill:hover { opacity: 0.8; }
+  .pill.active { opacity: 1; }
+  .pill.inactive-pill { opacity: 0.4; }
+
+  .pill-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  .pill-new    { color: var(--accent-new);      border-color: var(--accent-new);      background: rgba(0,212,170,.08); }
+  .pill-active { color: var(--accent-active);   border-color: var(--accent-active);   background: rgba(59,130,246,.08); }
+  .pill-lapsing{ color: var(--accent-lapsing);  border-color: var(--accent-lapsing);  background: rgba(245,158,11,.08); }
+  .pill-lapsed { color: var(--accent-lapsed);   border-color: var(--accent-lapsed);   background: rgba(239,68,68,.08); }
+  .pill-inactive-seg { color: var(--accent-inactive); border-color: var(--accent-inactive); background: rgba(139,92,246,.08); }
+
+  .pill-new    .pill-dot { background: var(--accent-new); }
+  .pill-active .pill-dot { background: var(--accent-active); }
+  .pill-lapsing .pill-dot { background: var(--accent-lapsing); }
+  .pill-lapsed .pill-dot  { background: var(--accent-lapsed); }
+  .pill-inactive-seg .pill-dot { background: var(--accent-inactive); }
+
+  /* ── CONTROLS ── */
+  .controls {
+    padding: 16px 40px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  input[type="search"] {
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    width: 240px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input[type="search"]:focus { border-color: var(--accent-active); }
+
+  select {
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .ctrl-label { color: var(--muted); font-size: 11px; }
+
+  .count-badge {
+    margin-left: auto;
+    background: var(--border);
+    color: var(--muted);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+  }
+
+  /* ── SEGMENTS ── */
+  .segments { padding: 24px 40px 60px; display: flex; flex-direction: column; gap: 12px; }
+
+  .segment-group {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .segment-group:hover { border-color: var(--border2); }
+
+  .segment-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    cursor: pointer;
+    background: var(--surface);
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .segment-header:hover { background: var(--surface2); }
+
+  .seg-stripe {
+    width: 4px;
+    height: 32px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .seg-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    flex: 1;
+  }
+
+  .seg-meta {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .meta-chip {
+    background: var(--tag-bg);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .seg-aim {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .chevron {
+    color: var(--muted);
+    font-size: 12px;
+    transition: transform 0.2s;
+  }
+  .open .chevron { transform: rotate(90deg); }
+
+  /* ── TABLE ── */
+  .segment-body { display: none; }
+  .open .segment-body { display: block; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  thead tr {
+    background: rgba(255,255,255,0.03);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    padding: 10px 16px;
+    text-align: left;
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  tbody tr.hidden-row { display: none; }
+
+  td { padding: 9px 16px; vertical-align: top; }
+
+  .td-sub {
+    font-weight: 500;
+    color: #c8cfe0;
+  }
+
+  .td-value { color: var(--muted); }
+
+  .dwag-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 500;
+    background: rgba(59,130,246,0.12);
+    color: #60a5fa;
+    border: 1px solid rgba(59,130,246,0.2);
+  }
+
+  .player-type-tag {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    color: var(--muted);
+    background: var(--tag-bg);
+    border: 1px solid var(--border2);
+    white-space: nowrap;
+  }
+
+  .freq-text { color: #a0aec0; font-size: 11px; }
+
+  .comm-type {
+    font-size: 11px;
+    color: #7dd3fc;
+  }
+
+  .aim-text {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* ── NOTES SECTION ── */
+  .notes-section {
+    margin: 0 40px 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+  }
+
+  .note-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+
+  .note-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #fff;
+  }
+
+  .note-card p { color: var(--muted); font-size: 11px; line-height: 1.7; }
+
+  .note-card .example {
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.03);
+    border-left: 2px solid var(--border2);
+    border-radius: 0 4px 4px 0;
+    font-size: 11px;
+    color: #7dd3fc;
+  }
+
+  /* ── COLOURS per segment ── */
+  [data-seg="new"]      .seg-stripe { background: var(--accent-new); }
+  [data-seg="active"]   .seg-stripe { background: var(--accent-active); }
+  [data-seg="lapsing"]  .seg-stripe { background: var(--accent-lapsing); }
+  [data-seg="lapsed"]   .seg-stripe { background: var(--accent-lapsed); }
+  [data-seg="inactive"] .seg-stripe { background: var(--accent-inactive); }
+
+  [data-seg="new"]      .seg-name { color: var(--accent-new); }
+  [data-seg="active"]   .seg-name { color: var(--accent-active); }
+  [data-seg="lapsing"]  .seg-name { color: var(--accent-lapsing); }
+  [data-seg="lapsed"]   .seg-name { color: var(--accent-lapsed); }
+  [data-seg="inactive"] .seg-name { color: var(--accent-inactive); }
+
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0 40px 10px;
+    margin-top: 24px;
+  }
+
+  /* ── NO RESULTS ── */
+  #no-results {
+    display: none;
+    text-align: center;
+    padding: 60px 40px;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+  }
+  #no-results.show { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">
+    <h1>CRM Player Journey Map</h1>
+    <p>Segment · Communication · Journey Flow</p>
+  </div>
+  <div class="lifecycle-pills">
+    <span class="pill pill-new active"      data-filter="new"     onclick="filterSegment(this)"><span class="pill-dot"></span>New</span>
+    <span class="pill pill-active active"   data-filter="active"  onclick="filterSegment(this)"><span class="pill-dot"></span>Active</span>
+    <span class="pill pill-lapsing active"  data-filter="lapsing" onclick="filterSegment(this)"><span class="pill-dot"></span>Lapsing</span>
+    <span class="pill pill-lapsed active"   data-filter="lapsed"  onclick="filterSegment(this)"><span class="pill-dot"></span>Lapsed</span>
+    <span class="pill pill-inactive-seg active" data-filter="inactive" onclick="filterSegment(this)"><span class="pill-dot"></span>Inactive</span>
+  </div>
+</header>
+
+<div class="controls">
+  <span class="ctrl-label">Search</span>
+  <input type="search" id="searchBox" placeholder="player type, sub segment, DWAG…" oninput="applySearch()">
+  <span class="ctrl-label">DWAG</span>
+  <select id="dwagFilter" onchange="applySearch()">
+    <option value="">All</option>
+    <option>DWAG1</option>
+    <option>DWAG2</option>
+    <option>DWAG3</option>
+    <option>DWAG4</option>
+    <option>DWAG5</option>
+    <option value="none">None (New players)</option>
+  </select>
+  <span class="count-badge" id="rowCount">— rows</span>
+</div>
+
+<div class="segments" id="segmentsContainer">
+
+  <!-- ═══════════════ NEW ═══════════════ -->
+  <div class="segment-group open" data-seg="new" id="seg-new">
+    <div class="segment-header" onclick="toggleSeg(this)">
+      <div class="seg-stripe"></div>
+      <span class="seg-name">New Players</span>
+      <div class="seg-meta">
+        <span class="meta-chip">Reg Not Deposited → Multi Depositor</span>
+        <span class="seg-aim">Goal: Get deposit / 2nd deposit</span>
+      </div>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="segment-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Sub Segment</th>
+            <th>Value</th>
+            <th>DWAG</th>
+            <th>Player Type</th>
+            <th>Frequency</th>
+            <th>Communication</th>
+            <th>Journey</th>
+            <th>Aim</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="td-sub">Reg Not Deposited (10 min – 1 hr)</td><td class="td-value">Unknown</td><td>—</td><td><span class="player-type-tag">Unknown</span></td><td class="freq-text">Once</td><td class="comm-type">Welcome email</td><td>RND</td><td class="aim-text">Get deposit</td></tr>
+          <tr><td class="td-sub">Reg Not Deposited (1 – 4 hrs)</td><td class="td-value">Unknown</td><td>—</td><td><span class="player-type-tag">Unknown</span></td><td class="freq-text">—</td><td class="comm-type">—</td><td>RND</td><td class="aim-text">Get deposit</td></tr>
+          <tr><td class="td-sub">Reg Not Deposited (4 – 24 hrs)</td><td class="td-value">Unknown</td><td>—</td><td><span class="player-type-tag">Unknown</span></td><td class="freq-text">After 24 hours</td><td class="comm-type">Email detailing deposit offer</td><td>RND</td><td class="aim-text">Get deposit</td></tr>
+          <tr><td class="td-sub">Reg Not Deposited (&gt;44 hrs)</td><td class="td-value">Unknown</td><td>—</td><td><span class="player-type-tag">Unknown</span></td><td class="freq-text">Every 72 hours</td><td class="comm-type">Increasing incentive to deposit email</td><td>RND</td><td class="aim-text">Get deposit</td></tr>
+          <tr><td class="td-sub" rowspan="3">Single Depositor (&lt;24 hrs)</td><td class="td-value">Low</td><td>—</td><td><span class="player-type-tag">Unknown</span></td><td class="freq-text">Every 72 hrs MIN + Ad-Hoc</td><td class="comm-type">News / Promotions / Upsell</td><td>Active</td><td class="aim-text">Get second deposit</td></tr>
+          <tr><td class="td-value">Med</td><td>—</td><td><span class="player-type-tag">Unknown</span></td><td class="freq-text">Every 72 hrs MIN + Ad-Hoc</td><td class="comm-type">News / Promotions / Upsell</td><td>Active</td><td class="aim-text">Get second deposit</td></tr>
+          <tr><td class="td-value">High</td><td>—</td><td><span class="player-type-tag">Unknown</span></td><td class="freq-text">Every 72 hrs MIN + Ad-Hoc</td><td class="comm-type">News / Promotions / Upsell</td><td>Active</td><td class="aim-text">Get second deposit</td></tr>
+          <tr><td class="td-sub" rowspan="3">Single Depositor (24 – 48 hrs)</td><td class="td-value">Low</td><td>—</td><td><span class="player-type-tag">Unknown</span></td><td class="freq-text">Every 72 hrs MIN + Ad-Hoc</td><td class="comm-type">News / Promotions / Upsell</td><td>Active</td><td class="aim-text">Get second deposit</td></tr>
+          <tr><td class="td-value">Med</td><td>—</td><td><span class="player-type-tag">Unknown</span></td><td class="freq-text">Every 72 hrs MIN + Ad-Hoc</td><td class="comm-type">News / Promotions / Upsell</td><td>Active</td><td class="aim-text">Get second deposit</td></tr>
+          <tr><td class="td-value">High</td><td>—</td><td><span class="player-type-tag">Unknown</span></td><td class="freq-text">Every 72 hrs MIN + Ad-Hoc</td><td class="comm-type">News / Promotions / Upsell</td><td>Active</td><td class="aim-text">Get second deposit</td></tr>
+          <tr><td class="td-sub" rowspan="3">Single Depositor (+48 hrs)</td><td class="td-value">Low</td><td>—</td><td><span class="player-type-tag">Unknown</span></td><td class="freq-text">Every 72 hrs MIN + Ad-Hoc</td><td class="comm-type">News / Promotions / Upsell</td><td>Active</td><td class="aim-text">Get second deposit</td></tr>
+          <tr><td class="td-value">Med</td><td>—</td><td><span class="player-type-tag">Unknown</span></td><td class="freq-text">Every 72 hrs MIN + Ad-Hoc</td><td class="comm-type">News / Promotions / Upsell</td><td>Active</td><td class="aim-text">Get second deposit</td></tr>
+          <tr><td class="td-value">High</td><td>—</td><td><span class="player-type-tag">Unknown</span></td><td class="freq-text">Every 72 hrs MIN + Ad-Hoc</td><td class="comm-type">News / Promotions / Upsell</td><td>Active</td><td class="aim-text">Get second deposit</td></tr>
+          <tr><td class="td-sub" rowspan="3">Multi (2+) Depositor (&lt;24 hrs)</td><td class="td-value">Low</td><td>—</td><td><span class="player-type-tag">Unknown</span></td><td class="freq-text">Every 72 hrs MIN + Ad-Hoc</td><td class="comm-type">News / Promotions / Upsell</td><td>Active</td><td class="aim-text">Maintain / Upsell players</td></tr>
+          <tr><td class="td-value">Med</td><td>—</td><td><span class="player-type-tag">Unknown</span></td><td class="freq-text">Every 72 hrs MIN + Ad-Hoc</td><td class="comm-type">News / Promotions / Upsell</td><td>Active</td><td class="aim-text">Maintain / Upsell players</td></tr>
+          <tr><td class="td-value">High</td><td>—</td><td><span class="player-type-tag">Unknown</span></td><td class="freq-text">Every 72 hrs MIN + Ad-Hoc</td><td class="comm-type">News / Promotions / Upsell</td><td>Active</td><td class="aim-text">Maintain / Upsell players</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════ ACTIVE ═══════════════ -->
+  <div class="segment-group open" data-seg="active" id="seg-active">
+    <div class="segment-header" onclick="toggleSeg(this)">
+      <div class="seg-stripe"></div>
+      <span class="seg-name">Active Players <span style="font-size:12px;font-weight:400;opacity:.6">(&lt;14 days CPB)</span></span>
+      <div class="seg-meta">
+        <span class="meta-chip">Active 7 · At Risk</span>
+        <span class="seg-aim">Goal: Maintain / Upsell</span>
+      </div>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="segment-body">
+      <table>
+        <thead>
+          <tr><th>Sub Segment</th><th>DWAG</th><th>Player Type</th><th>Frequency</th><th>Communication</th><th>Journey</th><th>Aim</th></tr>
+        </thead>
+        <tbody id="activeRows">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════ LAPSING ═══════════════ -->
+  <div class="segment-group open" data-seg="lapsing" id="seg-lapsing">
+    <div class="segment-header" onclick="toggleSeg(this)">
+      <div class="seg-stripe"></div>
+      <span class="seg-name">Lapsing Players <span style="font-size:12px;font-weight:400;opacity:.6">(14–28 days CPD)</span></span>
+      <div class="seg-meta">
+        <span class="meta-chip">DWAG1–5 · All Game Types</span>
+        <span class="seg-aim">Goal: Increase play</span>
+      </div>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="segment-body">
+      <table>
+        <thead>
+          <tr><th>DWAG</th><th>Player Type</th><th>Frequency</th><th>Communication</th><th>Journey</th><th>Aim</th></tr>
+        </thead>
+        <tbody id="lapsingRows">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════ LAPSED ═══════════════ -->
+  <div class="segment-group open" data-seg="lapsed" id="seg-lapsed">
+    <div class="segment-header" onclick="toggleSeg(this)">
+      <div class="seg-stripe"></div>
+      <span class="seg-name">Lapsed Players <span style="font-size:12px;font-weight:400;opacity:.6">(28 days – 3 months CPD)</span></span>
+      <div class="seg-meta">
+        <span class="meta-chip">Weekly cadence</span>
+        <span class="seg-aim">Goal: Get player playing before inactivity</span>
+      </div>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="segment-body">
+      <table>
+        <thead>
+          <tr><th>DWAG</th><th>Player Type</th><th>Frequency</th><th>Communication</th><th>Journey</th><th>Aim</th></tr>
+        </thead>
+        <tbody id="lapsedRows">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════ INACTIVE ═══════════════ -->
+  <div class="segment-group open" data-seg="inactive" id="seg-inactive">
+    <div class="segment-header" onclick="toggleSeg(this)">
+      <div class="seg-stripe"></div>
+      <span class="seg-name">Inactive Players <span style="font-size:12px;font-weight:400;opacity:.6">(+3 months CPD)</span></span>
+      <div class="seg-meta">
+        <span class="meta-chip">Fortnightly + Ad Hoc</span>
+        <span class="seg-aim">Goal: Reactivate players</span>
+      </div>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="segment-body">
+      <table>
+        <thead>
+          <tr><th>DWAG</th><th>Player Type</th><th>Frequency</th><th>Communication</th><th>Journey</th><th>Aim</th></tr>
+        </thead>
+        <tbody id="inactiveRows">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div id="no-results">No matching rows found. Try adjusting your filters.</div>
+
+<!-- Notes / Legend -->
+<div class="section-label">Communication Types — Reference</div>
+<div class="notes-section">
+  <div class="note-card">
+    <h3>📰 News Emails</h3>
+    <p>Specific to the player's level with an upsell side message promoting the next tier.</p>
+  </div>
+  <div class="note-card">
+    <h3>🎯 Promotion Emails</h3>
+    <p>Generally generic to all levels depending on the promotion. E.g. a GPPT promotional email will list all the different level sats to appeal to all player tiers.</p>
+  </div>
+  <div class="note-card">
+    <h3>💚 Low Value Offers</h3>
+    <p>Specific to level of lapsing player. Recycle ~4 offers. By "low value" refers to the RB%.</p>
+    <div class="example">e.g. Earn 100 points before X and get a $5 ticket</div>
+  </div>
+  <div class="note-card">
+    <h3>🟡 Mid Value Offers</h3>
+    <p>Specific to level of lapsing player.</p>
+    <div class="example">e.g. Earn 50 points before X and get a $5 ticket</div>
+  </div>
+  <div class="note-card">
+    <h3>🌙 Moon on a Stick Offer</h3>
+    <p>High value offer, easy to obtain. Used for inactive players to maximise reactivation.</p>
+    <div class="example">e.g. Earn 25 points before X and get a $5 ticket</div>
+  </div>
+  <div class="note-card">
+    <h3>📊 DWAG Tiers</h3>
+    <p>DWAG1–5 represent player value bands. Higher DWAG = higher value player. MTT frequency is 48 hrs; SNG/Cash is 72 hrs minimum across all active segments.</p>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const DWAGS = ['DWAG1','DWAG2','DWAG3','DWAG4','DWAG5'];
+
+const activePlayerTypes = [
+  'MTT Micro (Ave Buyin <$5.50)',
+  'MTT Low (Ave Buyin $5.50 to $22)',
+  'MTT Med (Ave Buyin $22 to $109)',
+  'MTT High (Ave buyin >$109)',
+  'SNG Low','SNG Med','SNG High','SNG Hero',
+  'Cash NLHE Low','Cash NLHE Med','Cash NLHE High','Cash Omaha+'
+];
+
+const lapsingPlayerTypes = activePlayerTypes;
+
+const lapsedPlayerTypes = activePlayerTypes;
+
+const inactivePlayerTypes = [
+  'MTT Micro + Low (Ave Buyin <$22)',
+  'MTT Med (Ave Buyin $22 to $109)',
+  'MTT High (Ave buyin >$109)',
+  'SNG Low + Med','SNG High','SNG Hero',
+  'Cash NLHE Low + Med','Cash NLHE High','Cash Omaha+'
+];
+
+function isMTT(pt) { return pt.toLowerCase().includes('mtt'); }
+
+function activeFreq(pt) {
+  return isMTT(pt) ? 'Every 48 hrs MIN + Ad-Hoc' : 'Every 72 hrs MIN + Ad-Hoc';
+}
+
+function buildRows(tbodyId, dwags, playerTypes, freqFn, comm, journey, aim, subSegCol) {
+  const tbody = document.getElementById(tbodyId);
+  dwags.forEach(dwag => {
+    playerTypes.forEach((pt, i) => {
+      const tr = document.createElement('tr');
+      tr.dataset.dwag = dwag;
+      tr.dataset.pt = pt.toLowerCase();
+      let cells = '';
+      if (subSegCol) {
+        cells += i === 0
+          ? `<td class="td-sub" rowspan="${playerTypes.length}" style="vertical-align:top;border-right:1px solid var(--border)">${subSegCol}</td>`
+          : '';
+      }
+      cells += `<td><span class="dwag-badge">${dwag}</span></td>`;
+      cells += `<td><span class="player-type-tag">${pt}</span></td>`;
+      cells += `<td class="freq-text">${freqFn(pt)}</td>`;
+      cells += `<td class="comm-type">${comm}</td>`;
+      cells += `<td>${journey}</td>`;
+      cells += `<td class="aim-text">${aim}</td>`;
+      tr.innerHTML = cells;
+      tbody.appendChild(tr);
+    });
+  });
+}
+
+// Build Active rows (two sub-segs)
+(function() {
+  const tbody = document.getElementById('activeRows');
+  const subSegs = [
+    { label: 'Active 7 (<8 days CPD)', comm: 'News / Promotions / Upsell', aim: 'Maintain / Upsell players' },
+    { label: 'At Risk (8–14 days CPD)', comm: 'News / Promotions / Upsell', aim: 'Maintain / Upsell players' },
+  ];
+  subSegs.forEach(ss => {
+    DWAGS.forEach(dwag => {
+      activePlayerTypes.forEach((pt, i) => {
+        const tr = document.createElement('tr');
+        tr.dataset.dwag = dwag;
+        tr.dataset.pt = pt.toLowerCase();
+        let cells = '';
+        if (i === 0) {
+          cells += `<td class="td-sub" rowspan="${activePlayerTypes.length * DWAGS.length}" style="vertical-align:top;border-right:1px solid var(--border)">${ss.label}</td>`;
+        }
+        // only once per sub-seg for first dwag first pt
+        cells += `<td><span class="dwag-badge">${dwag}</span></td>`;
+        cells += `<td><span class="player-type-tag">${pt}</span></td>`;
+        cells += `<td class="freq-text">${activeFreq(pt)}</td>`;
+        cells += `<td class="comm-type">${ss.comm}</td>`;
+        cells += `<td>Active</td>`;
+        cells += `<td class="aim-text">${ss.aim}</td>`;
+        tr.innerHTML = cells;
+        tbody.appendChild(tr);
+      });
+    });
+  });
+})();
+
+buildRows('lapsingRows', DWAGS, lapsingPlayerTypes,
+  pt => isMTT(pt) ? 'Every 48 hrs MIN + Ad-Hoc' : 'Every 72 hrs MIN + Ad-Hoc',
+  'News / Promotions / Low Value Offer', 'Lapsing', 'Increase play', null);
+
+buildRows('lapsedRows', DWAGS, lapsedPlayerTypes,
+  () => 'Weekly + Ad-Hoc',
+  'News / Promotions / Mid Value Offers', 'Lapsed', 'Get player playing before inactivity', null);
+
+buildRows('inactiveRows', DWAGS, inactivePlayerTypes,
+  () => 'Fortnightly + Ad Hoc',
+  'High Value / Moon on a Stick Offer', 'Inactive', 'Reactivate players', null);
+
+// ── TOGGLE ──
+function toggleSeg(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+// ── SEGMENT FILTER ──
+const activeFilters = new Set(['new','active','lapsing','lapsed','inactive']);
+
+function filterSegment(pill) {
+  const f = pill.dataset.filter;
+  if (activeFilters.has(f)) {
+    if (activeFilters.size === 1) return; // keep at least one
+    activeFilters.delete(f);
+    pill.classList.add('inactive-pill');
+    pill.classList.remove('active');
+  } else {
+    activeFilters.add(f);
+    pill.classList.remove('inactive-pill');
+    pill.classList.add('active');
+  }
+  document.querySelectorAll('.segment-group').forEach(g => {
+    g.style.display = activeFilters.has(g.dataset.seg) ? '' : 'none';
+  });
+  updateCount();
+}
+
+// ── SEARCH + DWAG ──
+function applySearch() {
+  const q = document.getElementById('searchBox').value.toLowerCase();
+  const dwag = document.getElementById('dwagFilter').value;
+
+  document.querySelectorAll('tbody tr').forEach(tr => {
+    const text = tr.textContent.toLowerCase();
+    const trDwag = tr.dataset.dwag || '';
+    let show = true;
+    if (q && !text.includes(q)) show = false;
+    if (dwag === 'none' && trDwag) show = false;
+    if (dwag && dwag !== 'none' && trDwag && trDwag !== dwag) show = false;
+    tr.classList.toggle('hidden-row', !show);
+  });
+  updateCount();
+}
+
+function updateCount() {
+  const visible = document.querySelectorAll('tbody tr:not(.hidden-row)').length;
+  document.getElementById('rowCount').textContent = `${visible} rows`;
+  document.getElementById('no-results').classList.toggle('show', visible === 0);
+}
+
+updateCount();
+</script>
+</body>
+</html>
