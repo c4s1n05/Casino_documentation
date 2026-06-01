@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casino Manager SOP — New Brand</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:   #0f1f3d;
+    --blue:   #1a56db;
+    --lblue:  #dbeafe;
+    --steel:  #1e3a5f;
+    --gold:   #c27c0e;
+    --lgold:  #fef9ee;
+    --green:  #146c43;
+    --lgreen: #ecfdf5;
+    --red:    #b91c1c;
+    --lred:   #fef2f2;
+    --grey:   #f4f6f9;
+    --mid:    #64748b;
+    --dark:   #0f172a;
+    --white:  #ffffff;
+    --border: #e2e8f0;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f0f4f8;
+    color: var(--dark);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── SIDEBAR NAV ─────────────────────────────────────────────────────── */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 220px;
+    height: 100vh;
+    background: var(--navy);
+    padding: 32px 0;
+    overflow-y: auto;
+    z-index: 100;
+  }
+
+  .sidebar-logo {
+    padding: 0 20px 28px;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    margin-bottom: 20px;
+  }
+
+  .sidebar-logo .brand { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; color: rgba(255,255,255,.4); letter-spacing: .12em; text-transform: uppercase; }
+  .sidebar-logo .title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: #fff; margin-top: 4px; line-height: 1.3; }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    color: rgba(255,255,255,.5);
+    font-size: 12.5px;
+    font-weight: 500;
+    transition: all .2s;
+    border-left: 3px solid transparent;
+    text-decoration: none;
+  }
+  .nav-item:hover { color: #fff; background: rgba(255,255,255,.05); }
+  .nav-item.active { color: #fff; border-left-color: var(--blue); background: rgba(26,86,219,.15); }
+  .nav-num { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; color: var(--blue); min-width: 22px; }
+
+  /* ── MAIN CONTENT ────────────────────────────────────────────────────── */
+  .main { margin-left: 220px; }
+
+  /* ── HERO ─────────────────────────────────────────────────────────────── */
+  .hero {
+    background: linear-gradient(135deg, #0a1628 0%, #0f2850 50%, #1a3a6e 100%);
+    padding: 80px 60px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(26,86,219,.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(26,86,219,.6), transparent);
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .16em; text-transform: uppercase;
+    color: var(--blue);
+    background: rgba(26,86,219,.15);
+    border: 1px solid rgba(26,86,219,.3);
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 52px; font-weight: 800;
+    color: #fff;
+    line-height: 1.05;
+    margin-bottom: 16px;
+    letter-spacing: -.02em;
+  }
+
+  .hero-sub {
+    font-size: 16px; color: rgba(255,255,255,.55);
+    font-weight: 300; margin-bottom: 36px;
+    max-width: 560px;
+  }
+
+  .hero-meta {
+    display: flex; gap: 28px; flex-wrap: wrap;
+  }
+  .meta-pill {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: rgba(255,255,255,.5);
+  }
+  .meta-pill strong { color: rgba(255,255,255,.85); font-weight: 500; }
+  .meta-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--blue); }
+
+  /* ── CONTENT WRAPPER ─────────────────────────────────────────────────── */
+  .content { padding: 48px 60px; max-width: 1200px; }
+
+  /* ── SECTION ─────────────────────────────────────────────────────────── */
+  .section { margin-bottom: 60px; }
+
+  .section-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px; font-weight: 800;
+    letter-spacing: .1em;
+    color: var(--white);
+    background: var(--blue);
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -.01em;
+  }
+
+  /* ── INFO BOX ────────────────────────────────────────────────────────── */
+  .info-box {
+    border-left: 4px solid;
+    padding: 16px 20px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 24px;
+  }
+  .info-box.blue { border-color: var(--blue); background: var(--lblue); }
+  .info-box.gold  { border-color: var(--gold); background: var(--lgold); }
+  .info-box.green { border-color: var(--green); background: var(--lgreen); }
+  .info-box.red   { border-color: var(--red); background: var(--lred); }
+  .info-box-label { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .info-box.blue  .info-box-label { color: var(--blue); }
+  .info-box.gold  .info-box-label { color: var(--gold); }
+  .info-box.green .info-box-label { color: var(--green); }
+  .info-box.red   .info-box-label { color: var(--red); }
+  .info-box p { font-size: 13.5px; color: var(--dark); line-height: 1.65; }
+
+  /* ── TABLES ──────────────────────────────────────────────────────────── */
+  .tbl-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 16px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+  thead tr { background: var(--navy); }
+  thead th {
+    padding: 12px 14px;
+    text-align: left;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: rgba(255,255,255,.85);
+    white-space: nowrap;
+  }
+
+  .sub-head td {
+    background: var(--blue);
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    padding: 9px 14px;
+  }
+
+  tbody tr:nth-child(even):not(.sub-head) { background: var(--grey); }
+  tbody tr:nth-child(odd):not(.sub-head) { background: var(--white); }
+  tbody tr:hover:not(.sub-head) { background: #e8f0fe; transition: background .15s; }
+
+  td { padding: 10px 14px; vertical-align: top; border-bottom: 1px solid var(--border); color: var(--dark); line-height: 1.55; }
+
+  .td-label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .td-blue  { color: var(--blue); font-weight: 600; }
+  .td-green { color: var(--green); font-weight: 500; font-style: italic; font-size: 12.5px; }
+  .td-red   { color: var(--red); font-size: 12.5px; }
+  .td-center { text-align: center; }
+  .td-owner { color: var(--blue); font-weight: 600; font-size: 12px; text-align: center; }
+
+  .rag-cell { background: #fef9ee; color: var(--red); font-size: 12px; }
+
+  .cadence-cell {
+    background: var(--blue);
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px; font-weight: 800;
+    letter-spacing: .1em;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* ── ROUTINE CARDS ───────────────────────────────────────────────────── */
+  .routine-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 16px; } .routine-grid.two-row { grid-template-columns: repeat(3, 1fr); }
+
+  .routine-card {
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .routine-card-head {
+    padding: 14px 18px;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px; font-weight: 800;
+    letter-spacing: .08em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .routine-card-head.daily  { background: var(--navy); color: #fff; }
+  .routine-card-head.weekly { background: var(--steel); color: #fff; }
+  .routine-card-head.monthly{ background: var(--blue); color: #fff; }
+
+  .routine-freq {
+    font-size: 10px; font-weight: 500; opacity: .65;
+    border: 1px solid rgba(255,255,255,.3);
+    padding: 2px 8px; border-radius: 10px;
+    margin-left: auto;
+  }
+
+  .routine-body { padding: 14px 18px; background: var(--white); }
+  .routine-body ul { list-style: none; padding: 0; }
+  .routine-body li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px; color: var(--dark);
+    display: flex; gap: 8px;
+    align-items: flex-start;
+  }
+  .routine-body li:last-child { border-bottom: none; }
+  .routine-body li::before { content: '→'; color: var(--blue); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  .routine-output {
+    padding: 10px 18px;
+    background: var(--lgreen);
+    border-top: 1px solid #d1fae5;
+    font-size: 12px; color: var(--green); font-weight: 500;
+    display: flex; gap: 6px; align-items: flex-start;
+  }
+  .routine-output::before { content: '✓'; font-weight: 800; }
+
+  /* ── ESCALATION CARDS ────────────────────────────────────────────────── */
+  .escalation-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+  .esc-card {
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .esc-card-head {
+    background: var(--lred);
+    border-bottom: 1px solid #fecaca;
+    padding: 12px 16px;
+    font-weight: 600; font-size: 13px; color: var(--red);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .esc-card-head::before { content: '⚠'; font-size: 14px; }
+  .esc-body { padding: 14px 16px; display: grid; gap: 8px; }
+  .esc-row { display: flex; gap: 10px; font-size: 12.5px; }
+  .esc-key { font-weight: 600; color: var(--navy); white-space: nowrap; min-width: 110px; }
+  .esc-val { color: var(--dark); }
+  .esc-val.timing { color: var(--red); font-weight: 600; }
+  .esc-val.person { color: var(--blue); font-weight: 600; }
+
+  /* ── DOC CONTROL ─────────────────────────────────────────────────────── */
+  .doc-control {
+    background: var(--grey);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .dc-item-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--mid); margin-bottom: 4px; }
+  .dc-item-value { font-size: 14px; font-weight: 500; color: var(--dark); }
+
+  /* ── PRINT ───────────────────────────────────────────────────────────── */
+  @media print {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .hero { padding: 40px; }
+    .content { padding: 30px 40px; }
+  }
+
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .routine-grid { grid-template-columns: 1fr; }
+    .escalation-grid { grid-template-columns: 1fr; }
+    .hero { padding: 40px 24px; }
+    .content { padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ─────────────────────────────────────────────────────────────── -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">New Brand</div>
+    <div class="title">Casino Manager SOP</div>
+  </div>
+  <a class="nav-item active" href="#role"><span class="nav-num">01</span> Role Overview</a>
+  <a class="nav-item" href="#responsibilities"><span class="nav-num">02</span> Responsibilities</a>
+  <a class="nav-item" href="#routines"><span class="nav-num">03</span> Operating Routines</a>
+  <a class="nav-item" href="#lobby"><span class="nav-num">04</span> Lobby Management</a>
+  <a class="nav-item" href="#kpis"><span class="nav-num">05</span> KPI Table</a>
+  <a class="nav-item" href="#escalation"><span class="nav-num">06</span> Escalation Matrix</a>
+  <a class="nav-item" href="#doccontrol"><span class="nav-num">07</span> Document Control</a>
+</nav>
+
+<!-- ── MAIN ───────────────────────────────────────────────────────────────── -->
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">Standard Operating Procedure</div>
+    <h1>Casino Manager</h1>
+    <p class="hero-sub">New Brand Launch — iGaming Operations. Operational playbook covering game performance, lobby management, bonus oversight and team reporting.</p>
+    <div class="hero-meta">
+      <div class="meta-pill"><span class="meta-dot"></span><span>Version <strong>1.0</strong></span></div>
+      <div class="meta-pill"><span class="meta-dot"></span><span>Status: <strong>Draft</strong></span></div>
+      <div class="meta-pill"><span class="meta-dot"></span><span>Owner: <strong>Casino Manager</strong></span></div>
+      <div class="meta-pill"><span class="meta-dot"></span><span>Approver: <strong>COO</strong></span></div>
+      <div class="meta-pill"><span class="meta-dot"></span><span>Date: <strong>May 2026</strong></span></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ── 01 ROLE OVERVIEW ────────────────────────────────────────────────── -->
+    <div class="section" id="role">
+      <div class="section-header">
+        <div class="section-num">01</div>
+        <div class="section-title">Role Overview &amp; Accountability</div>
+      </div>
+
+      <p style="margin-bottom:20px; font-size:14px; line-height:1.7; color:#334155;">The Casino Manager is responsible for the full commercial performance of the casino product — game content, lobby experience, provider relationships and bonus efficiency. This is a commercially focused role with direct accountability to the COO.</p>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:200px">Area</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td class="td-label">Reports To</td><td>Chief Operating Officer (COO)</td></tr>
+            <tr><td class="td-label">Works Closely With</td><td>COO, CRM Manager, SEO Manager, Payment Team, SoftSwiss Account Manager</td></tr>
+            <tr><td class="td-label">Primary Focus</td><td>Game performance, lobby optimisation, provider pipeline, bonus efficiency</td></tr>
+            <tr><td class="td-label">Review Cadence</td><td>Daily snapshot to COO; weekly performance review; quarterly business review; annual strategy review</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── 02 RESPONSIBILITIES ────────────────────────────────────────────── -->
+    <div class="section" id="responsibilities">
+      <div class="section-header">
+        <div class="section-num">02</div>
+        <div class="section-title">Core Responsibilities</div>
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:220px">Responsibility</th><th>What It Involves</th><th style="width:240px">Output / Deliverable</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="td-label">Game Portfolio Management</td>
+              <td>Curate and manage the live game catalogue; approve new titles; retire underperformers; manage RTP and variance mix across Slots, Live, Table and Virtuals</td>
+              <td class="td-green">Monthly game audit report; launch / retirement log</td>
+            </tr>
+            <tr>
+              <td class="td-label">Lobby Management</td>
+              <td>Own lobby layout, category structure, banner placement and featured game selection; run ongoing A/B tests on placement and creative</td>
+              <td class="td-green">Fortnightly A/B test results; lobby update log</td>
+            </tr>
+            <tr>
+              <td class="td-label">Provider Relationship Management</td>
+              <td>Manage commercial relationships with game providers. All technical issues, game availability and payment-related matters are routed through SoftSwiss — Casino Manager is responsible for raising and tracking tickets and escalating unresolved issues to the COO</td>
+              <td class="td-green">Provider scorecard (monthly); escalation log</td>
+            </tr>
+            <tr>
+              <td class="td-label">Bonus &amp; Promotions Oversight</td>
+              <td>Define game-level wagering contribution rules; collaborate with CRM on bonus mechanics; monitor bonus cost and wagering completion rates</td>
+              <td class="td-green">Weekly bonus cost report; promo performance review</td>
+            </tr>
+
+            <tr>
+              <td class="td-label">Performance Reporting</td>
+              <td>Produce daily, weekly and monthly casino performance reports; translate data into actionable recommendations for the COO</td>
+              <td class="td-green">Daily P&amp;L snapshot (inc. casino liability); weekly summary; monthly pack; quarterly business review; annual strategy report — all vs equivalent prior period</td>
+            </tr>
+            <tr>
+              <td class="td-label">New Game Launches</td>
+              <td>Manage end-to-end new title launches — from provider confirmation through to lobby placement, CRM brief and SEO asset request</td>
+              <td class="td-green">Launch checklist per title; 90-day launch calendar maintained</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── 03 ROUTINES ────────────────────────────────────────────────────── -->
+    <div class="section" id="routines">
+      <div class="section-header">
+        <div class="section-num">03</div>
+        <div class="section-title">Operating Routines</div>
+      </div>
+
+      <div class="routine-grid">
+        <div class="routine-card">
+          <div class="routine-card-head daily">Daily <span class="routine-freq">Every Morning</span></div>
+          <div class="routine-body">
+            <p style="font-size:12px;color:#475569;margin-bottom:8px;font-weight:600;">P&amp;L METRICS — compared to same day previous week</p>
+                        <ul>
+              <li><strong>GGR / NGR</strong> — vs same day previous week</li>
+              <li><strong>Registrations</strong> — count vs same day previous week</li>
+              <li><strong>FTD Count</strong> — number of first-time depositors vs same day previous week</li>
+              <li><strong>FTD Amount</strong> — total value of first deposits vs same day previous week</li>
+              <li><strong>Total Deposit Count</strong> — all deposits vs same day previous week</li>
+              <li><strong>Total Deposit Amount</strong> — total value of all deposits vs same day previous week</li>
+              <li><strong>Bonus Count</strong> — bonuses issued vs same day previous week</li>
+              <li><strong>Bonus Amount</strong> — total bonus value issued vs same day previous week</li>
+              <li><strong>Withdrawal Count</strong> — withdrawals processed vs same day previous week</li>
+              <li><strong>Withdrawal Amount</strong> — total withdrawal value vs same day previous week</li>
+              <li><strong>Casino Liability</strong> — total player wallet balances as at end of reporting day</li>
+            </ul>
+            <p style="font-size:12px;color:#475569;margin:10px 0 6px;font-weight:600;">OPERATIONS</p>
+            <ul>
+              <li>Check game uptime and provider feed status via SoftSwiss back office — raise ticket for any outages immediately</li>
+              <li>Review any new provider communications or updates</li>
+              <li>Flag any variance &gt;10% on GGR vs same day previous week to COO</li>
+            </ul>
+          </div>
+          <div class="routine-output">Daily P&amp;L snapshot shared with COO by 10am</div>
+        </div>
+
+        <div class="routine-card">
+          <div class="routine-card-head weekly">Weekly <span class="routine-freq">Every Monday</span></div>
+          <div class="routine-body">
+            <p style="font-size:12px;color:#475569;margin-bottom:8px;font-weight:600;">P&amp;L METRICS — compared to same week previous week &amp; week-on-week trend</p>
+                        <ul>
+              <li><strong>GGR / NGR</strong> — vs prior week</li>
+              <li><strong>Registrations</strong> — count vs prior week</li>
+              <li><strong>FTD Count</strong> — number of first-time depositors vs prior week</li>
+              <li><strong>FTD Amount</strong> — total value of first deposits vs prior week</li>
+              <li><strong>Total Deposit Count</strong> — all deposits vs prior week</li>
+              <li><strong>Total Deposit Amount</strong> — total value of all deposits vs prior week</li>
+              <li><strong>Bonus Count</strong> — bonuses issued vs prior week</li>
+              <li><strong>Bonus Amount</strong> — total bonus value issued vs prior week</li>
+              <li><strong>Withdrawal Count</strong> — withdrawals processed vs prior week</li>
+              <li><strong>Withdrawal Amount</strong> — total withdrawal value vs prior week</li>
+              <li><strong>Casino Liability</strong> — total player wallet balances as at end of week</li>
+            </ul>
+            <p style="font-size:12px;color:#475569;margin:10px 0 6px;font-weight:600;">OPERATIONS</p>
+            <ul>
+              <li>Full game performance review — GGR by title, category and provider</li>
+              <li>Lobby A/B test check-in — read results, implement winner, set next test</li>
+              <li>Bonus cost and wagering completion review with CRM Manager</li>
+              <li>Identify top 5 and bottom 5 games — action plan for bottom 5</li>
+              <li>Update pipeline and confirm upcoming launch schedule</li>
+            </ul>
+          </div>
+          <div class="routine-output">Weekly P&amp;L and performance report delivered to COO every Monday</div>
+        </div>
+
+        <div class="routine-card">
+          <div class="routine-card-head monthly">Monthly <span class="routine-freq">By Day 3</span></div>
+          <div class="routine-body">
+            <p style="font-size:12px;color:#475569;margin-bottom:8px;font-weight:600;">P&amp;L METRICS — compared to prior month &amp; same month previous year</p>
+                        <ul>
+              <li><strong>GGR / NGR</strong> — vs prior month &amp; same month prior year</li>
+              <li><strong>Registrations</strong> — count vs prior month &amp; same month prior year</li>
+              <li><strong>FTD Count</strong> — number of first-time depositors vs prior month &amp; same month prior year</li>
+              <li><strong>FTD Amount</strong> — total value of first deposits vs prior month &amp; same month prior year</li>
+              <li><strong>Total Deposit Count</strong> — all deposits vs prior month &amp; same month prior year</li>
+              <li><strong>Total Deposit Amount</strong> — total value of all deposits vs prior month &amp; same month prior year</li>
+              <li><strong>Bonus Count</strong> — bonuses issued vs prior month &amp; same month prior year</li>
+              <li><strong>Bonus Amount</strong> — total bonus value issued vs prior month &amp; same month prior year</li>
+              <li><strong>Withdrawal Count</strong> — withdrawals processed vs prior month &amp; same month prior year</li>
+              <li><strong>Withdrawal Amount</strong> — total withdrawal value vs prior month &amp; same month prior year</li>
+              <li><strong>Casino Liability</strong> — total player wallet balances as at end of month</li>
+            </ul>
+            <p style="font-size:12px;color:#475569;margin:10px 0 6px;font-weight:600;">OPERATIONS</p>
+            <ul>
+              <li>Full provider scorecard review — commercial performance vs contracted terms</li>
+              <li>Game retirement and launch audit — additions and removals from lobby</li>
+              <li>Bonus efficiency report — cost as % GGR, abuse rates, wagering completion</li>
+              <li>Competitive benchmarking — competitor lobby, promotions and new titles</li>
+              <li>Update 90-day game launch calendar</li>
+            </ul>
+          </div>
+          <div class="routine-output">Monthly P&amp;L and casino review pack delivered to COO by Day 3</div>
+        </div>
+      </div>
+
+      <div class="routine-grid" style="margin-top:20px;">
+        <div class="routine-card">
+          <div class="routine-card-head" style="background:#2d4a7a;">Quarterly <span class="routine-freq">End of Quarter</span></div>
+          <div class="routine-body">
+            <p style="font-size:12px;color:#475569;margin-bottom:8px;font-weight:600;">P&amp;L METRICS — compared to prior quarter &amp; same quarter previous year</p>
+                        <ul>
+              <li><strong>GGR / NGR</strong> — vs prior quarter &amp; same quarter prior year</li>
+              <li><strong>Registrations</strong> — count vs prior quarter &amp; same quarter prior year</li>
+              <li><strong>FTD Count</strong> — number of first-time depositors vs prior quarter &amp; same quarter prior year</li>
+              <li><strong>FTD Amount</strong> — total value of first deposits vs prior quarter &amp; same quarter prior year</li>
+              <li><strong>Total Deposit Count</strong> — all deposits vs prior quarter &amp; same quarter prior year</li>
+              <li><strong>Total Deposit Amount</strong> — total value of all deposits vs prior quarter &amp; same quarter prior year</li>
+              <li><strong>Bonus Count</strong> — bonuses issued vs prior quarter &amp; same quarter prior year</li>
+              <li><strong>Bonus Amount</strong> — total bonus value issued vs prior quarter &amp; same quarter prior year</li>
+              <li><strong>Withdrawal Count</strong> — withdrawals processed vs prior quarter &amp; same quarter prior year</li>
+              <li><strong>Withdrawal Amount</strong> — total withdrawal value vs prior quarter &amp; same quarter prior year</li>
+              <li><strong>Casino Liability</strong> — total player wallet balances as at end of quarter</li>
+            </ul>
+            <p style="font-size:12px;color:#475569;margin:10px 0 6px;font-weight:600;">STRATEGIC REVIEW</p>
+            <ul>
+              <li>Provider portfolio review — reassess commercial deals, identify renegotiation opportunities</li>
+              <li>Game lobby strategic review — category mix, mobile share, top/bottom performers over 3 months</li>
+              <li>Bonus strategy review — assess mechanics, cost trends and player behaviour shifts</li>
+              <li>SEO &amp; CRM alignment session — content calendar and promotional planning for next quarter</li>
+              <li>SoftSwiss platform review — raise any platform issues, request roadmap update</li>
+              <li>Quarterly headcount and resource review with COO</li>
+            </ul>
+          </div>
+          <div class="routine-output">Quarterly P&amp;L and Business Review deck presented to COO within 5 days of quarter end</div>
+        </div>
+
+        <div class="routine-card">
+          <div class="routine-card-head" style="background:#1a3a5c;">Yearly <span class="routine-freq">December / January</span></div>
+          <div class="routine-body">
+            <p style="font-size:12px;color:#475569;margin-bottom:8px;font-weight:600;">P&amp;L METRICS — full year vs prior year</p>
+                        <ul>
+              <li><strong>GGR / NGR</strong> — vs prior year</li>
+              <li><strong>Registrations</strong> — count vs prior year</li>
+              <li><strong>FTD Count</strong> — number of first-time depositors vs prior year</li>
+              <li><strong>FTD Amount</strong> — total value of first deposits vs prior year</li>
+              <li><strong>Total Deposit Count</strong> — all deposits vs prior year</li>
+              <li><strong>Total Deposit Amount</strong> — total value of all deposits vs prior year</li>
+              <li><strong>Bonus Count</strong> — bonuses issued vs prior year</li>
+              <li><strong>Bonus Amount</strong> — total bonus value issued vs prior year</li>
+              <li><strong>Withdrawal Count</strong> — withdrawals processed vs prior year</li>
+              <li><strong>Withdrawal Amount</strong> — total withdrawal value vs prior year</li>
+              <li><strong>Casino Liability</strong> — total player wallet balances as at end of year</li>
+            </ul>
+            <p style="font-size:12px;color:#475569;margin:10px 0 6px;font-weight:600;">STRATEGIC REVIEW</p>
+            <ul>
+              <li>Annual provider contract renegotiations — commercial terms, revenue share, exclusives pipeline</li>
+              <li>Full game lobby audit — retire aged content, plan next 12-month launch calendar</li>
+              <li>Annual bonus &amp; promotions strategy — redesign mechanics based on full-year player data</li>
+              <li>Competitive landscape analysis — positioning vs key market competitors</li>
+              <li>Annual SoftSwiss platform review — roadmap alignment, feature requests, SLA performance summary</li>
+              <li>Set KPI targets for the following year in alignment with COO and business plan</li>
+              <li>Annual team performance review and role development planning</li>
+            </ul>
+          </div>
+          <div class="routine-output">Annual P&amp;L and Strategy Report delivered to COO by end of January each year</div>
+        </div>
+
+        <div class="routine-card" style="border:1px dashed #cbd5e1; background:#f8fafc;">
+          <div class="routine-card-head" style="background:#475569;">Reporting Summary <span class="routine-freq">All Cadences</span></div>
+          <div class="routine-body">
+            <p style="font-size:12px;color:#475569;margin-bottom:8px;font-weight:600;">EVERY REPORT INCLUDES THESE CORE METRICS</p>
+            <ul>
+              <li>GGR / NGR &nbsp;·&nbsp; Registrations &nbsp;·&nbsp; FTD Count &amp; Amount</li>
+              <li>Deposit Count &amp; Amount &nbsp;·&nbsp; Bonus Count &amp; Amount</li>
+              <li>Withdrawal Count &amp; Amount &nbsp;·&nbsp; Casino Liability</li>
+            </ul>
+            <p style="font-size:12px;color:#475569;margin:10px 0 6px;font-weight:600;">DELIVERY SCHEDULE</p>
+            <ul>
+              <li><strong>Daily</strong> — P&amp;L snapshot to COO by 10am vs same day prior week</li>
+              <li><strong>Weekly</strong> — Report every Monday vs prior week</li>
+              <li><strong>Monthly</strong> — Full pack by Day 3 vs prior month &amp; prior year</li>
+              <li><strong>Quarterly</strong> — Business review within 5 days of quarter end vs prior quarter &amp; prior year</li>
+              <li><strong>Yearly</strong> — Annual report by end of January vs prior year</li>
+            </ul>
+          </div>
+          <div class="routine-output">All reports to COO. Casino Liability included in every report. SoftSwiss ticket references logged where applicable.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 04 LOBBY MANAGEMENT ─────────────────────────────────────────────── -->
+    <div class="section" id="lobby">
+      <div class="section-header">
+        <div class="section-num">04</div>
+        <div class="section-title">Lobby Management &amp; Optimisation</div>
+      </div>
+
+      <div class="info-box blue">
+        <div class="info-box-label">Principle</div>
+        <p>The lobby is the primary commercial lever available to the Casino Manager. Every placement decision should be data-led and tested. No banner, category or feature position should remain static for more than 4 weeks without a performance review.</p>
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:200px">Area</th><th>Standard</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="td-label">Homepage Banner</td>
+              <td>Maximum 5 featured game banners. Rotated fortnightly or when CTR drops below 25%. A/B test at least one creative variant at all times. Casino Manager approves all banner briefs.</td>
+            </tr>
+            <tr>
+              <td class="td-label">Category Structure</td>
+              <td>Minimum categories: New Games, Top Games, Slots, Live Casino, Table Games, Bonuses. Review category performance monthly and adjust based on player navigation data.</td>
+            </tr>
+            <tr>
+              <td class="td-label">New Games Placement</td>
+              <td>All new titles featured in 'New Games' category for a minimum of 30 days post-launch. High-priority launches also featured in homepage banner for first 2 weeks.</td>
+            </tr>
+            <tr>
+              <td class="td-label">Game Retirement</td>
+              <td>Any title generating less than 0.1% of GGR for 3 consecutive months to be reviewed. Casino Manager to assess whether to retire, reposition, or run a targeted promotion before removal.</td>
+            </tr>
+            <tr>
+              <td class="td-label">Metadata &amp; Search</td>
+              <td>Game metadata (title, provider, category, tags) must be complete and accurate for all live titles. Casino Manager to audit metadata quarterly to support SEO and on-site search performance.</td>
+            </tr>
+            <tr>
+              <td class="td-label">Mobile Optimisation</td>
+              <td>All new titles must be verified for mobile performance via SoftSwiss QA tools before launch. Mobile GGR share tracked weekly — target greater than 60% of total GGR on mobile devices.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── 05 KPI TABLE ────────────────────────────────────────────────────── -->
+    <div class="section" id="kpis">
+      <div class="section-header">
+        <div class="section-num">05</div>
+        <div class="section-title">Key Performance Indicators — Monitoring Table</div>
+      </div>
+
+      <div class="info-box gold">
+        <div class="info-box-label">How to Use This Table</div>
+        <p>Monitor all KPIs at the stated frequency. Any KPI hitting its RAG trigger must be actioned within 24 hours and reported to the COO. A written update on the action taken must be included in the next weekly report. All game-related and payment-related issues are escalated to <strong>SoftSwiss</strong> as the platform provider — always log the SoftSwiss ticket reference alongside any internal incident record.</p>
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:220px">KPI</th>
+              <th style="width:170px">Target / Benchmark</th>
+              <th style="width:100px">Frequency</th>
+              <th style="width:130px">Owner</th>
+              <th style="width:140px">RAG Trigger</th>
+              <th>Action if Off-Track</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="sub-head"><td colspan="6">REVENUE &amp; MARGIN</td></tr>
+            <tr>
+              <td class="td-label">GGR (Gross Gaming Revenue)</td>
+              <td>Month-on-month growth</td>
+              <td class="td-center">Daily / Monthly</td>
+              <td class="td-owner">Casino Mgr</td>
+              <td class="rag-cell">&lt; Budget by 10%</td>
+              <td>Review game mix, lobby placement, bonus pull-through</td>
+            </tr>
+            <tr>
+              <td class="td-label">NGR Margin (NGR / GGR)</td>
+              <td>&gt; 60%</td>
+              <td class="td-center">Weekly</td>
+              <td class="td-owner">Casino Mgr</td>
+              <td class="rag-cell">&lt; 55%</td>
+              <td>Audit bonus costs, review wagering completion rates</td>
+            </tr>
+            <tr>
+              <td class="td-label">Revenue by Game Category</td>
+              <td>Slots &gt;60%, Live &gt;25%</td>
+              <td class="td-center">Weekly</td>
+              <td class="td-owner">Casino Mgr</td>
+              <td class="rag-cell">Live share dropping</td>
+              <td>Promote live lobby, review live dealer schedule &amp; limits</td>
+            </tr>
+            <tr>
+              <td class="td-label">Revenue by Provider</td>
+              <td>No single provider &gt;40% of GGR</td>
+              <td class="td-center">Monthly</td>
+              <td class="td-owner">Casino Mgr</td>
+              <td class="rag-cell">Concentration &gt;40%</td>
+              <td>Diversify launch pipeline, renegotiate deal terms</td>
+            </tr>
+
+            <tr class="sub-head"><td colspan="6">GAME PERFORMANCE</td></tr>
+            <tr>
+              <td class="td-label">Active Game Ratio</td>
+              <td>&gt;70% of live games generating revenue</td>
+              <td class="td-center">Weekly</td>
+              <td class="td-owner">Casino Mgr</td>
+              <td class="rag-cell">&lt;60% active</td>
+              <td>Audit lobby placement; remove underperformers; run promotions on tail games</td>
+            </tr>
+            <tr>
+              <td class="td-label">New Game Launch Cadence</td>
+              <td>Min. 4 new titles per month</td>
+              <td class="td-center">Monthly</td>
+              <td class="td-owner">Casino Mgr</td>
+              <td class="rag-cell">&lt;4 launched</td>
+              <td>Review provider pipeline; prioritise integration queue</td>
+            </tr>
+            <tr>
+              <td class="td-label">Top 10 Game Revenue Share</td>
+              <td>&lt;40% of GGR from top 10 titles</td>
+              <td class="td-center">Weekly</td>
+              <td class="td-owner">Casino Mgr</td>
+              <td class="rag-cell">&gt;50% concentration</td>
+              <td>Broaden lobby promotion; feature mid-tier titles in homepage banners</td>
+            </tr>
+            <tr>
+              <td class="td-label">Game Uptime / Availability</td>
+              <td>&gt;99.5% per provider feed</td>
+              <td class="td-center">Daily</td>
+              <td class="td-owner">Casino Mgr</td>
+              <td class="rag-cell">&lt;99%</td>
+              <td>Raise urgent ticket with SoftSwiss; post player comms if &gt;15 min outage; log ticket reference</td>
+            </tr>
+
+
+            <tr class="sub-head"><td colspan="6">PLAYER ENGAGEMENT</td></tr>
+            <tr>
+              <td class="td-label">Avg. Session Duration</td>
+              <td>&gt;18 minutes per session</td>
+              <td class="td-center">Weekly</td>
+              <td class="td-owner">Casino Mgr + CRM</td>
+              <td class="rag-cell">&lt;12 min</td>
+              <td>Review UX/lobby flow; introduce session-lengthening features (e.g. tournaments)</td>
+            </tr>
+            <tr>
+              <td class="td-label">Games Per Session</td>
+              <td>&gt;4 games per visit</td>
+              <td class="td-center">Weekly</td>
+              <td class="td-owner">Casino Mgr</td>
+              <td class="rag-cell">&lt;3 games</td>
+              <td>Improve in-game recommendations; review lobby navigation</td>
+            </tr>
+            <tr>
+              <td class="td-label">Lobby CTR on Featured Banner</td>
+              <td>&gt;35% click-through rate</td>
+              <td class="td-center">Weekly</td>
+              <td class="td-owner">Casino Mgr</td>
+              <td class="rag-cell">&lt;25% CTR</td>
+              <td>A/B test banner creative, positioning and call-to-action copy</td>
+            </tr>
+            <tr>
+              <td class="td-label">Return Player Game Loyalty</td>
+              <td>&gt;60% of returning players play same category</td>
+              <td class="td-center">Monthly</td>
+              <td class="td-owner">Casino Mgr + CRM</td>
+              <td class="rag-cell">&lt;50%</td>
+              <td>Deploy personalised game recommendations via CRM</td>
+            </tr>
+
+            <tr class="sub-head"><td colspan="6">BONUS &amp; PROMOTIONS</td></tr>
+            <tr>
+              <td class="td-label">Bonus Cost as % of GGR</td>
+              <td>&lt;25%</td>
+              <td class="td-center">Weekly</td>
+              <td class="td-owner">Casino Mgr + CRM</td>
+              <td class="rag-cell">&gt;30%</td>
+              <td>Tighten wagering requirements; review welcome offer mechanics</td>
+            </tr>
+            <tr>
+              <td class="td-label">Wagering Completion Rate</td>
+              <td>&gt;55% of bonuses fully wagered</td>
+              <td class="td-center">Weekly</td>
+              <td class="td-owner">Casino Mgr</td>
+              <td class="rag-cell">&lt;45%</td>
+              <td>Review bonus terms; adjust game weighting contributions</td>
+            </tr>
+            <tr>
+              <td class="td-label">Promo Game GGR Uplift</td>
+              <td>&gt;20% uplift on promoted titles during promo</td>
+              <td class="td-center">Per campaign</td>
+              <td class="td-owner">Casino Mgr</td>
+              <td class="rag-cell">&lt;10% uplift</td>
+              <td>Reassess promo mechanics; increase visibility and CRM push</td>
+            </tr>
+            <tr>
+              <td class="td-label">Bonus Abuse Rate</td>
+              <td>&lt;2% of bonus claims flagged</td>
+              <td class="td-center">Weekly</td>
+              <td class="td-owner">Casino Mgr</td>
+              <td class="rag-cell">&gt;3%</td>
+              <td>Tighten T&amp;Cs; implement velocity checks; escalate to COO</td>
+            </tr>
+
+            <tr class="sub-head"><td colspan="6">OPERATIONAL</td></tr>
+            <tr>
+              <td class="td-label">Provider Pipeline Activity</td>
+              <td>Min. 2 providers in active discussion at all times</td>
+              <td class="td-center">Monthly</td>
+              <td class="td-owner">Casino Mgr</td>
+              <td class="rag-cell">&lt;1 in pipeline</td>
+              <td>Initiate new provider outreach; review deal terms</td>
+            </tr>
+            <tr>
+              <td class="td-label">Lobby A/B Test Cadence</td>
+              <td>Min. 1 active test per fortnight</td>
+              <td class="td-center">Fortnightly</td>
+              <td class="td-owner">Casino Mgr</td>
+              <td class="rag-cell">No active test</td>
+              <td>Launch test immediately; prioritise lobby banner or category order</td>
+            </tr>
+            <tr>
+              <td class="td-label">Monthly Casino Review Report</td>
+              <td>Delivered by Day 3 of each month</td>
+              <td class="td-center">Monthly</td>
+              <td class="td-owner">Casino Mgr</td>
+              <td class="rag-cell">Late submission</td>
+              <td>Flag to COO; implement submission checklist</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── 06 ESCALATION ───────────────────────────────────────────────────── -->
+    <div class="section" id="escalation">
+      <div class="section-header">
+        <div class="section-num">06</div>
+        <div class="section-title">Escalation Matrix</div>
+      </div>
+
+      <div class="info-box blue">
+        <div class="info-box-label">SoftSwiss — Platform Escalation Route</div>
+        <p>SoftSwiss is the third-party platform provider. All game-related issues (outages, feed errors) and all payment-related issues must be routed through SoftSwiss support. The Casino Manager is responsible for raising the ticket, tracking resolution and escalating to the COO if SoftSwiss does not resolve within the agreed SLA window. Always retain the SoftSwiss ticket reference number in the incident log.</p>
+      </div>
+      <div class="escalation-grid">
+        <div class="esc-card">
+          <div class="esc-card-head">Game Outage &gt;15 Minutes</div>
+          <div class="esc-body">
+            <div class="esc-row"><span class="esc-key">Immediate Action</span><span class="esc-val">Log the outage; post player-facing comms</span></div>
+            <div class="esc-row"><span class="esc-key">Notify Within</span><span class="esc-val timing">1 hour</span></div>
+            <div class="esc-row"><span class="esc-key">Escalate To</span><span class="esc-val person">SoftSwiss Support + COO</span></div>
+            <div class="esc-row"><span class="esc-key">Documentation</span><span class="esc-val">Log SoftSwiss ticket number; incident report within 4 hours</span></div>
+          </div>
+        </div>
+
+        <div class="esc-card">
+          <div class="esc-card-head">Bonus Abuse Spike &gt;3%</div>
+          <div class="esc-body">
+            <div class="esc-row"><span class="esc-key">Immediate Action</span><span class="esc-val">Flag accounts; pause promotion if live</span></div>
+            <div class="esc-row"><span class="esc-key">Notify Within</span><span class="esc-val timing">Same day</span></div>
+            <div class="esc-row"><span class="esc-key">Escalate To</span><span class="esc-val person">COO</span></div>
+            <div class="esc-row"><span class="esc-key">Documentation</span><span class="esc-val">Abuse report with flagged account list</span></div>
+          </div>
+        </div>
+
+        <div class="esc-card">
+          <div class="esc-card-head">Provider SLA Breach</div>
+          <div class="esc-body">
+            <div class="esc-row"><span class="esc-key">Immediate Action</span><span class="esc-val">Raise formal SLA ticket with SoftSwiss; log internally</span></div>
+            <div class="esc-row"><span class="esc-key">Notify Within</span><span class="esc-val timing">48 hours</span></div>
+            <div class="esc-row"><span class="esc-key">Escalate To</span><span class="esc-val person">SoftSwiss Account Manager + COO</span></div>
+            <div class="esc-row"><span class="esc-key">Documentation</span><span class="esc-val">SoftSwiss ticket reference; written breach summary on file</span></div>
+          </div>
+        </div>
+
+        <div class="esc-card">
+          <div class="esc-card-head">GGR &gt;20% Below Weekly Budget</div>
+          <div class="esc-body">
+            <div class="esc-row"><span class="esc-key">Immediate Action</span><span class="esc-val">Root cause analysis — game, channel or player level</span></div>
+            <div class="esc-row"><span class="esc-key">Notify Within</span><span class="esc-val timing">Same day</span></div>
+            <div class="esc-row"><span class="esc-key">Escalate To</span><span class="esc-val person">COO</span></div>
+            <div class="esc-row"><span class="esc-key">Documentation</span><span class="esc-val">Written summary with 7-day recovery plan</span></div>
+          </div>
+        </div>
+
+</div>
+
+        <div class="esc-card">
+          <div class="esc-card-head">Single Provider &gt;40% of GGR</div>
+          <div class="esc-body">
+            <div class="esc-row"><span class="esc-key">Immediate Action</span><span class="esc-val">Flag in weekly report; request provider pipeline options from SoftSwiss</span></div>
+            <div class="esc-row"><span class="esc-key">Notify Within</span><span class="esc-val timing">Next weekly review</span></div>
+            <div class="esc-row"><span class="esc-key">Escalate To</span><span class="esc-val person">COO + SoftSwiss Account Manager</span></div>
+            <div class="esc-row"><span class="esc-key">Documentation</span><span class="esc-val">Provider concentration report; 90-day diversification plan</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 07 DOC CONTROL ─────────────────────────────────────────────────── -->
+    <div class="section" id="doccontrol">
+      <div class="section-header">
+        <div class="section-num">07</div>
+        <div class="section-title">Document Control</div>
+      </div>
+
+      <div class="doc-control">
+        <div>
+          <div class="dc-item-label">Version</div>
+          <div class="dc-item-value">1.0 — Draft</div>
+        </div>
+        <div>
+          <div class="dc-item-label">Date</div>
+          <div class="dc-item-value">May 2026</div>
+        </div>
+        <div>
+          <div class="dc-item-label">Author</div>
+          <div class="dc-item-value">COO</div>
+        </div>
+        <div>
+          <div class="dc-item-label">Next Review</div>
+          <div class="dc-item-value">30 days post-launch</div>
+        </div>
+      </div>
+
+      <p style="margin-top:16px; font-size:13px; color:var(--mid); line-height:1.6;">
+        This document is an initial draft. It is to be updated within 30 days of brand audit completion and platform selection confirmation. All role holders must sign off that they have read and understood this SOP on commencement of their role.
+      </p>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+  // Active nav highlight on scroll
+  const sections = document.querySelectorAll('.section');
+  const navItems = document.querySelectorAll('.nav-item');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navItems.forEach(n => n.classList.remove('active'));
+        const id = entry.target.id;
+        const active = document.querySelector(`.nav-item[href="#${id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  navItems.forEach(item => {
+    item.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(item.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+
+</body>
+</html>
