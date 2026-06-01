@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOP — BIN Failure Investigation & Resolution</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f6f8fb;--surface:#ffffff;--border:#e2e7ef;--text:#1a2030;--muted:#6b7a94;--subtle:#f0f3f8;--blue:#1248c9;--blue-bg:#eef3ff;--blue-bd:#c0d0f8;--blue-dot:#3b6ef0;--green:#0a7c52;--green-bg:#eafaf3;--green-bd:#a3e0c5;--green-dot:#12b76a;--amber:#a16207;--amber-bg:#fffbeb;--amber-bd:#fcd34d;--amber-dot:#f59e0b;--red:#b91c1c;--red-bg:#fef2f2;--red-bd:#fca5a5;--red-dot:#ef4444;--purple:#6d28d9;--purple-bg:#f3eeff;--purple-bd:#c9b0f4;--purple-dot:#8b5cf6;--teal:#0e7490;--teal-bg:#ecfeff;--teal-bd:#a5f3fc;--teal-dot:#06b6d4;--tg:#229ED9;--tg-bg:#e8f6fd;--tg-bd:#93d4f5}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
+  .layout{display:grid;grid-template-columns:230px 1fr 210px;min-height:100vh;max-width:1360px;margin:0 auto}
+  .sidebar-left{border-right:1px solid var(--border);padding:32px 0;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .wiki-logo{padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:20px}.wiki-logo a{text-decoration:none}
+  .wiki-logo-icon{font-size:26px;margin-bottom:4px;display:block}.wiki-logo-title{font-family:'Lora',serif;font-size:16px;font-weight:700;color:var(--text)}.wiki-logo-sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .sb-section{padding:0 12px;margin-bottom:20px}.sb-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:0 8px;margin-bottom:4px}
+  .sb-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-size:12.5px;font-weight:500;color:var(--muted);text-decoration:none;transition:all .15s}.sb-link:hover{background:var(--subtle);color:var(--text)}.sb-link.active{background:var(--amber-bg);color:var(--amber);font-weight:600}
+  .sb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+  .main{padding:48px 56px;min-width:0}
+  .page-header{padding-bottom:28px;border-bottom:2px solid var(--border);margin-bottom:40px}
+  .page-breadcrumb{font-size:12px;color:var(--muted);margin-bottom:10px}.page-breadcrumb a{color:var(--blue);text-decoration:none}
+  .page-title{font-family:'Lora',serif;font-size:34px;font-weight:700;color:var(--text);line-height:1.15;margin-bottom:12px}
+  .page-intro{font-size:14.5px;color:var(--muted);line-height:1.7;font-weight:300;max-width:640px;margin-bottom:18px}
+  .page-meta{display:flex;gap:18px;flex-wrap:wrap}.page-meta-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}.page-meta-item strong{color:var(--text);font-weight:600}
+  .callout{display:flex;gap:14px;padding:16px 18px;border-radius:10px;border:1.5px solid;margin-bottom:24px}
+  .callout.blue{background:var(--blue-bg);border-color:var(--blue-bd)}.callout.green{background:var(--green-bg);border-color:var(--green-bd)}.callout.amber{background:var(--amber-bg);border-color:var(--amber-bd)}.callout.red{background:var(--red-bg);border-color:var(--red-bd)}.callout.purple{background:var(--purple-bg);border-color:var(--purple-bd)}.callout.teal{background:var(--teal-bg);border-color:var(--teal-bd)}.callout.telegram{background:var(--tg-bg);border-color:var(--tg-bd)}
+  .callout-icon{font-size:18px;flex-shrink:0;margin-top:1px}.callout-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+  .callout.blue .callout-label{color:var(--blue)}.callout.green .callout-label{color:var(--green)}.callout.amber .callout-label{color:var(--amber)}.callout.red .callout-label{color:var(--red)}.callout.purple .callout-label{color:var(--purple)}.callout.teal .callout-label{color:var(--teal)}.callout.telegram .callout-label{color:var(--tg)}
+  .callout p{font-size:13.5px;color:var(--text);line-height:1.65}
+  .section{margin-bottom:56px;scroll-margin-top:24px}
+  .section-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid}
+  .section-header.blue{border-color:var(--blue-bd)}.section-header.green{border-color:var(--green-bd)}.section-header.amber{border-color:var(--amber-bd)}.section-header.red{border-color:var(--red-bd)}.section-header.purple{border-color:var(--purple-bd)}.section-header.teal{border-color:var(--teal-bd)}.section-header.telegram{border-color:var(--tg-bd)}
+  .section-num{font-size:11px;font-weight:700;width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
+  .section-num.blue{background:var(--blue)}.section-num.green{background:var(--green)}.section-num.amber{background:var(--amber)}.section-num.red{background:var(--red)}.section-num.purple{background:var(--purple)}.section-num.teal{background:var(--teal)}.section-num.telegram{background:var(--tg)}
+  .section-title{font-family:'Lora',serif;font-size:22px;font-weight:700;color:var(--text)}
+  .tbl-wrap{overflow-x:auto;border-radius:10px;border:1.5px solid var(--border);margin-bottom:20px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead tr{background:var(--subtle)}thead th{padding:10px 16px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+  tbody tr:nth-child(even){background:var(--subtle)}tbody tr:hover{background:var(--blue-bg)}tbody tr:not(:last-child) td{border-bottom:1px solid var(--border)}
+  td{padding:10px 16px;vertical-align:top;line-height:1.55}
+  .sub-hdr td{background:var(--amber);color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:8px 16px}
+  .sub-hdr.blue td{background:var(--blue)}.sub-hdr.green td{background:var(--green)}.sub-hdr.red td{background:var(--red)}.sub-hdr.purple td{background:var(--purple)}.sub-hdr.teal td{background:var(--teal)}.sub-hdr.telegram td{background:var(--tg)}
+  p.body{font-size:13.5px;color:var(--muted);line-height:1.7;margin-bottom:16px;font-weight:300}
+  .badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 9px;border-radius:12px}
+  .badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+  .badge-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}.badge-amber{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd)}.badge-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}.badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd)}.badge-tg{background:var(--tg-bg);color:var(--tg);border:1px solid var(--tg-bd)}
+
+  /* BIN visualiser */
+  .bin-card{background:linear-gradient(135deg,#1a2a4a 0%,#2d4a7a 100%);border-radius:14px;padding:24px 28px;color:#fff;margin-bottom:20px;font-family:'Inter',monospace;position:relative;overflow:hidden}
+  .bin-card::before{content:'';position:absolute;top:-30px;right:-30px;width:150px;height:150px;background:rgba(255,255,255,.05);border-radius:50%}
+  .bin-card-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.5;margin-bottom:16px}
+  .bin-number{font-size:22px;letter-spacing:.2em;margin-bottom:8px}
+  .bin-highlight{background:rgba(239,68,68,.3);border-radius:4px;padding:2px 6px;color:#fca5a5;border:1px solid rgba(239,68,68,.4)}
+  .bin-ok{color:#86efac}
+  .bin-details{display:flex;gap:24px;margin-top:16px;font-size:11px;opacity:.7}
+  .bin-detail-label{opacity:.6;margin-bottom:2px}
+  .bin-detail-val{font-weight:600;font-size:13px;opacity:1}
+
+  /* Telegram mock */
+  .tg-mock{background:#1a1a2e;border-radius:14px;padding:20px 20px 14px;margin-bottom:20px;font-family:'Inter',monospace}
+  .tg-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .tg-avatar{width:36px;height:36px;border-radius:50%;background:var(--tg);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .tg-group-name{font-size:14px;font-weight:600;color:#fff}.tg-group-sub{font-size:11px;color:rgba(255,255,255,.4)}
+  .tg-msg{background:#2a2a3e;border-radius:10px 10px 10px 2px;padding:12px 14px;margin-bottom:10px;max-width:85%}
+  .tg-msg.alert-amber{border-left:3px solid #f59e0b}.tg-msg.alert-green{border-left:3px solid #12b76a}
+  .tg-msg-title{font-size:12px;font-weight:700;margin-bottom:6px}
+  .tg-msg.alert-amber .tg-msg-title{color:#f59e0b}.tg-msg.alert-green .tg-msg-title{color:#12b76a}
+  .tg-msg-body{font-size:12px;color:rgba(255,255,255,.8);line-height:1.6}
+  .tg-msg-body .val{color:#7dd3fc;font-weight:600}.tg-msg-body .warn{color:#fca5a5}.tg-msg-body .ok{color:#86efac}
+  .tg-time{font-size:10px;color:rgba(255,255,255,.3);text-align:right;margin-top:6px}
+
+  .sidebar-right{border-left:1px solid var(--border);padding:48px 18px;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .toc-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  .toc-link{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--muted);text-decoration:none;padding:5px 0;transition:color .15s}.toc-link:hover{color:var(--text)}.toc-link.active{color:var(--blue);font-weight:600}
+  .toc-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+  .toc-divider{height:1px;background:var(--border);margin:12px 0}
+  .toc-stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}.toc-stat-val{font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;margin-top:1px}
+  @media(max-width:960px){.layout{grid-template-columns:1fr}.sidebar-left,.sidebar-right{display:none}.main{padding:28px 20px}}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<aside class="sidebar-left">
+  <div class="wiki-logo"><a href="index.html"><span class="wiki-logo-icon">🃏</span><div class="wiki-logo-title">Casino Ops Wiki</div><div class="wiki-logo-sub">New Brand · v1.0 · 2026</div></a></div>
+  <div class="sb-section">
+    <div class="sb-label">Payments SOPs</div>
+    <a class="sb-link" href="deposit_success_rate_sop.html"><span class="sb-dot" style="background:var(--red-dot)"></span>Deposit Success Rate &lt;80%</a>
+    <a class="sb-link active" href="#"><span class="sb-dot" style="background:var(--amber-dot)"></span>BIN Failure SOP</a>
+    <a class="sb-link" href="player_rerouting_sop.html"><span class="sb-dot" style="background:var(--blue-dot)"></span>Player Re-routing SOP</a>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">On This Page</div>
+    <a class="sb-link" href="#overview"><span class="sb-dot" style="background:var(--muted)"></span>What is a BIN?</a>
+    <a class="sb-link" href="#detection"><span class="sb-dot" style="background:var(--amber-dot)"></span>Detection &amp; Alerts</a>
+    <a class="sb-link" href="#telegram"><span class="sb-dot" style="background:var(--tg)"></span>Telegram Alerts</a>
+    <a class="sb-link" href="#investigation"><span class="sb-dot" style="background:var(--blue-dot)"></span>Investigation Steps</a>
+    <a class="sb-link" href="#root-causes"><span class="sb-dot" style="background:var(--red-dot)"></span>Root Cause Guide</a>
+    <a class="sb-link" href="#resolution"><span class="sb-dot" style="background:var(--green-dot)"></span>Resolution Actions</a>
+    <a class="sb-link" href="#softswiss"><span class="sb-dot" style="background:var(--purple-dot)"></span>SoftSwiss Escalation</a>
+    <a class="sb-link" href="#player-comms"><span class="sb-dot" style="background:var(--green-dot)"></span>Player Comms</a>
+    <a class="sb-link" href="#monitoring"><span class="sb-dot" style="background:var(--teal-dot)"></span>Ongoing Monitoring</a>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="page-header" id="overview">
+    <div class="page-breadcrumb"><a href="index.html">Casino Ops Wiki</a> › <a href="index.html#payments">Payments</a> › BIN Failure SOP</div>
+    <h1 class="page-title">SOP — BIN Failure Investigation &amp; Resolution</h1>
+    <p class="page-intro">Defines how to detect, investigate and resolve scenarios where a specific Bank Identification Number (BIN) range is experiencing elevated decline rates. Covers root cause identification, SoftSwiss escalation, rerouting options and player communication standards.</p>
+    <div class="page-meta">
+      <div class="page-meta-item">📅 <strong>May 2026</strong></div>
+      <div class="page-meta-item">👤 Owner: <strong>Payments Team</strong></div>
+      <div class="page-meta-item">🔗 Platform: <strong>SoftSwiss</strong></div>
+      <div class="page-meta-item">⏱ Detection SLA: <strong>30 minutes</strong></div>
+    </div>
+  </div>
+
+  <div class="callout amber">
+    <div class="callout-icon">🃏</div>
+    <div class="callout-body">
+      <div class="callout-label">What is a BIN?</div>
+      <p>A <strong>Bank Identification Number (BIN)</strong> is the first 6–8 digits of a payment card number. It identifies the issuing bank, card scheme (Visa, Mastercard), card type (credit, debit, prepaid) and country of issue. When a specific BIN range has a high decline rate, it typically indicates an issue with that specific issuing bank — not with our platform or SoftSwiss. However, SoftSwiss controls the routing and may be able to resolve it via acquirer switching or BIN-specific configuration.</p>
+    </div>
+  </div>
+
+  <div class="bin-card">
+    <div class="bin-card-label">Example — Card BIN Breakdown</div>
+    <div class="bin-number">
+      <span class="bin-highlight">4532 16</span><span class="bin-ok">XX XXXX XXXX</span>
+    </div>
+    <div style="font-size:12px;opacity:.6;margin-top:4px">↑ BIN (first 6 digits) — identifies issuer · Card scheme · Card type · Country</div>
+    <div class="bin-details">
+      <div><div class="bin-detail-label">Card Scheme</div><div class="bin-detail-val">Visa</div></div>
+      <div><div class="bin-detail-label">Card Type</div><div class="bin-detail-val">Credit</div></div>
+      <div><div class="bin-detail-label">Issuing Bank</div><div class="bin-detail-val">Commonwealth Bank AU</div></div>
+      <div><div class="bin-detail-label">Country</div><div class="bin-detail-val">Australia</div></div>
+      <div><div class="bin-detail-label">Status</div><div class="bin-detail-val" style="color:#fca5a5">⚠ High Decline Rate</div></div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: DETECTION -->
+  <div class="section" id="detection">
+    <div class="section-header amber">
+      <div class="section-num amber">01</div>
+      <div class="section-title">Detection &amp; Alert Thresholds</div>
+    </div>
+    <p class="body">BIN-level failures may not be visible in overall success rate metrics until a significant volume of players is affected. Active monitoring of BIN-level data via SoftSwiss is essential to catch issuer-specific problems early.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Alert Level</th><th>Trigger Condition</th><th>Minimum Volume</th><th>Response SLA</th><th>Who Is Notified</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-amber">⚠ WATCH</span></td><td>BIN decline rate &gt;30% over rolling 60-min window</td><td>5+ attempts from same BIN</td><td>Monitor — review at 30 min</td><td>Payments Team</td></tr>
+          <tr><td><span class="badge badge-amber">🟡 WARNING</span></td><td>BIN decline rate &gt;50% over rolling 60-min window</td><td>10+ attempts from same BIN</td><td>20 minutes — begin investigation</td><td>Payments Team + Payments Lead</td></tr>
+          <tr><td><span class="badge badge-red">🔴 ALERT</span></td><td>BIN decline rate &gt;70% over rolling 60-min window</td><td>5+ attempts from same BIN</td><td>10 minutes — active investigation + SoftSwiss contact</td><td>Payments Lead + COO</td></tr>
+          <tr><td><span class="badge badge-red">🚨 CRITICAL</span></td><td>BIN decline rate 100% (complete failure) sustained for 15+ minutes</td><td>Any volume</td><td>Immediate — SoftSwiss urgent escalation</td><td>Payments Lead + COO + CS Lead</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:220px">How to Find BIN Data</th><th>Navigation Path in SoftSwiss</th><th>What to Look For</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">SoftSwiss Back Office — BIN Report</td><td>Reports → Payment Analytics → BIN Analysis → filter by date range and decline status</td><td>BIN ranges with &gt;30% decline rate; compare against same BIN success rate from prior week</td></tr>
+          <tr><td style="font-weight:600">Decline Code Report filtered by BIN</td><td>Reports → Transactions → filter by Status = Declined → group by BIN prefix</td><td>Concentration of declines on one BIN range with consistent decline code (e.g. all Code 05 or all Code 14)</td></tr>
+          <tr><td style="font-weight:600">SoftSwiss Telegram Bot</td><td>Automated — fires when BIN-level thresholds are crossed</td><td>Alert message includes BIN prefix, decline rate, volume and dominant decline code</td></tr>
+          <tr><td style="font-weight:600">Customer Support Ticket Cluster</td><td>CS dashboard — flag if 3+ players from same bank report failure in 30 min</td><td>Players from the same issuing bank (e.g. "my CBA card won't work") are a strong BIN signal</td></tr>
+          <tr><td style="font-weight:600">Manual BIN lookup tool</td><td>Use a BIN database (e.g. binlist.net or similar) to identify the issuer, country and card type from the first 6 digits</td><td>Confirm issuing bank and country — determines whether this is issuer-side or acquirer-routing issue</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 2: TELEGRAM -->
+  <div class="section" id="telegram">
+    <div class="section-header telegram">
+      <div class="section-num telegram">02</div>
+      <div class="section-title">Telegram Alert — BIN Failure Format</div>
+    </div>
+
+    <div class="tg-mock">
+      <div class="tg-header">
+        <div class="tg-avatar">🏦</div>
+        <div><div class="tg-group-name">🏦 Payments Operations</div><div class="tg-group-sub">PaymentsMonitorBot · Payments Lead · COO · +3 members</div></div>
+      </div>
+
+      <div class="tg-msg alert-amber">
+        <div class="tg-msg-title">🃏 BIN WARNING — Elevated Decline Rate @PaymentsLead</div>
+        <div class="tg-msg-body">
+          🃏 BIN: <span class="val">453216XX</span> (Visa Credit · CBA · Australia)<br>
+          📊 Decline rate: <span class="warn">72.3%</span> (last 60 min)<br>
+          📦 Volume: <span class="val">18 attempts · 5 approved · 13 declined</span><br>
+          🏦 Top decline code: <span class="warn">05 — Do Not Honour (×11)</span><br>
+          🏦 Secondary code: <span class="warn">57 — Transaction Not Permitted (×2)</span><br>
+          💳 Other Visa BINs: <span class="ok">Success rate 88.1% (normal)</span><br>
+          🌍 GEO: <span class="val">Australia</span><br>
+          🕐 First detected: <span class="val">09:14 AEST</span><br><br>
+          Action: Investigate BIN. Check SoftSwiss BIN report. Contact AM if not resolved in 20 min.
+        </div>
+        <div class="tg-time">09:14</div>
+      </div>
+
+      <div class="tg-msg alert-amber">
+        <div class="tg-msg-title">🚨 BIN CRITICAL — Complete Failure @PaymentsLead @COO</div>
+        <div class="tg-msg-body">
+          🃏 BIN: <span class="val">453216XX</span> (Visa Credit · CBA · Australia)<br>
+          📊 Decline rate: <span class="warn">100%</span> (last 15 min — 0 approvals)<br>
+          📦 Volume: <span class="val">9 attempts · 0 approved</span><br>
+          🏦 All declines: <span class="warn">Code 05 — Do Not Honour</span><br>
+          ⏱ Duration: <span class="warn">22 minutes since first detection</span><br>
+          💳 Mastercard BINs: <span class="ok">Unaffected — 91.2% success</span><br>
+          🔧 SoftSwiss: <span class="val">Not yet contacted</span><br><br>
+          Immediate action required. Raise SoftSwiss ticket now. Consider rerouting.
+        </div>
+        <div class="tg-time">09:36</div>
+      </div>
+
+      <div class="tg-msg alert-green">
+        <div class="tg-msg-title">✅ BIN RESOLVED — CBA Visa Credit Restored</div>
+        <div class="tg-msg-body">
+          🃏 BIN: <span class="val">453216XX</span><br>
+          📊 Current decline rate: <span class="ok">8.2%</span> (back to normal)<br>
+          🔧 Resolution: <span class="ok">SoftSwiss rerouted to secondary acquirer at 09:51</span><br>
+          ⏱ Total duration: <span class="val">37 minutes</span><br>
+          📋 Ticket: <span class="val">SS-89504</span><br>
+          📝 Post-incident review: Within 24 hours
+        </div>
+        <div class="tg-time">09:53</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: INVESTIGATION -->
+  <div class="section" id="investigation">
+    <div class="section-header blue">
+      <div class="section-num blue">03</div>
+      <div class="section-title">Investigation Steps</div>
+    </div>
+    <p class="body">Investigation must determine whether the BIN failure is caused by the issuing bank, the acquirer, SoftSwiss routing configuration, or a specific card type issue. This determines the correct resolution path.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:32px">#</th><th style="width:42%">Investigation Action</th><th style="width:20%">Tool</th><th>What It Tells You</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:700;color:var(--amber)">1</td><td>Pull BIN-level decline report from SoftSwiss back office — filter to failing BIN prefix, last 60 minutes</td><td>SoftSwiss Portal</td><td>Confirms the BIN range affected, volume and decline codes</td></tr>
+          <tr><td style="font-weight:700;color:var(--amber)">2</td><td>Identify the issuing bank using a BIN lookup tool — confirm bank name, country and card type (credit/debit/prepaid)</td><td>BIN lookup tool</td><td>Determines whether to escalate to issuer directly (via SoftSwiss) or check acquirer routing</td></tr>
+          <tr><td style="font-weight:700;color:var(--amber)">3</td><td>Check all decline codes for the failing BIN — are they all the same code, or mixed? A single code suggests one root cause; mixed codes suggest routing complexity</td><td>SoftSwiss Reports</td><td>Code 05 = issuer refusing; Code 14 = bad card data; Code 91 = issuer unreachable (technical outage); Code 57 = not permitted for this merchant type</td></tr>
+          <tr><td style="font-weight:700;color:var(--amber)">4</td><td>Check if other BINs from the same issuing bank are also failing — widen BIN prefix search to all BINs from that bank</td><td>SoftSwiss Portal</td><td>If all BINs from one bank are failing, it is likely a bank-wide outage or bank-level restriction on gambling merchants</td></tr>
+          <tr><td style="font-weight:700;color:var(--amber)">5</td><td>Check if the same BIN is failing on all payment methods or only one — e.g. card failing but same bank's e-wallet (Neteller) working</td><td>SoftSwiss Portal</td><td>If e-wallet from same bank works, the issue is card-scheme specific rather than bank-wide</td></tr>
+          <tr><td style="font-weight:700;color:var(--amber)">6</td><td>Check SoftSwiss routing configuration for this BIN — which acquirer is currently handling this BIN range? Is there a backup acquirer available?</td><td>SoftSwiss AM</td><td>The brand cannot see routing config directly — AM must provide this. Critical for determining rerouting feasibility.</td></tr>
+          <tr><td style="font-weight:700;color:var(--amber)">7</td><td>Check whether failure is time-of-day correlated — compare decline rate for this BIN against same time yesterday and same time last week</td><td>SoftSwiss Reports + manual check</td><td>Time-correlated failure may indicate a maintenance window or bank-specific processing hours issue</td></tr>
+          <tr><td style="font-weight:700;color:var(--amber)">8</td><td>Check customer support for any player contacts from the same bank — CS agent should ask "which bank is your card with?" for all deposit failure contacts during the investigation</td><td>CS Dashboard</td><td>Confirms real-world player impact and helps estimate volume of affected players beyond those who attempted transactions</td></tr>
+          <tr><td style="font-weight:700;color:var(--amber)">9</td><td>Check if any recent SoftSwiss configuration changes were made to this BIN or acquirer — new routing rules or fraud filters applied in the last 24 hours could cause sudden BIN failures</td><td>SoftSwiss AM</td><td>If SoftSwiss made a recent change, they can revert it; this is a fast resolution path if confirmed</td></tr>
+          <tr><td style="font-weight:700;color:var(--amber)">10</td><td>Document all findings in the incident log before contacting SoftSwiss — a structured brief will get faster resolution than an unstructured call</td><td>Incident Register</td><td>Ensures nothing is missed in escalation and provides evidence for post-incident review</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 4: ROOT CAUSES -->
+  <div class="section" id="root-causes">
+    <div class="section-header red">
+      <div class="section-num red">04</div>
+      <div class="section-title">Root Cause Guide — Decline Codes &amp; What They Mean</div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:80px">Code</th><th style="width:25%">Description</th><th style="width:28%">Likely Root Cause</th><th>Resolution Path</th></tr></thead>
+        <tbody>
+          <tr class="sub-hdr"><td colspan="4">ISSUER-SIDE DECLINES (Bank refusing the transaction)</td></tr>
+          <tr><td style="font-weight:700;color:var(--red)">05</td><td>Do Not Honour</td><td>Issuing bank refusing gambling transactions — either a new bank policy, daily/monthly limit hit, or bank fraud filter triggered</td><td>SoftSwiss to advise on acquirer rerouting; player may need to contact their bank to whitelist gambling transactions</td></tr>
+          <tr><td style="font-weight:700;color:var(--red)">57</td><td>Transaction Not Permitted to Cardholder</td><td>Bank has specifically blocked gambling MCC codes for this card product or customer segment</td><td>Cannot be fixed via rerouting — player must use alternative payment method; advise e-wallet or crypto</td></tr>
+          <tr><td style="font-weight:700;color:var(--red)">62</td><td>Restricted Card</td><td>Card restricted to specific merchant categories — common on corporate cards, prepaid cards or student accounts</td><td>Player needs alternative method; routing will not fix this</td></tr>
+          <tr><td style="font-weight:700;color:var(--amber)">51</td><td>Insufficient Funds</td><td>Genuinely player-side — their account doesn't have enough balance. High volume = player segment issue, not technical.</td><td>No technical fix needed — review minimum deposit limits and player segment if volume is high</td></tr>
+          <tr><td style="font-weight:700;color:var(--amber)">54</td><td>Expired Card</td><td>Player's card has expired. High volume = many players have not updated card details — CRM opportunity.</td><td>No technical fix — trigger CRM re-engagement to prompt card update for affected players</td></tr>
+          <tr class="sub-hdr teal"><td colspan="4">ACQUIRER-SIDE DECLINES (Routing or processing issue)</td></tr>
+          <tr><td style="font-weight:700;color:var(--teal)">91</td><td>Issuer Not Available / Timeout</td><td>Technical connection issue between the acquirer and the issuing bank. Can be issuer outage or acquirer-to-bank connectivity problem.</td><td>SoftSwiss to reroute to backup acquirer immediately; monitor for recovery</td></tr>
+          <tr><td style="font-weight:700;color:var(--teal)">96</td><td>System Malfunction</td><td>Processing system error — either SoftSwiss platform, acquirer or network issue between them</td><td>SoftSwiss urgent escalation — this is a technical fault on the processing chain</td></tr>
+          <tr><td style="font-weight:700;color:var(--teal)">12</td><td>Invalid Transaction</td><td>Transaction not permitted for this merchant type on this acquirer — MCC misconfiguration or acquirer-side setup issue</td><td>SoftSwiss to review acquirer MCC configuration for this BIN range</td></tr>
+          <tr class="sub-hdr green"><td colspan="4">DATA / CARD-SIDE DECLINES (Player card data issue)</td></tr>
+          <tr><td style="font-weight:700;color:var(--green)">14</td><td>Invalid Card Number</td><td>Card number entered incorrectly — typo, OCR error if using card scanning, or a closed card being reused</td><td>No technical fix — improve front-end card entry UX; add card number validation in real time</td></tr>
+          <tr><td style="font-weight:700;color:var(--green)">82</td><td>Incorrect CVV</td><td>CVV entered incorrectly — UI or player error</td><td>No technical fix — improve front-end UX; consider adding CVV hint/tooltip</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 5: RESOLUTION -->
+  <div class="section" id="resolution">
+    <div class="section-header green">
+      <div class="section-num green">05</div>
+      <div class="section-title">Resolution Actions</div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:220px">Resolution Option</th><th style="width:38%">When to Use It</th><th style="width:20%">Who Executes</th><th>Limitations</th></tr></thead>
+        <tbody>
+          <tr class="sub-hdr green"><td colspan="4">OPTIONS AVAILABLE VIA SOFTSWISS</td></tr>
+          <tr><td style="font-weight:600">Reroute BIN to backup acquirer</td><td>Decline code 91, 96, 05 where it is acquirer-connectivity related rather than issuer policy. Best option if a backup acquirer is available that accepts this BIN.</td><td>SoftSwiss (on request)</td><td>Backup acquirer must support the BIN's card scheme and country. Not always available — AM must confirm.</td></tr>
+          <tr><td style="font-weight:600">Remove BIN from fraud blocklist</td><td>If SoftSwiss fraud filters have incorrectly flagged a BIN range — e.g. following a recent fraud rule update</td><td>SoftSwiss (on request)</td><td>Only if investigation confirms the blocklist is incorrect — do not request removal without evidence</td></tr>
+          <tr><td style="font-weight:600">Adjust acquirer retry logic for this BIN</td><td>Where Code 91 / timeout declines are retrying too aggressively and getting blocked by the issuer's velocity rules</td><td>SoftSwiss (on request)</td><td>SoftSwiss controls retry logic; brand can only request, not configure</td></tr>
+          <tr><td style="font-weight:600">Enable alternative acquirer for this card scheme</td><td>If card scheme-wide failure (e.g. all Visa) and SoftSwiss has another Visa-capable acquirer available</td><td>SoftSwiss (on request)</td><td>Requires SoftSwiss to have contracted a second Visa acquirer — confirm availability with AM</td></tr>
+          <tr><td style="font-weight:600">Temporarily suppress the failing BIN from the deposit flow</td><td>Only if the BIN is at 100% failure and causing player confusion or repeated failed attempts — remove it temporarily rather than let players keep failing</td><td>SoftSwiss (on request)</td><td>Players with that BIN will be unable to use their card at all — must have alternative methods available before doing this</td></tr>
+          <tr class="sub-hdr blue"><td colspan="4">OPTIONS AVAILABLE TO THE BRAND DIRECTLY</td></tr>
+          <tr><td style="font-weight:600">Promote alternative payment methods on-site</td><td>When card BIN is failing but e-wallets or other methods are healthy — display a banner on the deposit page recommending alternatives</td><td>Marketing Manager / Casino Manager</td><td>Must be factually accurate — only promote methods that are genuinely working well</td></tr>
+          <tr><td style="font-weight:600">Alert Customer Support with script</td><td>Brief CS agents on the issue and provide them with accurate information and alternative method recommendations to share with affected players</td><td>Payments Lead → CS Lead</td><td>CS must not overpromise resolution timelines</td></tr>
+          <tr><td style="font-weight:600">Trigger CRM re-engagement for affected players</td><td>After resolution — if players abandoned without depositing, trigger a targeted CRM message acknowledging the issue and inviting them back</td><td>CRM Manager</td><td>Only for players who attempted and failed during the incident window — do not mass-blast</td></tr>
+          <tr><td style="font-weight:600">Update player-facing deposit page error messaging</td><td>If the error message shown to players is generic — work with SoftSwiss to customise decline messages for specific codes to give players clearer next-step guidance</td><td>Payments Lead + SoftSwiss</td><td>SoftSwiss controls the payment UI in most configurations — changes may require their support</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 6: SOFTSWISS -->
+  <div class="section" id="softswiss">
+    <div class="section-header purple">
+      <div class="section-num purple">06</div>
+      <div class="section-title">SoftSwiss Escalation — BIN Specific</div>
+    </div>
+
+    <div class="callout purple">
+      <div class="callout-icon">🔑</div>
+      <div class="callout-body">
+        <div class="callout-label">What to Send SoftSwiss</div>
+        <p>When raising a BIN failure ticket, always include: (1) the BIN prefix (first 6–8 digits), (2) the issuing bank and country, (3) the decline rate and volume, (4) the dominant decline code(s), (5) whether the issue is isolated to this BIN or affecting others from the same bank, (6) timestamp of first detection, and (7) your requested action (investigate / reroute / remove fraud block). The more structured the brief, the faster the resolution.</p>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:220px">Scenario</th><th style="width:36%">Request to SoftSwiss</th><th style="width:18%">Contact Method</th><th>Expected SLA</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">BIN decline rate 30–50%</td><td>Ask AM to review current acquirer performance for this BIN; request explanation if no obvious cause</td><td>Telegram / WhatsApp to AM</td><td>Response within 30 min</td></tr>
+          <tr><td style="font-weight:600">BIN decline rate 50–70%</td><td>Formal support ticket + AM contact; request routing review and confirm whether rerouting is available</td><td>Portal ticket + AM direct</td><td>Response within 20 min</td></tr>
+          <tr><td style="font-weight:600">BIN decline rate &gt;70% or 100% failure</td><td>Urgent ticket + AM direct call; request immediate rerouting to backup acquirer if available</td><td>Phone + portal ticket</td><td>Response within 10 min; rerouting within 20 min</td></tr>
+          <tr><td style="font-weight:600">Failure suspected to be fraud filter</td><td>Request SoftSwiss review fraud rules recently applied to this BIN range; share decline code evidence (consistent Code 05 pattern)</td><td>AM + support ticket</td><td>Review within 30 min; revert within 1 hour if confirmed</td></tr>
+          <tr><td style="font-weight:600">Bank-wide failure (all BINs from one issuer)</td><td>Flag as bank-level outage; request SoftSwiss contact their bank relationship manager if one exists; confirm whether this bank is on any known outage notice</td><td>AM + senior escalation if prolonged</td><td>Initial response within 20 min; ETA within 30 min</td></tr>
+          <tr><td style="font-weight:600">Confirm rerouting worked</td><td>After SoftSwiss confirms rerouting, wait 15 minutes then verify success rate for the BIN has recovered. Ask SoftSwiss to confirm in writing on the ticket.</td><td>Verify in portal + confirm with AM</td><td>Confirmation within 5 min of reroute</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 7: PLAYER COMMS -->
+  <div class="section" id="player-comms">
+    <div class="section-header green">
+      <div class="section-num green">07</div>
+      <div class="section-title">Player Communications</div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:220px">Scenario</th><th style="width:38%">Communication</th><th>Sample Message</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Single player contacts CS with BIN failure</td><td>CS agent response — acknowledge, explain alternatives, set expectation</td><td>"We're sorry your card isn't working right now. We're aware of an issue with some [bank name] cards and are working to fix it. In the meantime, you can deposit instantly using [e-wallet / crypto / alternative method]. We'll have this resolved as soon as possible."</td></tr>
+          <tr><td style="font-weight:600">Multiple players from same bank contacting CS</td><td>CS team briefed; on-site deposit page notification; proactive player outreach considered</td><td>Deposit page: "Some [card type] cards are currently experiencing payment issues. We recommend using [alternative] for instant deposits. We apologise for the inconvenience."</td></tr>
+          <tr><td style="font-weight:600">BIN fully resolved — player re-engagement</td><td>Targeted CRM message to players who failed during incident window</td><td>"We've resolved the payment issue affecting some [bank name] cards. You can now deposit using your card as normal. We're sorry for any inconvenience — [optional: small bonus offer as goodwill]."</td></tr>
+          <tr><td style="font-weight:600">Player asking if their money was taken</td><td>CS agent reassurance — standardised response</td><td>"Your card has not been charged. Declined transactions are never processed — no funds have left your account. You're safe to try again or use an alternative method."</td></tr>
+          <tr><td style="font-weight:600">Player whose bank permanently blocks gambling</td><td>Honest advice — do not suggest calling bank will fix a policy block</td><td>"Some banks restrict gambling transactions by policy for specific card types. Unfortunately this isn't something we can change from our end. We recommend using [e-wallet] which works for all players regardless of bank."</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 8: MONITORING -->
+  <div class="section" id="monitoring">
+    <div class="section-header teal">
+      <div class="section-num teal">08</div>
+      <div class="section-title">Ongoing BIN Monitoring Standards</div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:220px">Monitoring Item</th><th style="width:36%">Frequency</th><th>Action Threshold</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">BIN-level decline rate report</td><td>Payments Team reviews daily BIN report from SoftSwiss every morning by 9am</td><td>Any BIN with &gt;25% decline rate over prior 24 hours is flagged for investigation</td></tr>
+          <tr><td style="font-weight:600">Top 10 failing BINs log</td><td>Maintained weekly — updated each Monday as part of weekly payment review</td><td>Any BIN appearing in top 10 for 3 consecutive weeks triggers a formal SoftSwiss review request</td></tr>
+          <tr><td style="font-weight:600">Telegram bot BIN threshold check</td><td>Every 5 minutes — automated via SoftSwiss API</td><td>Alert fires per thresholds defined in Section 01</td></tr>
+          <tr><td style="font-weight:600">New BIN failure pattern check</td><td>Real-time via bot + daily manual review</td><td>New BIN entering the failing list for the first time triggers a same-day investigation regardless of volume</td></tr>
+          <tr><td style="font-weight:600">Post-rerouting BIN performance</td><td>After any SoftSwiss rerouting — monitor for 24 hours at elevated frequency</td><td>If decline rate for rerouted BIN rises above 30% again within 24 hours, re-escalate to SoftSwiss</td></tr>
+          <tr><td style="font-weight:600">Monthly BIN health report to COO</td><td>Included in monthly payments report — Day 3 each month</td><td>Includes: top 5 failing BINs, actions taken, resolution outcomes, any unresolved BIN issues and SoftSwiss response quality</td></tr>
+          <tr><td style="font-weight:600">Proactive issuer outreach (via SoftSwiss)</td><td>Quarterly — ask SoftSwiss AM for any known issuer-side restrictions or new bank policies that could affect our BIN acceptance rates</td><td>Pre-empt failures before they occur — especially for large Australian issuers (CBA, ANZ, Westpac, NAB)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<aside class="sidebar-right">
+  <div class="toc-label">On This Page</div>
+  <a class="toc-link" href="#overview"><span class="toc-dot" style="background:var(--muted)"></span>What is a BIN?</a>
+  <a class="toc-link" href="#detection"><span class="toc-dot" style="background:var(--amber-dot)"></span>Detection &amp; Alerts</a>
+  <a class="toc-link" href="#telegram"><span class="toc-dot" style="background:var(--tg)"></span>Telegram Alerts</a>
+  <a class="toc-link" href="#investigation"><span class="toc-dot" style="background:var(--blue-dot)"></span>Investigation</a>
+  <a class="toc-link" href="#root-causes"><span class="toc-dot" style="background:var(--red-dot)"></span>Root Cause Guide</a>
+  <a class="toc-link" href="#resolution"><span class="toc-dot" style="background:var(--green-dot)"></span>Resolution</a>
+  <a class="toc-link" href="#softswiss"><span class="toc-dot" style="background:var(--purple-dot)"></span>SoftSwiss</a>
+  <a class="toc-link" href="#player-comms"><span class="toc-dot" style="background:var(--green-dot)"></span>Player Comms</a>
+  <a class="toc-link" href="#monitoring"><span class="toc-dot" style="background:var(--teal-dot)"></span>Monitoring</a>
+  <div class="toc-divider"></div>
+  <div class="toc-stat-label">Alert Trigger</div><div class="toc-stat-val">&gt;30% decline · 5+ attempts</div>
+  <div class="toc-stat-label">Critical Trigger</div><div class="toc-stat-val">100% failure · any volume</div>
+  <div class="toc-stat-label">Platform</div><div class="toc-stat-val">SoftSwiss</div>
+</aside>
+</div>
+<script>
+  const ids=['overview','detection','telegram','investigation','root-causes','resolution','softswiss','player-comms','monitoring'];
+  const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting)document.querySelectorAll('.toc-link').forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+en.target.id))})},{rootMargin:'-20% 0px -70% 0px'});
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el)});
+</script>
+</body>
+</html>

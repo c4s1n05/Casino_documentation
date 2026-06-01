@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOP — Player Re-routing After Failed Deposits</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f6f8fb;--surface:#ffffff;--border:#e2e7ef;--text:#1a2030;--muted:#6b7a94;--subtle:#f0f3f8;--blue:#1248c9;--blue-bg:#eef3ff;--blue-bd:#c0d0f8;--blue-dot:#3b6ef0;--green:#0a7c52;--green-bg:#eafaf3;--green-bd:#a3e0c5;--green-dot:#12b76a;--amber:#a16207;--amber-bg:#fffbeb;--amber-bd:#fcd34d;--amber-dot:#f59e0b;--red:#b91c1c;--red-bg:#fef2f2;--red-bd:#fca5a5;--red-dot:#ef4444;--purple:#6d28d9;--purple-bg:#f3eeff;--purple-bd:#c9b0f4;--purple-dot:#8b5cf6;--teal:#0e7490;--teal-bg:#ecfeff;--teal-bd:#a5f3fc;--teal-dot:#06b6d4;--tg:#229ED9;--tg-bg:#e8f6fd;--tg-bd:#93d4f5}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
+  .layout{display:grid;grid-template-columns:230px 1fr 210px;min-height:100vh;max-width:1360px;margin:0 auto}
+  .sidebar-left{border-right:1px solid var(--border);padding:32px 0;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .wiki-logo{padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:20px}.wiki-logo a{text-decoration:none}
+  .wiki-logo-icon{font-size:26px;margin-bottom:4px;display:block}.wiki-logo-title{font-family:'Lora',serif;font-size:16px;font-weight:700;color:var(--text)}.wiki-logo-sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .sb-section{padding:0 12px;margin-bottom:20px}.sb-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:0 8px;margin-bottom:4px}
+  .sb-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-size:12.5px;font-weight:500;color:var(--muted);text-decoration:none;transition:all .15s}.sb-link:hover{background:var(--subtle);color:var(--text)}.sb-link.active{background:var(--blue-bg);color:var(--blue);font-weight:600}
+  .sb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+  .main{padding:48px 56px;min-width:0}
+  .page-header{padding-bottom:28px;border-bottom:2px solid var(--border);margin-bottom:40px}
+  .page-breadcrumb{font-size:12px;color:var(--muted);margin-bottom:10px}.page-breadcrumb a{color:var(--blue);text-decoration:none}
+  .page-title{font-family:'Lora',serif;font-size:34px;font-weight:700;color:var(--text);line-height:1.15;margin-bottom:12px}
+  .page-intro{font-size:14.5px;color:var(--muted);line-height:1.7;font-weight:300;max-width:640px;margin-bottom:18px}
+  .page-meta{display:flex;gap:18px;flex-wrap:wrap}.page-meta-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}.page-meta-item strong{color:var(--text);font-weight:600}
+  .callout{display:flex;gap:14px;padding:16px 18px;border-radius:10px;border:1.5px solid;margin-bottom:24px}
+  .callout.blue{background:var(--blue-bg);border-color:var(--blue-bd)}.callout.green{background:var(--green-bg);border-color:var(--green-bd)}.callout.amber{background:var(--amber-bg);border-color:var(--amber-bd)}.callout.red{background:var(--red-bg);border-color:var(--red-bd)}.callout.purple{background:var(--purple-bg);border-color:var(--purple-bd)}.callout.teal{background:var(--teal-bg);border-color:var(--teal-bd)}
+  .callout-icon{font-size:18px;flex-shrink:0;margin-top:1px}.callout-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+  .callout.blue .callout-label{color:var(--blue)}.callout.green .callout-label{color:var(--green)}.callout.amber .callout-label{color:var(--amber)}.callout.red .callout-label{color:var(--red)}.callout.purple .callout-label{color:var(--purple)}.callout.teal .callout-label{color:var(--teal)}
+  .callout p{font-size:13.5px;color:var(--text);line-height:1.65}
+  .section{margin-bottom:56px;scroll-margin-top:24px}
+  .section-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid}
+  .section-header.blue{border-color:var(--blue-bd)}.section-header.green{border-color:var(--green-bd)}.section-header.amber{border-color:var(--amber-bd)}.section-header.red{border-color:var(--red-bd)}.section-header.purple{border-color:var(--purple-bd)}.section-header.teal{border-color:var(--teal-bd)}
+  .section-num{font-size:11px;font-weight:700;width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
+  .section-num.blue{background:var(--blue)}.section-num.green{background:var(--green)}.section-num.amber{background:var(--amber)}.section-num.red{background:var(--red)}.section-num.purple{background:var(--purple)}.section-num.teal{background:var(--teal)}
+  .section-title{font-family:'Lora',serif;font-size:22px;font-weight:700;color:var(--text)}
+  .tbl-wrap{overflow-x:auto;border-radius:10px;border:1.5px solid var(--border);margin-bottom:20px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead tr{background:var(--subtle)}thead th{padding:10px 16px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+  tbody tr:nth-child(even){background:var(--subtle)}tbody tr:hover{background:var(--blue-bg)}tbody tr:not(:last-child) td{border-bottom:1px solid var(--border)}
+  td{padding:10px 16px;vertical-align:top;line-height:1.55}
+  .sub-hdr td{background:var(--blue);color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:8px 16px}
+  .sub-hdr.green td{background:var(--green)}.sub-hdr.amber td{background:var(--amber)}.sub-hdr.red td{background:var(--red)}.sub-hdr.purple td{background:var(--purple)}.sub-hdr.teal td{background:var(--teal)}
+  p.body{font-size:13.5px;color:var(--muted);line-height:1.7;margin-bottom:16px;font-weight:300}
+  .badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 9px;border-radius:12px}
+  .badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+  .badge-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}.badge-amber{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd)}.badge-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}.badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd)}
+
+  /* Player journey flow */
+  .flow{display:flex;flex-direction:column;gap:0;margin-bottom:28px}
+  .flow-step{display:flex;gap:20px;position:relative}
+  .flow-step:not(:last-child)::before{content:'';position:absolute;left:18px;top:44px;width:2px;height:calc(100% + 2px);background:var(--border)}
+  .flow-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;z-index:1}
+  .flow-num.attempt{background:var(--red-bg);color:var(--red);border:2px solid var(--red-bd)}
+  .flow-num.trigger{background:var(--amber-bg);color:var(--amber);border:2px solid var(--amber-bd)}
+  .flow-num.action{background:var(--blue-bg);color:var(--blue);border:2px solid var(--blue-bd)}
+  .flow-num.success{background:var(--green-bg);color:var(--green);border:2px solid var(--green-bd)}
+  .flow-num.escalate{background:var(--purple-bg);color:var(--purple);border:2px solid var(--purple-bd)}
+  .flow-content{padding:10px 0 28px;flex:1}
+  .flow-content-title{font-weight:700;font-size:14px;color:var(--text);margin-bottom:4px}
+  .flow-content-desc{font-size:13px;color:var(--muted);line-height:1.6}
+  .flow-content-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:6px}
+  .flow-content-tag.system{background:var(--blue-bg);color:var(--blue)}
+  .flow-content-tag.player{background:var(--green-bg);color:var(--green)}
+  .flow-content-tag.softswiss{background:var(--purple-bg);color:var(--purple)}
+  .flow-content-tag.cs{background:var(--teal-bg);color:var(--teal)}
+
+  /* On-site message mockups */
+  .site-mock{background:#1a1a2e;border-radius:14px;overflow:hidden;margin-bottom:20px}
+  .site-mock-bar{background:#0d0d1a;padding:10px 16px;display:flex;align-items:center;gap:8px}
+  .site-mock-dot{width:10px;height:10px;border-radius:50%}
+  .site-mock-url{background:rgba(255,255,255,.08);border-radius:4px;padding:4px 12px;font-size:11px;color:rgba(255,255,255,.4);font-family:monospace;margin-left:8px}
+  .site-mock-body{padding:24px;position:relative}
+  .site-mock-form{background:rgba(255,255,255,.05);border-radius:10px;padding:20px;margin-bottom:16px}
+  .site-mock-form-title{color:rgba(255,255,255,.7);font-size:13px;font-weight:600;margin-bottom:12px}
+  .site-mock-input{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:10px 12px;color:rgba(255,255,255,.6);font-size:13px;width:100%;margin-bottom:8px;font-family:'Inter',sans-serif}
+  .site-mock-btn{background:#2563eb;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;width:100%;font-family:'Inter',sans-serif}
+  .site-toast{position:absolute;top:16px;left:50%;transform:translateX(-50%);width:calc(100% - 48px);border-radius:10px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;border:1px solid}
+  .site-toast.warn{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.25)}
+  .site-toast.info{background:rgba(59,110,240,.1);border-color:rgba(59,110,240,.3)}
+  .site-toast.success{background:rgba(18,183,106,.08);border-color:rgba(18,183,106,.25)}
+  .site-toast-icon{font-size:18px;flex-shrink:0}
+  .site-toast-body{}
+  .site-toast-title{font-weight:700;font-size:13px;margin-bottom:4px}
+  .site-toast.warn .site-toast-title{color:#fcd34d}
+  .site-toast.info .site-toast-title{color:#93c5fd}
+  .site-toast.success .site-toast-title{color:#86efac}
+  .site-toast-text{font-size:12px;color:rgba(255,255,255,.6);line-height:1.55}
+  .site-toast-links{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
+  .site-toast-link{font-size:11px;font-weight:700;padding:4px 12px;border-radius:16px;border:1px solid;cursor:pointer}
+  .site-toast.warn .site-toast-link{color:#fcd34d;border-color:rgba(252,211,77,.3)}
+  .site-toast.info .site-toast-link{color:#93c5fd;border-color:rgba(147,197,253,.3)}
+  .site-toast.success .site-toast-link{color:#86efac;border-color:rgba(134,239,172,.3)}
+  .mock-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+
+  .sidebar-right{border-left:1px solid var(--border);padding:48px 18px;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .toc-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  .toc-link{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--muted);text-decoration:none;padding:5px 0;transition:color .15s}.toc-link:hover{color:var(--text)}.toc-link.active{color:var(--blue);font-weight:600}
+  .toc-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+  .toc-divider{height:1px;background:var(--border);margin:12px 0}
+  .toc-stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}.toc-stat-val{font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;margin-top:1px}
+  @media(max-width:960px){.layout{grid-template-columns:1fr}.sidebar-left,.sidebar-right{display:none}.main{padding:28px 20px}}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<aside class="sidebar-left">
+  <div class="wiki-logo"><a href="index.html"><span class="wiki-logo-icon">🃏</span><div class="wiki-logo-title">Casino Ops Wiki</div><div class="wiki-logo-sub">New Brand · v1.0 · 2026</div></a></div>
+  <div class="sb-section">
+    <div class="sb-label">Payments SOPs</div>
+    <a class="sb-link" href="deposit_success_rate_sop.html"><span class="sb-dot" style="background:var(--red-dot)"></span>Deposit Success Rate &lt;80%</a>
+    <a class="sb-link" href="bin_failure_sop.html"><span class="sb-dot" style="background:var(--amber-dot)"></span>BIN Failure SOP</a>
+    <a class="sb-link active" href="#"><span class="sb-dot" style="background:var(--blue-dot)"></span>Player Re-routing SOP</a>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">On This Page</div>
+    <a class="sb-link" href="#overview"><span class="sb-dot" style="background:var(--muted)"></span>Overview</a>
+    <a class="sb-link" href="#trigger"><span class="sb-dot" style="background:var(--amber-dot)"></span>Trigger Logic</a>
+    <a class="sb-link" href="#journey"><span class="sb-dot" style="background:var(--blue-dot)"></span>Player Journey Flow</a>
+    <a class="sb-link" href="#rerouting"><span class="sb-dot" style="background:var(--purple-dot)"></span>Re-routing Logic</a>
+    <a class="sb-link" href="#onsite-messaging"><span class="sb-dot" style="background:var(--green-dot)"></span>On-Site Messaging</a>
+    <a class="sb-link" href="#cs-response"><span class="sb-dot" style="background:var(--teal-dot)"></span>CS Response</a>
+    <a class="sb-link" href="#softswiss"><span class="sb-dot" style="background:var(--purple-dot)"></span>SoftSwiss Escalation</a>
+    <a class="sb-link" href="#crm"><span class="sb-dot" style="background:var(--green-dot)"></span>CRM Recovery</a>
+    <a class="sb-link" href="#monitoring"><span class="sb-dot" style="background:var(--teal-dot)"></span>Monitoring</a>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="page-header" id="overview">
+    <div class="page-breadcrumb"><a href="index.html">Casino Ops Wiki</a> › <a href="index.html#payments">Payments</a> › Player Re-routing SOP</div>
+    <h1 class="page-title">SOP — Player Re-routing After 2 Failed Deposits</h1>
+    <p class="page-intro">Defines the automated and manual response when a player experiences two consecutive acquirer-declined deposit attempts within a single session. Covers re-routing logic via SoftSwiss, on-site messaging standards, Customer Support scripts and CRM recovery actions.</p>
+    <div class="page-meta">
+      <div class="page-meta-item">📅 <strong>May 2026</strong></div>
+      <div class="page-meta-item">👤 Owner: <strong>Payments Team</strong></div>
+      <div class="page-meta-item">🔗 Platform: <strong>SoftSwiss</strong></div>
+      <div class="page-meta-item">⚡ Trigger: <strong>2 acquirer declines in session</strong></div>
+    </div>
+  </div>
+
+  <div class="callout blue">
+    <div class="callout-icon">💡</div>
+    <div class="callout-body">
+      <div class="callout-label">Why This Matters</div>
+      <p>A player who fails to deposit twice in a session is at extremely high risk of abandonment. Research across iGaming shows that conversion drops by over 60% after a second consecutive failure. The goal of this SOP is to remove friction as fast as possible — through re-routing, clear messaging and proactive support — before the player gives up and churns. Every second of delay after the second failure costs money.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 1: TRIGGER -->
+  <div class="section" id="trigger">
+    <div class="section-header amber">
+      <div class="section-num amber">01</div>
+      <div class="section-title">Trigger Logic — When This SOP Applies</div>
+    </div>
+    <p class="body">This SOP is activated specifically when failures are attributed to acquirer decline codes — not player-side errors (wrong card number, insufficient funds, expired card). Distinguishing between these is critical to avoid incorrect re-routing.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:200px">Condition</th><th style="width:36%">Detail</th><th>SOP Triggered?</th></tr></thead>
+        <tbody>
+          <tr class="sub-hdr green"><td colspan="3">THIS SOP IS TRIGGERED (Acquirer-side failures)</td></tr>
+          <tr><td style="font-weight:600">Code 05 — Do Not Honour (×2)</td><td>Acquirer or issuer refusing the transaction — may be routable to backup acquirer</td><td><span class="badge badge-green">✅ Yes — re-route</span></td></tr>
+          <tr><td style="font-weight:600">Code 91 — Issuer Not Available (×2)</td><td>Technical timeout between acquirer and issuing bank — classic re-routing scenario</td><td><span class="badge badge-green">✅ Yes — re-route</span></td></tr>
+          <tr><td style="font-weight:600">Code 96 — System Malfunction (×2)</td><td>Processing system error — rerouting to different acquirer likely to resolve</td><td><span class="badge badge-green">✅ Yes — re-route</span></td></tr>
+          <tr><td style="font-weight:600">Code 12 — Invalid Transaction (×2)</td><td>Acquirer not accepting this merchant type — rerouting to different acquirer may resolve</td><td><span class="badge badge-green">✅ Yes — re-route</span></td></tr>
+          <tr><td style="font-weight:600">Mixed acquirer codes (×2)</td><td>Two different acquirer-side codes on two attempts — routing instability; escalate to SoftSwiss</td><td><span class="badge badge-amber">⚠ Yes — escalate to SoftSwiss first</span></td></tr>
+          <tr class="sub-hdr red"><td colspan="3">THIS SOP DOES NOT APPLY (Player-side failures)</td></tr>
+          <tr><td style="font-weight:600">Code 51 — Insufficient Funds (×2)</td><td>Genuine player balance issue — re-routing will not fix this</td><td><span class="badge badge-red">❌ No — suggest lower amount or alternative method</span></td></tr>
+          <tr><td style="font-weight:600">Code 54 — Expired Card (×2)</td><td>Player's card has expired — re-routing will not fix this</td><td><span class="badge badge-red">❌ No — prompt card update or alternative method</span></td></tr>
+          <tr><td style="font-weight:600">Code 14 — Invalid Card Number (×2)</td><td>Card number entered incorrectly — re-routing will not fix this</td><td><span class="badge badge-red">❌ No — prompt player to re-enter details carefully</span></td></tr>
+          <tr><td style="font-weight:600">Code 57 — Not Permitted (×2)</td><td>Bank policy blocks gambling on this card — re-routing will not fix a bank policy</td><td><span class="badge badge-red">❌ No — recommend alternative payment method</span></td></tr>
+          <tr><td style="font-weight:600">Code 82 — Incorrect CVV (×2)</td><td>CVV entered incorrectly — player-side error</td><td><span class="badge badge-red">❌ No — prompt player to check card security code</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body">
+        <div class="callout-label">Session Definition</div>
+        <p>Two failures count as in-session if they occur within <strong>30 minutes</strong> of each other on the same payment method. If the player changes payment method between attempts (e.g. switches from card to e-wallet), the counter resets. If the player returns after 30 minutes, they are treated as a new session. The session window can be adjusted by the Payments Lead in the SoftSwiss configuration.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: JOURNEY -->
+  <div class="section" id="journey">
+    <div class="section-header blue">
+      <div class="section-num blue">02</div>
+      <div class="section-title">Player Journey — End to End</div>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num attempt">1</div>
+        <div class="flow-content">
+          <div class="flow-content-title">First Deposit Attempt — Declined (Acquirer)</div>
+          <div class="flow-content-desc">Player submits deposit. SoftSwiss processes via primary acquirer. Acquirer returns decline code (e.g. Code 05 or Code 91). SoftSwiss logs the decline. Player sees generic error message on deposit page.</div>
+          <span class="flow-content-tag system">System: SoftSwiss logs decline code + timestamp</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num attempt">2</div>
+        <div class="flow-content">
+          <div class="flow-content-title">First Failure — On-Site Message Displayed (Attempt 1)</div>
+          <div class="flow-content-desc">After first acquirer decline, the deposit page displays a soft notification: reassures the player the card was not charged, acknowledges the failure, and offers simple troubleshooting. Does not yet suggest alternative methods to avoid alarming the player prematurely.</div>
+          <span class="flow-content-tag player">Player sees: Attempt 1 message (see Section 4)</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num attempt">2</div>
+        <div class="flow-content">
+          <div class="flow-content-title">Second Deposit Attempt — Declined (Acquirer)</div>
+          <div class="flow-content-desc">Player tries again on the same payment method. SoftSwiss processes via same or different acquirer depending on retry logic. Second acquirer decline returned. SoftSwiss re-routing trigger fires (if configured — see Section 3). Two-failure threshold reached.</div>
+          <span class="flow-content-tag system">System: 2-failure threshold triggered → re-routing logic activates</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num trigger">!</div>
+        <div class="flow-content">
+          <div class="flow-content-title">🚨 Trigger Point — Re-routing &amp; Messaging Activated</div>
+          <div class="flow-content-desc">At this exact moment: (1) SoftSwiss attempts to re-route subsequent attempts to a backup acquirer. (2) On-site messaging upgrades to the two-failure message — clear, helpful, proactive. (3) CS alert fires in Telegram with player session reference if chat is available. (4) Player email capture triggered for CRM recovery if player abandons.</div>
+          <span class="flow-content-tag system">System auto-actions on 2nd decline</span>
+          <span class="flow-content-tag player">Player sees: Attempt 2 message — alternative methods presented</span>
+          <span class="flow-content-tag cs">CS: Telegram alert fires with session ref</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num action">→</div>
+        <div class="flow-content">
+          <div class="flow-content-title">Player Path A — Rerouted Card Attempt Succeeds</div>
+          <div class="flow-content-desc">SoftSwiss re-routes to backup acquirer. Player tries again. Deposit approved. Player continues session. System logs successful re-route for reporting. No further action required beyond logging.</div>
+          <span class="flow-content-tag success">✅ Resolved via re-routing</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num action">→</div>
+        <div class="flow-content">
+          <div class="flow-content-title">Player Path B — Switches to Alternative Method</div>
+          <div class="flow-content-desc">Player selects an alternative method (e-wallet, crypto, bank transfer) prompted by on-site messaging. Deposit succeeds via alternative method. System logs method switch for CRM analysis. Payment Team reviews why card route failed and requests SoftSwiss fix.</div>
+          <span class="flow-content-tag success">✅ Resolved via method switch</span>
+          <span class="flow-content-tag system">Log: method switch event for CRM reporting</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num escalate">?</div>
+        <div class="flow-content">
+          <div class="flow-content-title">Player Path C — Third Failure or Abandonment</div>
+          <div class="flow-content-desc">Player tries re-routed card and fails a third time, or player exits without depositing. Third failure: SoftSwiss escalation required immediately. Abandonment: CRM recovery flow activates within 15 minutes if email is on file — targeted re-engagement with alternative methods highlighted.</div>
+          <span class="flow-content-tag cs">CS: Proactive outreach if player has live chat open</span>
+          <span class="flow-content-tag softswiss">SoftSwiss: Escalate immediately on 3rd failure</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: RE-ROUTING -->
+  <div class="section" id="rerouting">
+    <div class="section-header purple">
+      <div class="section-num purple">03</div>
+      <div class="section-title">Re-routing Logic via SoftSwiss</div>
+    </div>
+
+    <div class="callout purple">
+      <div class="callout-icon">🔀</div>
+      <div class="callout-body">
+        <div class="callout-label">Re-routing is Controlled by SoftSwiss</div>
+        <p>The brand does not control acquirer routing directly. All re-routing happens through SoftSwiss configuration. The Payments Team must work with the SoftSwiss account manager to set up automated re-routing rules in advance — so that when the 2-failure trigger fires, re-routing happens automatically without requiring a manual call each time.</p>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:220px">Re-routing Rule</th><th style="width:38%">Configuration Request to SoftSwiss</th><th>Expected Outcome</th></tr></thead>
+        <tbody>
+          <tr class="sub-hdr purple"><td colspan="3">AUTOMATED RE-ROUTING (Configure in advance with SoftSwiss AM)</td></tr>
+          <tr><td style="font-weight:600">Primary acquirer fail → route to secondary acquirer</td><td>Request SoftSwiss configure: if primary acquirer returns Code 91 or 96 twice on same card, auto-route next attempt to backup acquirer without player intervention</td><td>Player's next attempt goes to backup acquirer transparently — no visible change to player</td></tr>
+          <tr><td style="font-weight:600">BIN-specific routing rule</td><td>Request SoftSwiss configure: if a specific BIN prefix has &gt;50% decline rate on primary acquirer, route all transactions from that BIN to secondary acquirer automatically</td><td>Reduces failure rate for known problematic BINs before players even experience two failures</td></tr>
+          <tr><td style="font-weight:600">Time-of-day routing rule</td><td>If certain acquirers have higher success rates at specific times (e.g. overnight), request SoftSwiss configure time-weighted routing to prefer the most reliable acquirer for the current time window</td><td>Improves overall success rate during known low-performance windows</td></tr>
+          <tr><td style="font-weight:600">Card scheme routing preference</td><td>Request SoftSwiss configure separate routing logic for Visa vs Mastercard — if one scheme performs better on a specific acquirer, route that scheme accordingly</td><td>Optimises approval rate by card type rather than treating all cards identically</td></tr>
+          <tr class="sub-hdr blue"><td colspan="3">MANUAL RE-ROUTING (Payments Team requests during live incident)</td></tr>
+          <tr><td style="font-weight:600">Emergency reroute on live incident</td><td>If automated rules have not resolved two-failure spike, Payments Lead contacts SoftSwiss AM to manually switch routing to backup acquirer immediately</td><td>Faster than waiting for automated rules to cycle; SoftSwiss can make routing changes in the back office in real time</td></tr>
+          <tr><td style="font-weight:600">Temporary route suspension</td><td>If a specific acquirer is failing broadly, request SoftSwiss suspend that acquirer temporarily and route all traffic to backup. Restore once acquirer is confirmed stable.</td><td>Protects success rate at the cost of redundancy — backup acquirer handles full load temporarily</td></tr>
+          <tr class="sub-hdr teal"><td colspan="3">WHAT THE BRAND CANNOT DO (SoftSwiss controls these)</td></tr>
+          <tr><td style="font-weight:600">Direct acquirer switch</td><td>Cannot be done by brand — must request SoftSwiss to change routing</td><td>Response time depends on SoftSwiss SLA — pre-configured rules avoid this delay</td></tr>
+          <tr><td style="font-weight:600">Add a new acquirer</td><td>Cannot be done in real time — new acquirer contracts and integration take weeks</td><td>Prepare backup acquirer relationships in advance to have options available</td></tr>
+          <tr><td style="font-weight:600">See live routing configuration</td><td>Brand has limited visibility into routing rules — must request SoftSwiss share current routing config and confirm any changes made</td><td>Request monthly routing config review with SoftSwiss AM to understand current setup</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:32px">#</th><th style="width:44%">Setup Action — Pre-configure with SoftSwiss</th><th style="width:18%">Who Leads</th><th>When</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:700;color:var(--purple)">1</td><td>Book a SoftSwiss routing configuration session — review current acquirer setup, confirm which backup acquirers are available and their BIN/scheme coverage</td><td style="font-weight:600;color:var(--purple)">Payments Lead</td><td>Pre-launch</td></tr>
+          <tr><td style="font-weight:700;color:var(--purple)">2</td><td>Request SoftSwiss configure 2-failure automatic re-route rule for acquirer decline codes 91, 96, 05</td><td style="font-weight:600;color:var(--purple)">Payments Lead</td><td>Pre-launch</td></tr>
+          <tr><td style="font-weight:700;color:var(--purple)">3</td><td>Test re-routing in sandbox — confirm backup acquirer activates correctly on simulated 2-failure scenario</td><td style="font-weight:600;color:var(--purple)">Payments Lead + SoftSwiss</td><td>Pre-launch QA</td></tr>
+          <tr><td style="font-weight:700;color:var(--purple)">4</td><td>Confirm on-site messaging triggers at the correct failure count — test with SoftSwiss sandbox that the front-end message fires after exactly 2 acquirer declines</td><td style="font-weight:600;color:var(--purple)">Payments + Marketing</td><td>Pre-launch QA</td></tr>
+          <tr><td style="font-weight:700;color:var(--purple)">5</td><td>Monthly review of routing performance with SoftSwiss AM — check if re-routing is firing correctly and whether routing rules need updating based on acquirer performance data</td><td style="font-weight:600;color:var(--purple)">Payments Lead</td><td>Monthly</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 4: ON-SITE MESSAGING -->
+  <div class="section" id="onsite-messaging">
+    <div class="section-header green">
+      <div class="section-num green">04</div>
+      <div class="section-title">On-Site Player Messaging</div>
+    </div>
+    <p class="body">On-site messaging must be honest, calm and action-oriented. Never blame the player, never use technical jargon, and never make promises about resolution timelines. The goal is to keep the player engaged and guide them to a successful deposit via an alternative route.</p>
+
+    <div class="mock-label">After 1st Failed Attempt — Soft Reassurance Message</div>
+    <div class="site-mock">
+      <div class="site-mock-bar">
+        <div class="site-mock-dot" style="background:#ff5f56"></div>
+        <div class="site-mock-dot" style="background:#ffbd2e"></div>
+        <div class="site-mock-dot" style="background:#27c93f"></div>
+        <div class="site-mock-url">casino.com/deposit</div>
+      </div>
+      <div class="site-mock-body" style="min-height:180px">
+        <div class="site-mock-form" style="opacity:.35;margin-top:40px">
+          <div class="site-mock-form-title">Deposit Amount</div>
+          <div class="site-mock-input">A$ 100</div>
+          <div class="site-mock-btn" style="opacity:.5">Deposit Now</div>
+        </div>
+        <div class="site-toast warn" style="top:12px">
+          <div class="site-toast-icon">⚠️</div>
+          <div class="site-toast-body">
+            <div class="site-toast-title">Payment Unsuccessful</div>
+            <div class="site-toast-text">Your card was not charged. This can happen for several reasons. Please check your card details are correct and try again — or contact your bank if the issue continues.</div>
+            <div class="site-toast-links">
+              <span class="site-toast-link">Try Again</span>
+              <span class="site-toast-link">Need Help?</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mock-label">After 2nd Failed Attempt — Proactive Alternative Method Message</div>
+    <div class="site-mock">
+      <div class="site-mock-bar">
+        <div class="site-mock-dot" style="background:#ff5f56"></div>
+        <div class="site-mock-dot" style="background:#ffbd2e"></div>
+        <div class="site-mock-dot" style="background:#27c93f"></div>
+        <div class="site-mock-url">casino.com/deposit</div>
+      </div>
+      <div class="site-mock-body" style="min-height:220px">
+        <div class="site-mock-form" style="opacity:.25;margin-top:60px">
+          <div class="site-mock-form-title">Deposit Amount</div>
+          <div class="site-mock-input">A$ 100</div>
+          <div class="site-mock-btn" style="opacity:.5">Deposit Now</div>
+        </div>
+        <div class="site-toast info" style="top:12px">
+          <div class="site-toast-icon">💳</div>
+          <div class="site-toast-body">
+            <div class="site-toast-title">Still Having Trouble? Let's Try Something Different</div>
+            <div class="site-toast-text">Your card hasn't gone through — no charges have been made. Some banks restrict payments to gaming sites. The quickest way to deposit right now is via Skrill, Neteller or crypto — all instant and secure. Or we can re-try your card via a different processor.</div>
+            <div class="site-toast-links">
+              <span class="site-toast-link">Use Skrill</span>
+              <span class="site-toast-link">Use Neteller</span>
+              <span class="site-toast-link">Crypto Deposit</span>
+              <span class="site-toast-link">Retry Card</span>
+              <span class="site-toast-link">Live Chat</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mock-label">After 3rd Failed Attempt — Maximum Support Mode</div>
+    <div class="site-mock">
+      <div class="site-mock-bar">
+        <div class="site-mock-dot" style="background:#ff5f56"></div>
+        <div class="site-mock-dot" style="background:#ffbd2e"></div>
+        <div class="site-mock-dot" style="background:#27c93f"></div>
+        <div class="site-mock-url">casino.com/deposit</div>
+      </div>
+      <div class="site-mock-body" style="min-height:180px">
+        <div class="site-mock-form" style="opacity:.15;margin-top:40px">
+          <div class="site-mock-form-title">Deposit Amount</div>
+          <div class="site-mock-input">A$ 100</div>
+          <div class="site-mock-btn" style="opacity:.3">Deposit Now</div>
+        </div>
+        <div class="site-toast warn" style="top:12px">
+          <div class="site-toast-icon">🛎</div>
+          <div class="site-toast-body">
+            <div class="site-toast-title">We're Sorry — Our Support Team Is Here to Help</div>
+            <div class="site-toast-text">We know this is frustrating. Our team can resolve this for you right now — click Live Chat below and one of our payment specialists will get you depositing within minutes. Alternatively, try one of our instant deposit methods.</div>
+            <div class="site-toast-links">
+              <span class="site-toast-link">💬 Live Chat Now</span>
+              <span class="site-toast-link">See All Methods</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="body" style="margin-top:16px">Message rules: Always confirm no charge was made. Never use technical language (no mention of "acquirer", "BIN" or "routing"). Always offer a clear next action. Keep messages concise — three lines maximum for the main message. Always include a Live Chat link from attempt 2 onwards.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:140px">Failure Count</th><th style="width:28%">Message Tone</th><th style="width:30%">Key Content</th><th>CTA Buttons</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-amber">1st Failure</span></td><td>Soft reassurance — do not alarm the player</td><td>Card not charged; simple troubleshooting suggestion; try again</td><td>Try Again · Need Help?</td></tr>
+          <tr><td><span class="badge badge-amber">2nd Failure</span></td><td>Proactive and helpful — offer alternatives clearly</td><td>Card not charged; some banks block gaming; alternative methods available immediately; option to retry via different route</td><td>Skrill · Neteller · Crypto · Retry Card · Live Chat</td></tr>
+          <tr><td><span class="badge badge-red">3rd Failure</span></td><td>Maximum support — human intervention offered</td><td>Acknowledge frustration; specialist support available now; alternative methods listed</td><td>Live Chat Now · See All Methods</td></tr>
+          <tr><td><span class="badge badge-red">Player Abandons</span></td><td>CRM re-engagement (email/push) — 15 min post-session</td><td>Acknowledge issue; confirm alternative methods; invite back; optional soft incentive</td><td>Email CTA: Deposit with [Alternative] →</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 5: CS RESPONSE -->
+  <div class="section" id="cs-response">
+    <div class="section-header teal">
+      <div class="section-num teal">05</div>
+      <div class="section-title">Customer Support Response</div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:220px">Scenario</th><th style="width:40%">CS Agent Action</th><th>Script / Guidance</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Player opens live chat during deposit failure</td><td>Agent checks SoftSwiss portal for player's recent transaction history — confirm decline codes. Do not guess the cause.</td><td>"I can see your last two payments didn't go through — your account has not been charged either time. Let me help you get this sorted. Can you try [alternative method] — it takes under a minute to set up."</td></tr>
+          <tr><td style="font-weight:600">Player contacts CS after abandoning</td><td>Confirm no charges made. Ask what payment method they used. Check SoftSwiss for decline codes. Recommend alternative based on cause.</td><td>"I can confirm your card was not charged. I can see there was an issue with card payments earlier. The fastest way to deposit right now is [Skrill / Neteller / crypto]. Would you like me to walk you through it?"</td></tr>
+          <tr><td style="font-weight:600">Player blames site / threatens chargeback</td><td>Stay calm. Confirm no charge was made (this eliminates the chargeback threat). Offer to connect them with a senior agent or supervisor immediately.</td><td>"I completely understand your frustration. I want to confirm clearly: your card was not charged — no money has left your account at any point. I'd like to get this resolved for you now. Can I offer you [alternative solution]?"</td></tr>
+          <tr><td style="font-weight:600">Player asks if it's their bank's fault</td><td>Be honest but diplomatic — confirm some banks do restrict gaming payments without being accusatory of the bank.</td><td>"Some banks do apply restrictions to gaming payments as a precaution. It's worth calling your bank to confirm — but the quickest solution right now is to try an alternative like Skrill or Neteller, which bypasses the bank entirely."</td></tr>
+          <tr><td style="font-weight:600">Player wants a refund for a failed transaction</td><td>Confirm clearly that no charge occurred. If player believes money left their account, escalate to Payments Lead immediately to investigate with SoftSwiss — a pending authorisation that did not settle may be visible on their statement temporarily.</td><td>"Declined transactions are never processed — no funds leave your account. If you're seeing a pending amount on your statement, this is a temporary authorisation hold that will disappear within 2–5 business days automatically. Your bank can confirm this."</td></tr>
+          <tr><td style="font-weight:600">CS agent receives Telegram alert during session</td><td>If the Payments Telegram group fires an alert during a player's live chat, the CS agent should acknowledge this internally — the payment issue is being investigated. Do not tell the player "we know about the issue" before the Payments Lead has a public-facing statement ready.</td><td>Wait for internal update from Payments Lead before telling players about known issues. Say: "Our team is looking into this and I'll have an update for you shortly."</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 6: SOFTSWISS -->
+  <div class="section" id="softswiss">
+    <div class="section-header purple">
+      <div class="section-num purple">06</div>
+      <div class="section-title">SoftSwiss Escalation — Re-routing Requests</div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:220px">Situation</th><th style="width:36%">What to Request</th><th style="width:18%">Contact</th><th>Expected Response</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Re-routing rule not firing automatically</td><td>Report that 2-failure re-routing rule is not activating. Provide player session reference and transaction IDs from SoftSwiss. Request SoftSwiss check configuration and activate manually for current failing sessions.</td><td>SoftSwiss AM + Support ticket</td><td>Response within 15 min</td></tr>
+          <tr><td style="font-weight:600">Backup acquirer also failing</td><td>Report that both primary and secondary acquirer are declining. Request SoftSwiss check if a third acquirer or alternative routing path is available. This is a critical escalation — treat as CRITICAL per Deposit Success Rate SOP.</td><td>AM + phone + urgent ticket</td><td>Response within 10 min</td></tr>
+          <tr><td style="font-weight:600">Re-routing appears to work but player still failing</td><td>Request SoftSwiss pull the specific transaction trace for the player's session — confirm which acquirer processed each attempt and what response codes came back. May indicate the issue is issuer-side, not acquirer-side.</td><td>SoftSwiss Support ticket</td><td>Transaction trace within 30 min</td></tr>
+          <tr><td style="font-weight:600">Request for proactive re-routing rule setup</td><td>Before a known event (e.g. a large promotion driving high deposit volume) ask SoftSwiss to confirm routing configuration is optimal and backup acquirer is ready to handle overflow.</td><td>SoftSwiss AM (advance notice)</td><td>Confirm 24 hours before event</td></tr>
+          <tr><td style="font-weight:600">Player-facing error message customisation</td><td>Request SoftSwiss update the error messages shown to players for specific decline codes — replace generic messages with method-specific guidance (e.g. Code 05 message should include e-wallet alternatives). Requires SoftSwiss front-end configuration.</td><td>SoftSwiss AM + support ticket</td><td>Implementation within 48 hours</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 7: CRM RECOVERY -->
+  <div class="section" id="crm">
+    <div class="section-header green">
+      <div class="section-num green">07</div>
+      <div class="section-title">CRM Recovery — Abandoned Deposit Players</div>
+    </div>
+    <p class="body">Players who abandon after two failed deposits must be re-engaged within 15 minutes via CRM if email or push notification is available. The message must acknowledge the issue without alarm, offer a clear alternative, and optionally include a soft incentive to reduce the friction of returning.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:160px">CRM Touchpoint</th><th style="width:20%">Trigger</th><th style="width:14%">Timing</th><th>Message Focus</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Push notification (app)</td><td>Player exits deposit page after 2nd failure without completing</td><td>Within 5 minutes</td><td>"Having trouble depositing? Try Skrill or Neteller — deposit in under a minute with no card needed."</td></tr>
+          <tr><td style="font-weight:600">On-site pop-up (if player stays on site)</td><td>Player is still on site 2 minutes after 2nd failure with deposit page idle</td><td>2 minutes post-2nd failure</td><td>Soft pop-up: "Need a hand? Our support team can help you deposit right now — or try an instant e-wallet."</td></tr>
+          <tr><td style="font-weight:600">Email re-engagement</td><td>Player exits site without depositing after 2nd failure</td><td>Within 15 minutes</td><td>Subject: "We noticed you had trouble depositing — here's how to fix it." Body: acknowledge issue, confirm no charge, highlight 2 alternative methods, include direct deposit link.</td></tr>
+          <tr><td style="font-weight:600">Email re-engagement + soft incentive</td><td>Player is a known depositor who has deposited before — failure is unusual for their account</td><td>Within 30 minutes</td><td>Same as above plus: "As a thank you for your patience, we've added [X free spins / small bonus] to your account — just deposit using any of the methods below to activate."</td></tr>
+          <tr><td style="font-weight:600">Follow-up email if no response</td><td>Player did not respond to first recovery email within 24 hours</td><td>24 hours later</td><td>Lighter tone: "Still having trouble? Our support team is available 24/7 to help. Just reply to this email or click Live Chat." Do not repeat the incentive if one was already offered.</td></tr>
+          <tr><td style="font-weight:600">CS outbound contact (VIP players only)</td><td>VIP player abandons after 2 failures</td><td>Within 10 minutes</td><td>Payments Lead or CS Lead to personally reach out via preferred contact method. Do not send a generic email to a VIP — call or message directly.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 8: MONITORING -->
+  <div class="section" id="monitoring">
+    <div class="section-header teal">
+      <div class="section-num teal">08</div>
+      <div class="section-title">Monitoring &amp; Continuous Improvement</div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:220px">Metric</th><th style="width:32%">Target</th><th style="width:18%">Frequency</th><th>Action if Off-Target</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">2-failure session rate</td><td>&lt;5% of all deposit sessions reach 2 consecutive acquirer declines</td><td>Daily</td><td>Investigate dominant decline codes; review routing with SoftSwiss</td></tr>
+          <tr><td style="font-weight:600">Re-routing success rate</td><td>&gt;60% of re-routed attempts succeed on backup acquirer</td><td>Weekly</td><td>Review backup acquirer performance with SoftSwiss; consider alternative backup</td></tr>
+          <tr><td style="font-weight:600">Method switch rate after 2nd failure</td><td>Track — no fixed target; used to assess messaging effectiveness</td><td>Weekly</td><td>If &lt;20% of failing players switch, review on-site message clarity and CTA design</td></tr>
+          <tr><td style="font-weight:600">Abandonment rate after 2nd failure</td><td>&lt;40% of players who hit 2nd failure abandon without depositing</td><td>Daily</td><td>Review messaging, CS availability and alternative method prominence</td></tr>
+          <tr><td style="font-weight:600">CRM recovery rate</td><td>&gt;25% of abandoned players deposit within 24 hours after CRM re-engagement</td><td>Weekly</td><td>Review email timing, subject line, alternative method CTAs and incentive structure</td></tr>
+          <tr><td style="font-weight:600">3rd failure rate</td><td>&lt;2% of sessions reach a 3rd consecutive acquirer failure</td><td>Daily</td><td>Escalate to SoftSwiss; review re-routing configuration</td></tr>
+          <tr><td style="font-weight:600">Player complaints after payment failure</td><td>&lt;10% of 2-failure sessions result in a CS contact</td><td>Weekly</td><td>Review on-site messaging clarity — good messaging should pre-empt CS contacts</td></tr>
+          <tr><td style="font-weight:600">Monthly report to COO</td><td>Include: 2-failure session rate, re-routing success rate, method switch rate, abandonment rate, CRM recovery rate, revenue impact estimate</td><td>Monthly</td><td>Report in monthly payments pack — Day 3 each month</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout teal">
+      <div class="callout-icon">📊</div>
+      <div class="callout-body">
+        <div class="callout-label">Quarterly Optimisation Review</div>
+        <p>Every quarter, the Payments Team and Marketing Manager should review the on-site messaging A/B test results, CRM recovery rates and re-routing success data. The messaging copy, alternative method order and CTA button text should be tested and updated based on actual conversion data — not assumptions. Present findings and recommendations to the COO in the quarterly business review.</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<aside class="sidebar-right">
+  <div class="toc-label">On This Page</div>
+  <a class="toc-link" href="#overview"><span class="toc-dot" style="background:var(--muted)"></span>Overview</a>
+  <a class="toc-link" href="#trigger"><span class="toc-dot" style="background:var(--amber-dot)"></span>Trigger Logic</a>
+  <a class="toc-link" href="#journey"><span class="toc-dot" style="background:var(--blue-dot)"></span>Player Journey</a>
+  <a class="toc-link" href="#rerouting"><span class="toc-dot" style="background:var(--purple-dot)"></span>Re-routing Logic</a>
+  <a class="toc-link" href="#onsite-messaging"><span class="toc-dot" style="background:var(--green-dot)"></span>On-Site Messaging</a>
+  <a class="toc-link" href="#cs-response"><span class="toc-dot" style="background:var(--teal-dot)"></span>CS Response</a>
+  <a class="toc-link" href="#softswiss"><span class="toc-dot" style="background:var(--purple-dot)"></span>SoftSwiss</a>
+  <a class="toc-link" href="#crm"><span class="toc-dot" style="background:var(--green-dot)"></span>CRM Recovery</a>
+  <a class="toc-link" href="#monitoring"><span class="toc-dot" style="background:var(--teal-dot)"></span>Monitoring</a>
+  <div class="toc-divider"></div>
+  <div class="toc-stat-label">Trigger</div><div class="toc-stat-val">2 acquirer declines</div>
+  <div class="toc-stat-label">Session Window</div><div class="toc-stat-val">30 minutes</div>
+  <div class="toc-stat-label">CRM Recovery</div><div class="toc-stat-val">Within 15 minutes</div>
+  <div class="toc-stat-label">Platform</div><div class="toc-stat-val">SoftSwiss</div>
+</aside>
+</div>
+<script>
+  const ids=['overview','trigger','journey','rerouting','onsite-messaging','cs-response','softswiss','crm','monitoring'];
+  const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting)document.querySelectorAll('.toc-link').forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+en.target.id))})},{rootMargin:'-20% 0px -70% 0px'});
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el)});
+</script>
+</body>
+</html>

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOP — Deposit Success Rate Below 80%</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f6f8fb; --surface:#ffffff; --border:#e2e7ef; --text:#1a2030; --muted:#6b7a94; --subtle:#f0f3f8;
+    --blue:#1248c9; --blue-bg:#eef3ff; --blue-bd:#c0d0f8; --blue-dot:#3b6ef0;
+    --green:#0a7c52; --green-bg:#eafaf3; --green-bd:#a3e0c5; --green-dot:#12b76a;
+    --amber:#a16207; --amber-bg:#fffbeb; --amber-bd:#fcd34d; --amber-dot:#f59e0b;
+    --red:#b91c1c; --red-bg:#fef2f2; --red-bd:#fca5a5; --red-dot:#ef4444;
+    --purple:#6d28d9; --purple-bg:#f3eeff; --purple-bd:#c9b0f4; --purple-dot:#8b5cf6;
+    --teal:#0e7490; --teal-bg:#ecfeff; --teal-bd:#a5f3fc; --teal-dot:#06b6d4;
+    --tg:#229ED9; --tg-bg:#e8f6fd; --tg-bd:#93d4f5;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
+  .layout{display:grid;grid-template-columns:230px 1fr 210px;min-height:100vh;max-width:1360px;margin:0 auto}
+  .sidebar-left{border-right:1px solid var(--border);padding:32px 0;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .wiki-logo{padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:20px}
+  .wiki-logo a{text-decoration:none}
+  .wiki-logo-icon{font-size:26px;margin-bottom:4px;display:block}
+  .wiki-logo-title{font-family:'Lora',serif;font-size:16px;font-weight:700;color:var(--text)}
+  .wiki-logo-sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .sb-section{padding:0 12px;margin-bottom:20px}
+  .sb-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:0 8px;margin-bottom:4px}
+  .sb-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-size:12.5px;font-weight:500;color:var(--muted);text-decoration:none;transition:all .15s}
+  .sb-link:hover{background:var(--subtle);color:var(--text)}
+  .sb-link.active{background:var(--red-bg);color:var(--red);font-weight:600}
+  .sb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+  .main{padding:48px 56px;min-width:0}
+  .page-header{padding-bottom:28px;border-bottom:2px solid var(--border);margin-bottom:40px}
+  .page-breadcrumb{font-size:12px;color:var(--muted);margin-bottom:10px}
+  .page-breadcrumb a{color:var(--blue);text-decoration:none}
+  .page-title{font-family:'Lora',serif;font-size:34px;font-weight:700;color:var(--text);line-height:1.15;margin-bottom:12px}
+  .page-intro{font-size:14.5px;color:var(--muted);line-height:1.7;font-weight:300;max-width:640px;margin-bottom:18px}
+  .page-meta{display:flex;gap:18px;flex-wrap:wrap}
+  .page-meta-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+  .page-meta-item strong{color:var(--text);font-weight:600}
+  .callout{display:flex;gap:14px;padding:16px 18px;border-radius:10px;border:1.5px solid;margin-bottom:24px}
+  .callout.blue{background:var(--blue-bg);border-color:var(--blue-bd)}
+  .callout.green{background:var(--green-bg);border-color:var(--green-bd)}
+  .callout.amber{background:var(--amber-bg);border-color:var(--amber-bd)}
+  .callout.red{background:var(--red-bg);border-color:var(--red-bd)}
+  .callout.purple{background:var(--purple-bg);border-color:var(--purple-bd)}
+  .callout.teal{background:var(--teal-bg);border-color:var(--teal-bd)}
+  .callout.telegram{background:var(--tg-bg);border-color:var(--tg-bd)}
+  .callout-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+  .callout-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+  .callout.blue .callout-label{color:var(--blue)}
+  .callout.green .callout-label{color:var(--green)}
+  .callout.amber .callout-label{color:var(--amber)}
+  .callout.red .callout-label{color:var(--red)}
+  .callout.purple .callout-label{color:var(--purple)}
+  .callout.teal .callout-label{color:var(--teal)}
+  .callout.telegram .callout-label{color:var(--tg)}
+  .callout p{font-size:13.5px;color:var(--text);line-height:1.65}
+  .section{margin-bottom:56px;scroll-margin-top:24px}
+  .section-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid}
+  .section-header.blue{border-color:var(--blue-bd)}
+  .section-header.green{border-color:var(--green-bd)}
+  .section-header.amber{border-color:var(--amber-bd)}
+  .section-header.red{border-color:var(--red-bd)}
+  .section-header.purple{border-color:var(--purple-bd)}
+  .section-header.teal{border-color:var(--teal-bd)}
+  .section-header.telegram{border-color:var(--tg-bd)}
+  .section-num{font-size:11px;font-weight:700;width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
+  .section-num.blue{background:var(--blue)}
+  .section-num.green{background:var(--green)}
+  .section-num.amber{background:var(--amber)}
+  .section-num.red{background:var(--red)}
+  .section-num.purple{background:var(--purple)}
+  .section-num.teal{background:var(--teal)}
+  .section-num.telegram{background:var(--tg)}
+  .section-title{font-family:'Lora',serif;font-size:22px;font-weight:700;color:var(--text)}
+  .tbl-wrap{overflow-x:auto;border-radius:10px;border:1.5px solid var(--border);margin-bottom:20px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead tr{background:var(--subtle)}
+  thead th{padding:10px 16px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+  tbody tr:nth-child(even){background:var(--subtle)}
+  tbody tr:hover{background:var(--blue-bg)}
+  tbody tr:not(:last-child) td{border-bottom:1px solid var(--border)}
+  td{padding:10px 16px;vertical-align:top;line-height:1.55}
+  .sub-hdr td{background:var(--red);color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:8px 16px}
+  .sub-hdr.blue td{background:var(--blue)}
+  .sub-hdr.green td{background:var(--green)}
+  .sub-hdr.amber td{background:var(--amber)}
+  .sub-hdr.purple td{background:var(--purple)}
+  .sub-hdr.teal td{background:var(--teal)}
+  .sub-hdr.telegram td{background:var(--tg)}
+  p.body{font-size:13.5px;color:var(--muted);line-height:1.7;margin-bottom:16px;font-weight:300}
+  .badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 9px;border-radius:12px}
+  .badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+  .badge-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
+  .badge-amber{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd)}
+  .badge-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+  .badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd)}
+  .badge-tg{background:var(--tg-bg);color:var(--tg);border:1px solid var(--tg-bd)}
+
+  /* Telegram mock */
+  .tg-mock{background:#1a1a2e;border-radius:14px;padding:20px 20px 14px;margin-bottom:20px;font-family:'Inter',monospace}
+  .tg-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .tg-avatar{width:36px;height:36px;border-radius:50%;background:var(--tg);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .tg-group-name{font-size:14px;font-weight:600;color:#fff}
+  .tg-group-sub{font-size:11px;color:rgba(255,255,255,.4)}
+  .tg-msg{background:#2a2a3e;border-radius:10px 10px 10px 2px;padding:12px 14px;margin-bottom:10px;max-width:85%}
+  .tg-msg.alert-red{border-left:3px solid #ef4444}
+  .tg-msg.alert-amber{border-left:3px solid #f59e0b}
+  .tg-msg.alert-green{border-left:3px solid #12b76a}
+  .tg-msg.system{background:#1a2a1a;border-left:3px solid var(--tg)}
+  .tg-msg-title{font-size:12px;font-weight:700;margin-bottom:6px}
+  .tg-msg.alert-red .tg-msg-title{color:#ef4444}
+  .tg-msg.alert-amber .tg-msg-title{color:#f59e0b}
+  .tg-msg.alert-green .tg-msg-title{color:#12b76a}
+  .tg-msg.system .tg-msg-title{color:var(--tg)}
+  .tg-msg-body{font-size:12px;color:rgba(255,255,255,.8);line-height:1.6}
+  .tg-msg-body .val{color:#7dd3fc;font-weight:600}
+  .tg-msg-body .warn{color:#fca5a5}
+  .tg-msg-body .ok{color:#86efac}
+  .tg-time{font-size:10px;color:rgba(255,255,255,.3);text-align:right;margin-top:6px}
+
+  /* Alert threshold meter */
+  .threshold-bar{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px}
+  .threshold-bar-label{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:.08em}
+  .threshold-track{position:relative;height:24px;border-radius:12px;background:linear-gradient(90deg,#fef2f2 0%,#fffbeb 60%,#eafaf3 80%,#d1fae5 100%);border:1px solid var(--border);margin-bottom:8px}
+  .threshold-marker{position:absolute;top:-6px;width:2px;height:36px;background:var(--text)}
+  .threshold-marker::after{content:attr(data-label);position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:700;white-space:nowrap;color:var(--text);background:var(--surface);padding:1px 5px;border-radius:3px;border:1px solid var(--border)}
+  .threshold-zones{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+
+  .sidebar-right{border-left:1px solid var(--border);padding:48px 18px;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .toc-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  .toc-link{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--muted);text-decoration:none;padding:5px 0;transition:color .15s}
+  .toc-link:hover{color:var(--text)}
+  .toc-link.active{color:var(--blue);font-weight:600}
+  .toc-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+  .toc-divider{height:1px;background:var(--border);margin:12px 0}
+  .toc-stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+  .toc-stat-val{font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;margin-top:1px}
+  @media(max-width:960px){.layout{grid-template-columns:1fr}.sidebar-left,.sidebar-right{display:none}.main{padding:28px 20px}}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<aside class="sidebar-left">
+  <div class="wiki-logo"><a href="index.html"><span class="wiki-logo-icon">🃏</span><div class="wiki-logo-title">Casino Ops Wiki</div><div class="wiki-logo-sub">New Brand · v1.0 · 2026</div></a></div>
+  <div class="sb-section">
+    <div class="sb-label">Payments SOPs</div>
+    <a class="sb-link active" href="#"><span class="sb-dot" style="background:var(--red-dot)"></span>Deposit Success Rate &lt;80%</a>
+    <a class="sb-link" href="bin_failure_sop.html"><span class="sb-dot" style="background:var(--amber-dot)"></span>BIN Failure SOP</a>
+    <a class="sb-link" href="player_rerouting_sop.html"><span class="sb-dot" style="background:var(--blue-dot)"></span>Player Re-routing SOP</a>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">On This Page</div>
+    <a class="sb-link" href="#overview"><span class="sb-dot" style="background:var(--muted)"></span>Overview</a>
+    <a class="sb-link" href="#thresholds"><span class="sb-dot" style="background:var(--red-dot)"></span>Alert Thresholds</a>
+    <a class="sb-link" href="#visibility"><span class="sb-dot" style="background:var(--tg)"></span>Visibility &amp; Monitoring</a>
+    <a class="sb-link" href="#telegram"><span class="sb-dot" style="background:var(--tg)"></span>Telegram Alert System</a>
+    <a class="sb-link" href="#escalation"><span class="sb-dot" style="background:var(--amber-dot)"></span>Escalation Process</a>
+    <a class="sb-link" href="#payment-team"><span class="sb-dot" style="background:var(--blue-dot)"></span>Payment Team Response</a>
+    <a class="sb-link" href="#softswiss"><span class="sb-dot" style="background:var(--purple-dot)"></span>SoftSwiss Escalation</a>
+    <a class="sb-link" href="#player-comms"><span class="sb-dot" style="background:var(--green-dot)"></span>Player Communications</a>
+    <a class="sb-link" href="#recovery"><span class="sb-dot" style="background:var(--green-dot)"></span>Recovery &amp; Sign-off</a>
+    <a class="sb-link" href="#post-incident"><span class="sb-dot" style="background:var(--muted)"></span>Post-Incident Review</a>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="page-header" id="overview">
+    <div class="page-breadcrumb"><a href="index.html">Casino Ops Wiki</a> › <a href="index.html#payments">Payments</a> › Deposit Success Rate SOP</div>
+    <h1 class="page-title">SOP — Deposit Success Rate Below 80%</h1>
+    <p class="page-intro">Defines the alert system, visibility infrastructure, escalation path and payment team response procedure when the brand's overall deposit success rate falls below 80%. Covers Telegram alert configuration, SoftSwiss escalation and player communication standards.</p>
+    <div class="page-meta">
+      <div class="page-meta-item">📅 <strong>May 2026</strong></div>
+      <div class="page-meta-item">👤 Owner: <strong>Payments Team</strong></div>
+      <div class="page-meta-item">🔗 Platform: <strong>SoftSwiss</strong></div>
+      <div class="page-meta-item">⏱ Response SLA: <strong>15 minutes</strong></div>
+    </div>
+  </div>
+
+  <div class="callout red">
+    <div class="callout-icon">🚨</div>
+    <div class="callout-body">
+      <div class="callout-label">Critical Threshold</div>
+      <p>A deposit success rate below <strong>80%</strong> is a critical operational incident. Every 1% drop in success rate represents lost revenue, frustrated players and potential churn. The payment team must respond within <strong>15 minutes</strong> of an alert. SoftSwiss must be escalated within <strong>30 minutes</strong> if the cause cannot be identified internally. All activity is logged in the incident register and reviewed within 24 hours of resolution.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 1: THRESHOLDS -->
+  <div class="section" id="thresholds">
+    <div class="section-header red">
+      <div class="section-num red">01</div>
+      <div class="section-title">Alert Thresholds &amp; Severity Levels</div>
+    </div>
+    <p class="body">Monitoring operates on a rolling 60-minute window. Alerts fire automatically via the Telegram bot when thresholds are crossed. Three severity levels are defined to calibrate the response.</p>
+
+    <div class="threshold-bar">
+      <div class="threshold-bar-label">Deposit Success Rate — Alert Bands</div>
+      <div class="threshold-track">
+        <div class="threshold-marker" style="left:0%" data-label="0%"></div>
+        <div class="threshold-marker" style="left:70%" data-label="70% 🔴 CRITICAL"></div>
+        <div class="threshold-marker" style="left:80%" data-label="80% 🟡 WARNING"></div>
+        <div class="threshold-marker" style="left:90%" data-label="90% ✅ HEALTHY"></div>
+        <div class="threshold-marker" style="left:100%" data-label="100%"></div>
+      </div>
+      <div class="threshold-zones"><span style="color:var(--red);font-weight:600">&lt;70% CRITICAL</span><span style="color:var(--amber);font-weight:600">70–79% WARNING</span><span style="color:var(--green);font-weight:600">80–89% CAUTION</span><span style="color:var(--green);font-weight:600">&gt;90% HEALTHY</span></div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Level</th><th>Threshold</th><th>Alert Type</th><th>Response SLA</th><th>Who Is Notified</th><th>Action Required</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-amber">⚠ WARNING</span></td><td>80–84% success rate</td><td>Telegram bot alert (amber)</td><td>30 minutes</td><td>Payments Team</td><td>Monitor closely; begin investigation; check SoftSwiss dashboard for decline reason breakdown</td></tr>
+          <tr><td><span class="badge badge-red">🔴 ALERT</span></td><td>75–79% success rate</td><td>Telegram bot alert (red) + @mention Payments Lead</td><td>15 minutes</td><td>Payments Team + Payments Lead</td><td>Active investigation required; SoftSwiss to be notified; escalation path initiated</td></tr>
+          <tr><td><span class="badge badge-red">🚨 CRITICAL</span></td><td>&lt;75% success rate</td><td>Telegram bot + @mention all + SMS to Payments Lead + COO</td><td>5 minutes</td><td>Payments Lead + COO + Marketing Manager</td><td>All hands; SoftSwiss urgent escalation; player comms to be reviewed; incident record opened</td></tr>
+          <tr><td><span class="badge badge-green">✅ RESOLVED</span></td><td>Returns to &gt;85% for 15 consecutive minutes</td><td>Telegram bot resolution alert</td><td>—</td><td>All notified parties</td><td>Confirm resolution; close incident; begin post-incident review within 24 hours</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:220px">Metric</th><th>Definition</th><th>Measurement Window</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Deposit Success Rate</td><td>Approved deposits ÷ total deposit attempts × 100. Excludes abandoned attempts (player closed page before submitting).</td><td>Rolling 60-minute window</td><td>SoftSwiss reporting API</td></tr>
+          <tr><td style="font-weight:600">Approval Rate by PSP</td><td>Approved transactions ÷ submitted transactions per payment method</td><td>Rolling 60-minute + daily</td><td>SoftSwiss back office</td></tr>
+          <tr><td style="font-weight:600">Decline Rate by Reason</td><td>Breakdown of decline codes: insufficient funds, card blocked, 3DS failure, acquirer decline, technical error</td><td>Rolling 60-minute + daily</td><td>SoftSwiss reporting</td></tr>
+          <tr><td style="font-weight:600">Attempts per Player</td><td>Average number of deposit attempts per unique player session — spike indicates friction</td><td>Rolling 60-minute</td><td>SoftSwiss reporting</td></tr>
+          <tr><td style="font-weight:600">Method-Specific Success Rate</td><td>Success rate broken out per payment method (card, e-wallet, crypto, bank transfer)</td><td>Rolling 60-minute + daily</td><td>SoftSwiss reporting</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 2: VISIBILITY -->
+  <div class="section" id="visibility">
+    <div class="section-header teal">
+      <div class="section-num teal">02</div>
+      <div class="section-title">Visibility &amp; Monitoring Infrastructure</div>
+    </div>
+    <p class="body">Because all payment processing sits with SoftSwiss, the brand does not process transactions directly. Visibility is achieved through SoftSwiss reporting tools, the back office dashboard, and a custom Telegram alert bot that queries the SoftSwiss API on a defined schedule.</p>
+
+    <div class="callout blue">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-body">
+        <div class="callout-label">Third-Party Payment Infrastructure</div>
+        <p>SoftSwiss owns the payment stack. The brand has read access to transaction data via the SoftSwiss back office and reporting API. The brand cannot directly modify routing or PSP configuration — all changes must be requested through the SoftSwiss account manager or support portal. This makes the alert system and SoftSwiss escalation process critical tools.</p>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:220px">Monitoring Tool</th><th style="width:35%">What It Shows</th><th style="width:18%">Access</th><th>Check Frequency</th></tr></thead>
+        <tbody>
+          <tr class="sub-hdr blue"><td colspan="4">PRIMARY MONITORING TOOLS</td></tr>
+          <tr><td style="font-weight:600">SoftSwiss Back Office Dashboard</td><td>Real-time transaction volume, approval rates, decline breakdown by method and reason code</td><td>Payments Team (login)</td><td>Continuous (always open during business hours)</td></tr>
+          <tr><td style="font-weight:600">SoftSwiss Reporting API</td><td>Programmatic access to transaction data — powers the Telegram alert bot with rolling window calculations</td><td>API key (Payments Lead)</td><td>Bot queries every 5 minutes</td></tr>
+          <tr><td style="font-weight:600">SoftSwiss Status Page</td><td>SoftSwiss platform-level outages, PSP partner status, scheduled maintenance</td><td>Public URL + Payments Team bookmark</td><td>Check immediately when alert fires</td></tr>
+          <tr><td style="font-weight:600">Telegram Alert Bot</td><td>Automated alerts when success rate crosses defined thresholds — see Section 3</td><td>Payments Operations Group</td><td>Fires on threshold breach; status update every 10 min during incident</td></tr>
+          <tr class="sub-hdr teal"><td colspan="4">SECONDARY / MANUAL CHECKS</td></tr>
+          <tr><td style="font-weight:600">SoftSwiss Decline Code Report</td><td>Breakdown of specific decline codes — differentiates acquirer decline from 3DS failure from technical error</td><td>Payments Team</td><td>Pull immediately on WARNING alert</td></tr>
+          <tr><td style="font-weight:600">SoftSwiss Method-Level Report</td><td>Success rate per payment method — identifies whether issue is card-specific, e-wallet specific or platform-wide</td><td>Payments Team</td><td>Pull immediately on WARNING alert</td></tr>
+          <tr><td style="font-weight:600">SoftSwiss GEO Report</td><td>Success rates broken down by player country — identifies whether issue is issuer-specific or geographic</td><td>Payments Team</td><td>Pull on ALERT or CRITICAL</td></tr>
+          <tr><td style="font-weight:600">Player Support Queue</td><td>Deposit complaint volume — sudden spike in "payment not working" contacts is an early warning signal</td><td>Customer Support</td><td>Monitor in real time; flag to Payments Team if 3+ complaints in 30 minutes</td></tr>
+          <tr><td style="font-weight:600">SoftSwiss Account Manager</td><td>Direct escalation channel — AM can see behind-the-scenes PSP and acquirer status not visible in back office</td><td>Payments Lead (direct line)</td><td>Call/message on ALERT or CRITICAL</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 3: TELEGRAM -->
+  <div class="section" id="telegram">
+    <div class="section-header telegram">
+      <div class="section-num telegram">03</div>
+      <div class="section-title">Telegram Alert System</div>
+    </div>
+    <p class="body">A Telegram bot monitors deposit success rate in real time by querying the SoftSwiss API every 5 minutes. All alerts post to a dedicated private group: <strong>🏦 Payments Operations</strong>. The group must include the Payments Lead, Payments Team, COO and Marketing Manager (for player comms decisions).</p>
+
+    <div class="callout telegram">
+      <div class="callout-icon">✈️</div>
+      <div class="callout-body">
+        <div class="callout-label">Telegram Group Setup</div>
+        <p><strong>Group name:</strong> 🏦 [BrandName] Payments Operations &nbsp;·&nbsp; <strong>Bot name:</strong> @PaymentsMonitorBot &nbsp;·&nbsp; <strong>Members:</strong> Payments Lead, Payments Team (all), COO, Marketing Manager, Customer Support Lead. This group is ops-only — no external or marketing content. Alerts are automated; human responses and updates are posted manually by the Payments Lead during an incident.</p>
+      </div>
+    </div>
+
+    <p class="body">Example alert messages as they would appear in the Telegram group:</p>
+
+    <div class="tg-mock">
+      <div class="tg-header">
+        <div class="tg-avatar">🏦</div>
+        <div><div class="tg-group-name">🏦 Payments Operations</div><div class="tg-group-sub">PaymentsMonitorBot · Payments Lead · COO · +3 members</div></div>
+      </div>
+
+      <div class="tg-msg alert-amber">
+        <div class="tg-msg-title">⚠️ WARNING — Deposit Success Rate Dropping</div>
+        <div class="tg-msg-body">
+          📊 Current rate: <span class="val">82.1%</span> (rolling 60min)<br>
+          ⚠️ Below threshold: <span class="warn">85%</span><br>
+          📉 Trend: <span class="warn">down 3.4% vs prior hour</span><br>
+          💳 Most declined method: <span class="val">Visa Credit</span><br>
+          🏦 Top decline reason: <span class="val">Acquirer Decline (Do Not Honour)</span><br>
+          🕐 Alert time: 14:32 AEST<br><br>
+          Action: Check SoftSwiss back office. Monitor for 15 min.
+        </div>
+        <div class="tg-time">14:32</div>
+      </div>
+
+      <div class="tg-msg alert-red">
+        <div class="tg-msg-title">🔴 ALERT — Deposit Success Rate Below 80% @PaymentsLead</div>
+        <div class="tg-msg-body">
+          📊 Current rate: <span class="val">76.4%</span> (rolling 60min)<br>
+          🔴 Below critical threshold: <span class="warn">80%</span><br>
+          📉 Trend: <span class="warn">down 6.1% vs prior hour</span><br>
+          💳 Worst method: <span class="val">Visa Credit — 61.2% success</span><br>
+          💳 Least affected: <span class="ok">e-Wallet — 94.1% success</span><br>
+          🌍 Most affected GEO: <span class="val">Australia</span><br>
+          🏦 Top decline codes: <span class="val">05 (Do Not Honour) · 51 (Insuff. Funds) · 54 (Expired Card)</span><br>
+          📞 SoftSwiss AM: <span class="val">Contact now</span><br>
+          🕐 Alert time: 14:47 AEST<br><br>
+          Required action within 15 min. Open incident record now.
+        </div>
+        <div class="tg-time">14:47</div>
+      </div>
+
+      <div class="tg-msg alert-red">
+        <div class="tg-msg-title">🚨 CRITICAL — Success Rate &lt;75% @PaymentsLead @COO @all</div>
+        <div class="tg-msg-body">
+          📊 Current rate: <span class="val">71.2%</span> (rolling 60min)<br>
+          🚨 CRITICAL threshold breached<br>
+          ⏱ Duration below 80%: <span class="warn">22 minutes</span><br>
+          💸 Estimated revenue impact: <span class="warn">~A$X per hour (recalculating)</span><br>
+          💳 Card success rate: <span class="warn">58.3%</span><br>
+          💳 e-Wallet success rate: <span class="ok">93.1%</span><br>
+          🔧 SoftSwiss status: <span class="val">Checking...</span><br>
+          🕐 Alert time: 15:03 AEST<br><br>
+          All hands. Escalate SoftSwiss immediately. Review player comms.
+        </div>
+        <div class="tg-time">15:03</div>
+      </div>
+
+      <div class="tg-msg alert-green">
+        <div class="tg-msg-title">✅ RESOLVED — Deposit Success Rate Restored</div>
+        <div class="tg-msg-body">
+          📊 Current rate: <span class="ok">87.3%</span> (rolling 60min)<br>
+          ✅ Above 85% for 15 consecutive minutes<br>
+          ⏱ Incident duration: <span class="val">41 minutes</span><br>
+          🔧 Resolution: <span class="ok">SoftSwiss rerouted card traffic to backup acquirer</span><br>
+          📋 Incident record: <span class="val">INC-2026-047</span><br>
+          📝 Post-incident review: Within 24 hours<br>
+          🕐 Resolved: 15:44 AEST
+        </div>
+        <div class="tg-time">15:44</div>
+      </div>
+
+      <div class="tg-msg system">
+        <div class="tg-msg-title">📊 10-MIN INCIDENT UPDATE</div>
+        <div class="tg-msg-body">
+          Rate: <span class="val">73.8%</span> · Duration: <span class="warn">32 min</span><br>
+          SoftSwiss ticket: <span class="val">SS-89421 (open)</span><br>
+          AM contacted: <span class="ok">Yes — investigating acquirer</span><br>
+          Rerouting: <span class="val">Requested — pending</span>
+        </div>
+        <div class="tg-time">15:14</div>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:30%">Bot Configuration Item</th><th>Specification</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Data Source</td><td>SoftSwiss Reporting API — endpoint: transaction summary by method, rolling 60-min window</td></tr>
+          <tr><td style="font-weight:600">Poll Frequency</td><td>Every 5 minutes during business hours; every 10 minutes overnight</td></tr>
+          <tr><td style="font-weight:600">Warning Trigger</td><td>Success rate &lt;85% for two consecutive polls (10 minutes sustained)</td></tr>
+          <tr><td style="font-weight:600">Alert Trigger</td><td>Success rate &lt;80% on any single poll</td></tr>
+          <tr><td style="font-weight:600">Critical Trigger</td><td>Success rate &lt;75% on any single poll, OR &lt;80% sustained for 20+ minutes</td></tr>
+          <tr><td style="font-weight:600">Update Frequency During Incident</td><td>Every 10 minutes automatically until resolved</td></tr>
+          <tr><td style="font-weight:600">Resolution Trigger</td><td>&gt;85% for 3 consecutive polls (15 minutes sustained)</td></tr>
+          <tr><td style="font-weight:600">@mention Rules</td><td>Warning: no mention · Alert: @PaymentsLead · Critical: @all</td></tr>
+          <tr><td style="font-weight:600">Alert Contents</td><td>Current rate, trend vs prior hour, worst/best performing method, top decline codes, GEO breakdown, estimated duration, SoftSwiss status</td></tr>
+          <tr><td style="font-weight:600">Bot Owner / Maintenance</td><td>Payments Lead — responsible for keeping API credentials current and testing bot weekly</td></tr>
+          <tr><td style="font-weight:600">Fallback If Bot Fails</td><td>Payments Team manually checks SoftSwiss dashboard every 30 minutes minimum during business hours. Bot failure triggers its own Telegram alert via a secondary watchdog.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 4: ESCALATION -->
+  <div class="section" id="escalation">
+    <div class="section-header amber">
+      <div class="section-num amber">04</div>
+      <div class="section-title">Escalation Process</div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:32px">Step</th><th style="width:32%">Action</th><th style="width:18%">Owner</th><th style="width:120px">By (mins)</th><th>If Not Resolved</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:700;color:var(--blue)">1</td><td>Telegram alert received — Payments Team member acknowledges in group chat with 👀 reaction</td><td style="font-weight:600;color:var(--blue)">First responder</td><td>Within 5 min</td><td>Payments Lead manually checks if no acknowledgement</td></tr>
+          <tr><td style="font-weight:700;color:var(--blue)">2</td><td>Open SoftSwiss back office — navigate to Payment Reports → Success Rate dashboard → filter last 60 minutes</td><td style="font-weight:600;color:var(--blue)">Payments Team</td><td>Within 10 min</td><td>—</td></tr>
+          <tr><td style="font-weight:700;color:var(--blue)">3</td><td>Check SoftSwiss status page for any platform-level outage or maintenance notice that explains the drop</td><td style="font-weight:600;color:var(--blue)">Payments Team</td><td>Within 10 min</td><td>—</td></tr>
+          <tr><td style="font-weight:700;color:var(--blue)">4</td><td>Pull decline code breakdown from SoftSwiss — identify whether declines are acquirer-driven, 3DS-driven, fraud-blocked or technical errors</td><td style="font-weight:600;color:var(--blue)">Payments Team</td><td>Within 15 min</td><td>—</td></tr>
+          <tr><td style="font-weight:700;color:var(--blue)">5</td><td>Pull method-level report — confirm if issue is card-wide, specific card scheme, e-wallet or all methods</td><td style="font-weight:600;color:var(--blue)">Payments Team</td><td>Within 15 min</td><td>—</td></tr>
+          <tr><td style="font-weight:700;color:var(--blue)">6</td><td>Message SoftSwiss Account Manager directly — share current success rate, decline code breakdown and request investigation</td><td style="font-weight:600;color:var(--blue)">Payments Lead</td><td>Within 20 min</td><td>Call AM if no response within 10 minutes</td></tr>
+          <tr><td style="font-weight:700;color:var(--blue)">7</td><td>Raise formal support ticket on SoftSwiss portal — reference Telegram alert time, rate, decline codes, affected methods</td><td style="font-weight:600;color:var(--blue)">Payments Lead</td><td>Within 25 min</td><td>—</td></tr>
+          <tr><td style="font-weight:700;color:var(--blue)">8</td><td>Notify COO of incident status — include current rate, duration, cause (if known), SoftSwiss ticket reference and estimated resolution</td><td style="font-weight:600;color:var(--blue)">Payments Lead</td><td>Within 30 min</td><td>—</td></tr>
+          <tr><td style="font-weight:700;color:var(--blue)">9</td><td>Post 10-minute update to Telegram group — current rate, SoftSwiss status, actions taken. Continue until resolved.</td><td style="font-weight:600;color:var(--blue)">Payments Lead</td><td>Every 10 min</td><td>Bot also posts automated updates</td></tr>
+          <tr><td style="font-weight:700;color:var(--blue)">10</td><td>If &gt;60 minutes unresolved at CRITICAL level — Payments Lead escalates to SoftSwiss senior support and COO reviews player comms decision</td><td style="font-weight:600;color:var(--blue)">Payments Lead + COO</td><td>60 min mark</td><td>Player communication issued (Section 7)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 5: PAYMENT TEAM RESPONSE -->
+  <div class="section" id="payment-team">
+    <div class="section-header blue">
+      <div class="section-num blue">05</div>
+      <div class="section-title">Payment Team — Expected Response Actions</div>
+    </div>
+    <p class="body">The payment team cannot directly fix acquirer or PSP issues — these sit with SoftSwiss. However, the team is expected to rapidly diagnose the issue, communicate clearly, and work with SoftSwiss to drive resolution. The following is the complete set of actions expected from the payment team during an incident.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:220px">Action</th><th>Detail</th><th style="width:140px">Tool Used</th></tr></thead>
+        <tbody>
+          <tr class="sub-hdr blue"><td colspan="3">DIAGNOSIS</td></tr>
+          <tr><td style="font-weight:600">Identify affected payment methods</td><td>Pull method-level success rate from SoftSwiss back office. Confirm which methods are failing and which are healthy. This determines whether to recommend alternate methods to players.</td><td>SoftSwiss Portal</td></tr>
+          <tr><td style="font-weight:600">Decode decline reason codes</td><td>Map decline codes to root causes: Code 05 = Do Not Honour (acquirer); Code 14 = Invalid card; Code 51 = Insufficient funds; Code 54 = Expired card; Code 91 = Issuer not available (technical). Distinguish player-side from acquirer-side declines.</td><td>SoftSwiss Reports</td></tr>
+          <tr><td style="font-weight:600">Check for specific BIN clusters</td><td>Look for patterns — is the failure rate concentrated on a specific BIN range, card scheme (Visa vs Mastercard) or issuer country? This points toward BIN-level or issuer-level investigation.</td><td>SoftSwiss BIN Report</td></tr>
+          <tr><td style="font-weight:600">Review GEO-level data</td><td>Pull success rate by player country. A drop concentrated in one GEO suggests an issuer-side or country-specific acquiring problem rather than a platform-wide issue.</td><td>SoftSwiss GEO Report</td></tr>
+          <tr><td style="font-weight:600">Check 3DS failure rate separately</td><td>3DS failures are separate from acquirer declines. A 3DS failure spike suggests a 3DS provider issue rather than an acquirer issue — different root cause, different SoftSwiss escalation path.</td><td>SoftSwiss 3DS Report</td></tr>
+          <tr><td style="font-weight:600">Check e-wallet success rates</td><td>If card methods are failing but e-wallets are healthy, the team should advise players to use e-wallets via on-site messaging while card issues are investigated. Confirm e-wallet headroom is sufficient for player volume.</td><td>SoftSwiss Portal</td></tr>
+          <tr class="sub-hdr blue"><td colspan="3">COMMUNICATION</td></tr>
+          <tr><td style="font-weight:600">Update Telegram group every 10 minutes</td><td>Manual update from Payments Lead including: current rate, SoftSwiss ticket status, diagnosis progress, any actions taken (rerouting, method adjustment). Be specific — "investigating" is not enough.</td><td>Telegram</td></tr>
+          <tr><td style="font-weight:600">Provide structured brief to SoftSwiss</td><td>When raising a ticket, include: timestamp of first detection, current success rate, affected methods, top decline codes with volumes, GEO breakdown, whether 3DS or acquirer, and any pattern noted (e.g. specific BIN cluster).</td><td>SoftSwiss Portal</td></tr>
+          <tr><td style="font-weight:600">Brief Customer Support</td><td>Send a clear message to CS lead with: what is happening, which payment methods are affected, what to tell players, and whether e-wallets or other methods are available as alternatives. CS must not give incorrect reassurances.</td><td>Internal comms</td></tr>
+          <tr><td style="font-weight:600">Provide COO incident summary</td><td>Concise written summary to COO at 30-minute mark: what happened, current status, SoftSwiss response, estimated time to resolution, revenue impact estimate.</td><td>Telegram / email</td></tr>
+          <tr class="sub-hdr blue"><td colspan="3">RESOLUTION SUPPORT</td></tr>
+          <tr><td style="font-weight:600">Request SoftSwiss rerouting if available</td><td>Ask SoftSwiss AM whether traffic can be rerouted to a backup acquirer. Provide decline code data to help them identify the optimal reroute path. Follow up if no response within 15 minutes.</td><td>SoftSwiss AM (direct)</td></tr>
+          <tr><td style="font-weight:600">Verify resolution when rate recovers</td><td>When rate returns above 85%, do not immediately close the incident. Monitor for 15 minutes before declaring resolution. Check per-method rates to confirm all methods have recovered, not just the overall average.</td><td>SoftSwiss Portal + Bot</td></tr>
+          <tr><td style="font-weight:600">Document everything in incident register</td><td>Log: time of first alert, time of each escalation step, SoftSwiss ticket reference, cause (as advised by SoftSwiss), resolution action, time to resolution, and revenue impact. This feeds the post-incident review.</td><td>Incident Register</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 6: SOFTSWISS -->
+  <div class="section" id="softswiss">
+    <div class="section-header purple">
+      <div class="section-num purple">06</div>
+      <div class="section-title">SoftSwiss Escalation Path</div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:200px">Scenario</th><th style="width:32%">What to Request from SoftSwiss</th><th style="width:20%">Contact Method</th><th>Expected Response</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Success rate drops 80–85%</td><td>Request AM reviews current acquirer performance; ask for preliminary diagnosis</td><td>Telegram / WhatsApp to AM</td><td>Acknowledgement within 20 min</td></tr>
+          <tr><td style="font-weight:600">Success rate drops below 80%</td><td>Open formal support ticket + contact AM directly. Request decline code breakdown not visible in back office, and whether rerouting is available.</td><td>Portal ticket + AM direct</td><td>Response within 15 min; update every 10 min</td></tr>
+          <tr><td style="font-weight:600">Success rate drops below 75%</td><td>Urgent ticket + escalate AM to SoftSwiss senior support if AM unresponsive. Request emergency rerouting, acquirer failover, or method suspension if causing harm.</td><td>Portal (urgent) + AM + phone</td><td>Response within 10 min</td></tr>
+          <tr><td style="font-weight:600">Incident unresolved for 60+ minutes</td><td>Request escalation to SoftSwiss technical lead and/or payments operations manager. Provide full incident log.</td><td>Phone + formal escalation email</td><td>Senior response within 30 min</td></tr>
+          <tr><td style="font-weight:600">SoftSwiss identifies acquirer fault</td><td>Request timeline for acquirer fix, whether backup acquirer is available, and when players can expect recovery.</td><td>AM + ticket</td><td>Written ETA within 20 min of diagnosis</td></tr>
+          <tr><td style="font-weight:600">SoftSwiss identifies platform fault</td><td>Request emergency fix ETA, temporary workarounds (e.g. disable 3DS for low-risk players), and whether a maintenance window is needed.</td><td>AM + senior escalation</td><td>Written ETA + status updates every 15 min</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 7: PLAYER COMMS -->
+  <div class="section" id="player-comms">
+    <div class="section-header green">
+      <div class="section-num green">07</div>
+      <div class="section-title">Player Communications</div>
+    </div>
+    <p class="body">Player communications are authorised by the COO and delivered by the Marketing Manager. Customer Support must be briefed before any player-facing message goes live. Proactive communication is only issued if the incident exceeds 30 minutes at CRITICAL level or if the support queue sees a significant spike.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:200px">Scenario</th><th style="width:35%">Message Type</th><th>Sample Copy</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Specific method failing — alternatives available</td><td>On-site banner (deposit page) + CS briefing</td><td>"Some card payments are experiencing delays. We recommend using [e-wallet / alternative method] for instant deposits right now. We apologise for the inconvenience."</td></tr>
+          <tr><td style="font-weight:600">Widespread failure &gt;30 min CRITICAL</td><td>On-site notification banner + email to active players + CS briefing</td><td>"We are currently experiencing a technical issue affecting some deposit methods. Our team is working to resolve this urgently. If your deposit has not been processed, please try again shortly or contact support."</td></tr>
+          <tr><td style="font-weight:600">Player contacts support during incident</td><td>CS agent response template</td><td>"We are aware of an issue affecting some payment methods right now and are working urgently to fix it. Your deposit has not been charged. Please try again in [X] minutes or use [alternative method]. We appreciate your patience."</td></tr>
+          <tr><td style="font-weight:600">Resolution — follow-up comms</td><td>On-site banner removal + optional email if major incident</td><td>"Our payment systems are now fully restored. We apologise for any inconvenience. If you have any unresolved issues, please contact our support team who will be happy to help."</td></tr>
+          <tr><td style="font-weight:600">Player requests compensation</td><td>Escalate to Marketing Manager — assess case by case. Do not offer compensation without authorisation.</td><td>Assessed case by case. Offer only where player demonstrably lost time or opportunity. COO approval required for any bonus compensation.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 8: RECOVERY -->
+  <div class="section" id="recovery">
+    <div class="section-header green">
+      <div class="section-num green">08</div>
+      <div class="section-title">Recovery Monitoring &amp; Incident Sign-Off</div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:200px">Step</th><th>Criteria / Action</th><th style="width:150px">Owner</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Declare recovery candidate</td><td>Bot posts automated alert when rate returns above 85%. Payments Team begins active monitoring — do not yet declare resolved.</td><td>Payments Team</td></tr>
+          <tr><td style="font-weight:600">Confirm sustained recovery</td><td>Rate must remain above 85% for 15 consecutive minutes. Check all individual methods — not just blended rate. One failing method should prevent full sign-off.</td><td>Payments Team</td></tr>
+          <tr><td style="font-weight:600">Confirm SoftSwiss fix is stable</td><td>Ask SoftSwiss AM to confirm the root cause is fully resolved, not temporarily masked. Get written confirmation in the ticket.</td><td>Payments Lead + SoftSwiss</td></tr>
+          <tr><td style="font-weight:600">Remove player-facing comms</td><td>If on-site banners or CS templates were activated, remove / update them immediately on recovery confirmation.</td><td>Marketing Manager</td></tr>
+          <tr><td style="font-weight:600">Post resolution Telegram message</td><td>Post resolved message to Payments Operations group including: final rate, incident duration, root cause, resolution action, SoftSwiss ticket reference.</td><td>Payments Lead</td></tr>
+          <tr><td style="font-weight:600">Notify COO</td><td>Send written incident summary to COO: timeline, cause, resolution, revenue impact estimate, and preliminary recommendation for post-incident review.</td><td>Payments Lead</td></tr>
+          <tr><td style="font-weight:600">Continue elevated monitoring</td><td>Keep monitoring cadence at 5-minute intervals for 2 hours post-resolution. Confirm no recurrence.</td><td>Payments Team</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 9: POST-INCIDENT -->
+  <div class="section" id="post-incident">
+    <div class="section-header blue">
+      <div class="section-num blue">09</div>
+      <div class="section-title">Post-Incident Review</div>
+    </div>
+    <p class="body">Every ALERT or CRITICAL incident requires a written post-incident review within 24 hours of resolution. WARNING-level incidents are reviewed if they recur within 7 days.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:220px">Review Item</th><th>What to Document</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Incident timeline</td><td>Time of first alert, time of each escalation step, time of SoftSwiss acknowledgement, time of resolution. Identify any gaps where response was slower than SLA.</td></tr>
+          <tr><td style="font-weight:600">Root cause</td><td>As confirmed by SoftSwiss — was it an acquirer issue, 3DS issue, SoftSwiss platform bug, or a specific PSP outage? Document the confirmed technical cause, not speculation.</td></tr>
+          <tr><td style="font-weight:600">Revenue impact</td><td>Estimated lost deposits during incident window based on pre-incident hourly deposit rate × duration × failed transaction rate above baseline. Report to COO.</td></tr>
+          <tr><td style="font-weight:600">SoftSwiss response assessment</td><td>Was SoftSwiss response within agreed SLA? Was the AM reachable? Was the resolution appropriate? Log formally — used in quarterly SoftSwiss SLA review.</td></tr>
+          <tr><td style="font-weight:600">Alert system performance</td><td>Did the Telegram bot fire at the right time? Were thresholds correct? Any false positives or missed alerts? Update bot configuration if needed.</td></tr>
+          <tr><td style="font-weight:600">Team response assessment</td><td>Were all escalation steps followed in the correct order and within SLA? Were communications to COO, CS and players timely and accurate?</td></tr>
+          <tr><td style="font-weight:600">Prevention recommendations</td><td>What could be done to prevent recurrence? E.g. request SoftSwiss add additional backup acquirer, increase monitoring frequency for a specific method, add new alert threshold.</td></tr>
+          <tr><td style="font-weight:600">SOP update required?</td><td>Does this incident reveal a gap in this SOP? If yes, update SOP within 5 business days and note the change in the document control log.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<aside class="sidebar-right">
+  <div class="toc-label">On This Page</div>
+  <a class="toc-link" href="#overview"><span class="toc-dot" style="background:var(--muted)"></span>Overview</a>
+  <a class="toc-link" href="#thresholds"><span class="toc-dot" style="background:var(--red-dot)"></span>Alert Thresholds</a>
+  <a class="toc-link" href="#visibility"><span class="toc-dot" style="background:var(--teal-dot)"></span>Visibility</a>
+  <a class="toc-link" href="#telegram"><span class="toc-dot" style="background:var(--tg)"></span>Telegram System</a>
+  <a class="toc-link" href="#escalation"><span class="toc-dot" style="background:var(--amber-dot)"></span>Escalation</a>
+  <a class="toc-link" href="#payment-team"><span class="toc-dot" style="background:var(--blue-dot)"></span>Payment Team Response</a>
+  <a class="toc-link" href="#softswiss"><span class="toc-dot" style="background:var(--purple-dot)"></span>SoftSwiss Escalation</a>
+  <a class="toc-link" href="#player-comms"><span class="toc-dot" style="background:var(--green-dot)"></span>Player Comms</a>
+  <a class="toc-link" href="#recovery"><span class="toc-dot" style="background:var(--green-dot)"></span>Recovery</a>
+  <a class="toc-link" href="#post-incident"><span class="toc-dot" style="background:var(--muted)"></span>Post-Incident Review</a>
+  <div class="toc-divider"></div>
+  <div class="toc-stat-label">Critical Threshold</div>
+  <div class="toc-stat-val">&lt;80% success rate</div>
+  <div class="toc-stat-label">Response SLA</div>
+  <div class="toc-stat-val">15 minutes</div>
+  <div class="toc-stat-label">Bot Poll Frequency</div>
+  <div class="toc-stat-val">Every 5 minutes</div>
+  <div class="toc-stat-label">Platform</div>
+  <div class="toc-stat-val">SoftSwiss</div>
+</aside>
+</div>
+<script>
+  const ids=['overview','thresholds','visibility','telegram','escalation','payment-team','softswiss','player-comms','recovery','post-incident'];
+  const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting)document.querySelectorAll('.toc-link').forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+en.target.id))})},{rootMargin:'-20% 0px -70% 0px'});
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el)});
+</script>
+</body>
+</html>
