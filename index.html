@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casino Operations Wiki</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #f6f8fb;
+    --surface:  #ffffff;
+    --border:   #e2e7ef;
+    --text:     #1a2030;
+    --muted:    #6b7a94;
+    --subtle:   #f0f3f8;
+
+    --casino-h:    #1248c9;
+    --casino-bg:   #eef3ff;
+    --casino-bd:   #c0d0f8;
+    --casino-dot:  #3b6ef0;
+
+    --mkt-h:    #0a7c52;
+    --mkt-bg:   #eafaf3;
+    --mkt-bd:   #a3e0c5;
+    --mkt-dot:  #12b76a;
+
+    --pay-h:    #6d28d9;
+    --pay-bg:   #f3eeff;
+    --pay-bd:   #c9b0f4;
+    --pay-dot:  #8b5cf6;
+
+    --vip-h:    #a16207;
+    --vip-bg:   #fffbeb;
+    --vip-bd:   #fcd34d;
+    --vip-dot:  #f59e0b;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── LAYOUT ─────────────────────────────────────────────────────────── */
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr 200px;
+    min-height: 100vh;
+    max-width: 1280px;
+    margin: 0 auto;
+    gap: 0;
+  }
+
+  /* ── LEFT SIDEBAR ───────────────────────────────────────────────────── */
+  .sidebar-left {
+    border-right: 1px solid var(--border);
+    padding: 32px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .wiki-logo {
+    padding: 0 20px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .wiki-logo-icon {
+    font-size: 28px;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .wiki-logo-title {
+    font-family: 'Lora', serif;
+    font-size: 17px; font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .wiki-logo-sub {
+    font-size: 11px; color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .sidebar-section {
+    padding: 0 12px;
+    margin-bottom: 20px;
+  }
+  .sidebar-section-label {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 8px;
+    margin-bottom: 4px;
+  }
+
+  .sidebar-link {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px;
+    border-radius: 6px;
+    font-size: 13px; font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    transition: all .15s;
+    cursor: pointer;
+  }
+  .sidebar-link:hover { background: var(--subtle); color: var(--text); }
+  .sidebar-link.active { background: var(--subtle); color: var(--text); font-weight: 600; }
+  .sidebar-link-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── MAIN CONTENT ───────────────────────────────────────────────────── */
+  .main {
+    padding: 48px 56px;
+    min-width: 0;
+  }
+
+  /* ── PAGE HEADER ────────────────────────────────────────────────────── */
+  .page-header {
+    padding-bottom: 28px;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 40px;
+  }
+  .page-eyebrow {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .page-title {
+    font-family: 'Lora', serif;
+    font-size: 38px; font-weight: 700;
+    color: var(--text);
+    line-height: 1.15;
+    margin-bottom: 14px;
+    letter-spacing: -.01em;
+  }
+  .page-intro {
+    font-size: 15px; color: var(--muted);
+    line-height: 1.7; font-weight: 300;
+    max-width: 640px;
+    margin-bottom: 20px;
+  }
+  .page-meta {
+    display: flex; gap: 20px; flex-wrap: wrap;
+  }
+  .page-meta-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--muted);
+  }
+  .page-meta-item strong { color: var(--text); font-weight: 600; }
+
+  /* ── DEPT SECTION ───────────────────────────────────────────────────── */
+  .dept-section {
+    margin-bottom: 52px;
+    scroll-margin-top: 24px;
+  }
+
+  .dept-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid;
+  }
+  .casino-section   .dept-header { border-color: var(--casino-bd); }
+  .marketing-section .dept-header { border-color: var(--mkt-bd); }
+  .payments-section  .dept-header { border-color: var(--pay-bd); }
+  .vip-section       .dept-header { border-color: var(--vip-bd); }
+
+  .dept-icon-pill {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .casino-section   .dept-icon-pill { background: var(--casino-bg); border: 1.5px solid var(--casino-bd); }
+  .marketing-section .dept-icon-pill { background: var(--mkt-bg); border: 1.5px solid var(--mkt-bd); }
+  .payments-section  .dept-icon-pill { background: var(--pay-bg); border: 1.5px solid var(--pay-bd); }
+  .vip-section       .dept-icon-pill { background: var(--vip-bg); border: 1.5px solid var(--vip-bd); }
+
+  .dept-header-text {}
+  .dept-num {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .casino-section   .dept-num { color: var(--casino-h); }
+  .marketing-section .dept-num { color: var(--mkt-h); }
+  .payments-section  .dept-num { color: var(--pay-h); }
+  .vip-section       .dept-num { color: var(--vip-h); }
+
+  .dept-name {
+    font-family: 'Lora', serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .dept-desc {
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.65; font-weight: 300;
+    margin-bottom: 18px;
+    max-width: 620px;
+  }
+
+  /* ── DOC TABLE ───────────────────────────────────────────────────────── */
+  .doc-table {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .doc-table thead tr {
+    background: var(--subtle);
+  }
+  .doc-table thead th {
+    padding: 9px 16px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .07em; text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .doc-table tbody tr {
+    transition: background .12s;
+  }
+  .doc-table tbody tr:hover { background: var(--subtle); }
+  .doc-table tbody tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
+
+  .doc-table td {
+    padding: 12px 16px;
+    vertical-align: middle;
+  }
+
+  .doc-name {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .doc-file-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .casino-section   .doc-file-icon { background: var(--casino-bg); }
+  .marketing-section .doc-file-icon { background: var(--mkt-bg); }
+  .payments-section  .doc-file-icon { background: var(--pay-bg); }
+  .vip-section       .doc-file-icon { background: var(--vip-bg); }
+
+  .doc-link {
+    font-size: 13.5px; font-weight: 600;
+    text-decoration: none;
+    transition: color .15s;
+  }
+  .casino-section   .doc-link { color: var(--casino-h); }
+  .marketing-section .doc-link { color: var(--mkt-h); }
+  .payments-section  .doc-link { color: var(--pay-h); }
+  .vip-section       .doc-link { color: var(--vip-h); }
+  .doc-link:hover { text-decoration: underline; }
+
+  .doc-link-sub { font-size: 11.5px; color: var(--muted); font-weight: 400; margin-top: 1px; }
+
+  .doc-version {
+    font-size: 12px; color: var(--muted);
+    font-family: 'Inter', monospace;
+  }
+
+  .doc-status {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11.5px; font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .doc-status::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+  .status-live   { background: #ecfdf5; color: #059669; }
+  .status-draft  { background: #fffbeb; color: #d97706; }
+  .status-soon   { background: var(--subtle); color: var(--muted); }
+
+  .doc-action {
+    font-size: 12px; font-weight: 500;
+    text-decoration: none;
+    color: var(--muted);
+    transition: color .15s;
+  }
+  .doc-action:hover { color: var(--text); }
+
+  /* ── RIGHT SIDEBAR (TOC) ─────────────────────────────────────────────── */
+  .sidebar-right {
+    border-left: 1px solid var(--border);
+    padding: 48px 20px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .toc-label {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toc-link {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12.5px; font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 6px 0;
+    border-bottom: 1px solid transparent;
+    transition: color .15s;
+  }
+  .toc-link:hover { color: var(--text); }
+  .toc-link.active { color: var(--text); font-weight: 600; }
+  .toc-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .toc-dot.casino   { background: var(--casino-dot); }
+  .toc-dot.marketing{ background: var(--mkt-dot); }
+  .toc-dot.payments { background: var(--pay-dot); }
+  .toc-dot.vip      { background: var(--vip-dot); }
+
+  .toc-divider { height: 1px; background: var(--border); margin: 14px 0; }
+
+  .toc-stat { margin-bottom: 10px; }
+  .toc-stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+  .toc-stat-val { font-size: 13px; font-weight: 600; color: var(--text); margin-top: 1px; }
+
+  /* ── COMING SOON NOTE ───────────────────────────────────────────────── */
+  .coming-note {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px;
+    background: var(--subtle);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    margin-top: 12px;
+    font-size: 12.5px; color: var(--muted);
+  }
+  .coming-note strong { color: var(--text); }
+
+  @media (max-width: 960px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar-left, .sidebar-right { display: none; }
+    .main { padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ── LEFT SIDEBAR ──────────────────────────────────────────────────────── -->
+  <aside class="sidebar-left">
+    <div class="wiki-logo">
+      <span class="wiki-logo-icon">🃏</span>
+      <div class="wiki-logo-title">Casino Ops Wiki</div>
+      <div class="wiki-logo-sub">New Brand · v1.0 · 2026</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Navigation</div>
+      <a class="sidebar-link active" href="#">🏠 Overview</a>
+      <a class="sidebar-link" href="#casino">🎰 Casino Operations</a>
+      <a class="sidebar-link" href="#marketing">📈 Marketing</a>
+      <a class="sidebar-link" href="#payments">💳 Payments</a>
+      <a class="sidebar-link" href="#vip">♛ VIP</a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Casino Operations</div>
+      <a class="sidebar-link" href="casino_manager_sop.html">
+        <span class="sidebar-link-dot" style="background:var(--casino-dot)"></span>
+        Casino Manager SOP
+      </a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Marketing</div>
+      <a class="sidebar-link" href="V1_Marketing_Campaign_Communication.html">
+        <span class="sidebar-link-dot" style="background:var(--mkt-dot)"></span>
+        Campaign Communications
+      </a>
+      <a class="sidebar-link" href="crm_journey.html">
+        <span class="sidebar-link-dot" style="background:var(--mkt-dot)"></span>
+        CRM Journey
+      </a>
+      <a class="sidebar-link" href="crm_overall_view.html">
+        <span class="sidebar-link-dot" style="background:var(--mkt-dot)"></span>
+        CRM Overall View
+      </a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Payments</div>
+      <a class="sidebar-link" href="#payments" style="opacity:.5;pointer-events:none;">
+        <span class="sidebar-link-dot" style="background:var(--pay-dot)"></span>
+        Payments SOP <span style="font-size:10px;margin-left:auto">Soon</span>
+      </a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">VIP</div>
+      <a class="sidebar-link" href="#vip" style="opacity:.5;pointer-events:none;">
+        <span class="sidebar-link-dot" style="background:var(--vip-dot)"></span>
+        VIP SOP <span style="font-size:10px;margin-left:auto">Soon</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ──────────────────────────────────────────────────────────────── -->
+  <main class="main">
+
+    <div class="page-header">
+      <div class="page-eyebrow">Internal Operations Wiki</div>
+      <h1 class="page-title">Casino Operations Hub</h1>
+      <p class="page-intro">Central reference for all operational departments — Casino, Marketing, Payments and VIP. SOPs, playbooks, KPI frameworks and reporting standards in one place.</p>
+      <div class="page-meta">
+        <div class="page-meta-item">📅 <strong>May 2026</strong></div>
+        <div class="page-meta-item">🏗 Status: <strong>New Brand Build</strong></div>
+        <div class="page-meta-item">🔗 Platform: <strong>SoftSwiss</strong></div>
+        <div class="page-meta-item">👤 Reports to: <strong>COO</strong></div>
+      </div>
+    </div>
+
+    <!-- ── CASINO OPS ───────────────────────────────────────────────────────── -->
+    <div class="dept-section casino-section" id="casino">
+      <div class="dept-header">
+        <div class="dept-icon-pill">🎰</div>
+        <div class="dept-header-text">
+          <div class="dept-num">Department 01</div>
+          <div class="dept-name">Casino Operations</div>
+        </div>
+      </div>
+      <p class="dept-desc">Game portfolio management, lobby optimisation, provider relationships via SoftSwiss and daily P&L reporting to the COO. All game and payment issues escalated directly to the SoftSwiss platform.</p>
+
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th style="width:46%">Document</th>
+            <th style="width:10%">Version</th>
+            <th style="width:14%">Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">📋</div>
+                <div>
+                  <a class="doc-link" href="casino_manager_sop.html">Casino Manager SOP</a>
+                  <div class="doc-link-sub">Responsibilities, routines, KPIs, escalation matrix</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">v1.0</span></td>
+            <td><span class="doc-status status-live">Live</span></td>
+            <td><a class="doc-action" href="casino_manager_sop.html">Open →</a></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">📊</div>
+                <div>
+                  <a class="doc-link" href="casino_manager_sop.html#kpis">KPI Monitoring Table</a>
+                  <div class="doc-link-sub">28 KPIs across revenue, engagement, bonus and operations</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">v1.0</span></td>
+            <td><span class="doc-status status-live">Live</span></td>
+            <td><a class="doc-action" href="casino_manager_sop.html#kpis">Open →</a></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">✅</div>
+                <div>
+                  <a class="doc-link" href="game_launch_sop.html">Game Launch SOP &amp; Checklist</a>
+                  <div class="doc-link-sub">End-to-end per-title launch workflow · 36-item interactive checklist</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">v1.0</span></td>
+            <td><span class="doc-status status-live">Live</span></td>
+            <td><a class="doc-action" href="game_launch_sop.html">Open →</a></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">🤝</div>
+                <div>
+                  <a class="doc-link" href="#">Provider Scorecard Template</a>
+                  <div class="doc-link-sub">Monthly SoftSwiss provider commercial review</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">—</span></td>
+            <td><span class="doc-status status-soon">Coming Soon</span></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── MARKETING ────────────────────────────────────────────────────────── -->
+    <div class="dept-section marketing-section" id="marketing">
+      <div class="dept-header">
+        <div class="dept-icon-pill">📈</div>
+        <div class="dept-header-text">
+          <div class="dept-num">Department 02</div>
+          <div class="dept-name">Marketing</div>
+        </div>
+      </div>
+      <p class="dept-desc">Acquisition across SEO, paid social and affiliates. CRM strategy, player journeys and campaign communications. Covers the Meta AU test phase and SEO partner management.</p>
+
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th style="width:46%">Document</th>
+            <th style="width:10%">Version</th>
+            <th style="width:14%">Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">📣</div>
+                <div>
+                  <a class="doc-link" href="V1_Marketing_Campaign_Communication.html">Marketing Campaign Communications</a>
+                  <div class="doc-link-sub">Campaign messaging framework and communication standards</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">v1.0</span></td>
+            <td><span class="doc-status status-live">Live</span></td>
+            <td><a class="doc-action" href="V1_Marketing_Campaign_Communication.html">Open →</a></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">🔄</div>
+                <div>
+                  <a class="doc-link" href="crm_journey.html">CRM Journey</a>
+                  <div class="doc-link-sub">Player lifecycle touchpoints and automated journey flows</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">v1.0</span></td>
+            <td><span class="doc-status status-live">Live</span></td>
+            <td><a class="doc-action" href="crm_journey.html">Open →</a></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">🗺</div>
+                <div>
+                  <a class="doc-link" href="crm_overall_view.html">CRM Overall View</a>
+                  <div class="doc-link-sub">Full CRM strategy overview and segmentation approach</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">v1.0</span></td>
+            <td><span class="doc-status status-live">Live</span></td>
+            <td><a class="doc-action" href="crm_overall_view.html">Open →</a></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">🤝</div>
+                <div>
+                  <a class="doc-link" href="affiliate_strategy.html">Affiliate Strategy</a>
+                  <div class="doc-link-sub">KPI-anchored deal structures, LTV calculator, TQS scoring, 4-tier system</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">v1.0</span></td>
+            <td><span class="doc-status status-live">Live</span></td>
+            <td><a class="doc-action" href="affiliate_strategy.html">Open →</a></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">🍀</div>
+                <div>
+                  <a class="doc-link" href="luckywins_affiliate_deck.html">LuckyWins Affiliate Deck</a>
+                  <div class="doc-link-sub">Affiliate partner landing page for luckywins.com — commission structures, tiers, CTA</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">v1.0</span></td>
+            <td><span class="doc-status status-live">Live</span></td>
+            <td><a class="doc-action" href="luckywins_affiliate_deck.html">Open →</a></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">⚡</div>
+                <div>
+                  <a class="doc-link" href="winmaker_affiliate_deck.html">WinMaker Affiliate Deck</a>
+                  <div class="doc-link-sub">Affiliate partner landing page for winmaker.com — commission structures, tiers, CTA</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">v1.0</span></td>
+            <td><span class="doc-status status-live">Live</span></td>
+            <td><a class="doc-action" href="winmaker_affiliate_deck.html">Open →</a></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">🔍</div>
+                <div>
+                  <a class="doc-link" href="#">SEO Strategy Framework</a>
+                  <div class="doc-link-sub">Organic acquisition playbook and partner management</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">—</span></td>
+            <td><span class="doc-status status-soon">Coming Soon</span></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">🔗</div>
+                <div>
+                  <a class="doc-link" href="#">Affiliate Programme Playbook</a>
+                  <div class="doc-link-sub">Commission structures, tracking and partner onboarding</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">—</span></td>
+            <td><span class="doc-status status-soon">Coming Soon</span></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── PAYMENTS ─────────────────────────────────────────────────────────── -->
+    <div class="dept-section payments-section" id="payments">
+      <div class="dept-header">
+        <div class="dept-icon-pill">💳</div>
+        <div class="dept-header-text">
+          <div class="dept-num">Department 03</div>
+          <div class="dept-name">Payments</div>
+        </div>
+      </div>
+      <p class="dept-desc">PSP relationships, deposit conversion and withdrawal processing. All payment infrastructure runs through SoftSwiss — technical and payment issues escalated to the platform as first contact.</p>
+
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th style="width:46%">Document</th>
+            <th style="width:10%">Version</th>
+            <th style="width:14%">Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">🚨</div>
+                <div>
+                  <a class="doc-link" href="deposit_success_rate_sop.html">Deposit Success Rate SOP</a>
+                  <div class="doc-link-sub">Alert system, Telegram monitoring, SoftSwiss escalation when rate falls below 80%</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">v1.0</span></td>
+            <td><span class="doc-status status-live">Live</span></td>
+            <td><a class="doc-action" href="deposit_success_rate_sop.html">Open →</a></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">🃏</div>
+                <div>
+                  <a class="doc-link" href="bin_failure_sop.html">BIN Failure SOP</a>
+                  <div class="doc-link-sub">Detection, investigation, root cause guide and resolution for failing BIN ranges</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">v1.0</span></td>
+            <td><span class="doc-status status-live">Live</span></td>
+            <td><a class="doc-action" href="bin_failure_sop.html">Open →</a></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">🔀</div>
+                <div>
+                  <a class="doc-link" href="player_rerouting_sop.html">Player Re-routing SOP</a>
+                  <div class="doc-link-sub">2-failure trigger, re-routing logic, on-site messaging and CRM recovery</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">v1.0</span></td>
+            <td><span class="doc-status status-live">Live</span></td>
+            <td><a class="doc-action" href="player_rerouting_sop.html">Open →</a></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">💳</div>
+                <div>
+                  <a class="doc-link" href="#">PSP Stack Overview</a>
+                  <div class="doc-link-sub">High-risk PSPs, e-wallets, crypto rails and local methods</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">—</span></td>
+            <td><span class="doc-status status-draft">Draft</span></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">📊</div>
+                <div>
+                  <a class="doc-link" href="#">Deposit Conversion KPIs</a>
+                  <div class="doc-link-sub">Conversion rate tracking, decline analysis and benchmarks</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">—</span></td>
+            <td><span class="doc-status status-soon">Coming Soon</span></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">🔄</div>
+                <div>
+                  <a class="doc-link" href="#">Withdrawal Processing Standards</a>
+                  <div class="doc-link-sub">Processing timelines, limits and SoftSwiss escalation path</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">—</span></td>
+            <td><span class="doc-status status-soon">Coming Soon</span></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── VIP ──────────────────────────────────────────────────────────────── -->
+    <div class="dept-section vip-section" id="vip">
+      <div class="dept-header">
+        <div class="dept-icon-pill">♛</div>
+        <div class="dept-header-text">
+          <div class="dept-num">Department 04</div>
+          <div class="dept-name">VIP</div>
+        </div>
+      </div>
+      <p class="dept-desc">High-value player management, tiered loyalty programmes and bespoke retention. Data-led identification, manual relationship management and personalised bonus structures for top-tier players.</p>
+
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th style="width:46%">Document</th>
+            <th style="width:10%">Version</th>
+            <th style="width:14%">Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">♛</div>
+                <div>
+                  <a class="doc-link" href="vip_identification_sop.html">VIP Identification SOP</a>
+                  <div class="doc-link-sub">Identification matrix, VIP scoring, 4-tier structure, outreach &amp; onboarding</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">v1.0</span></td>
+            <td><span class="doc-status status-live">Live</span></td>
+            <td><a class="doc-action" href="vip_identification_sop.html">Open →</a></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">♛</div>
+                <div>
+                  <a class="doc-link" href="#">VIP Tier Structure &amp; Criteria</a>
+                  <div class="doc-link-sub">Thresholds, tier benefits and upgrade/downgrade rules</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">—</span></td>
+            <td><span class="doc-status status-soon">Coming Soon</span></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">🎁</div>
+                <div>
+                  <a class="doc-link" href="#">VIP Bonus Framework</a>
+                  <div class="doc-link-sub">Bespoke bonus structures, limits and approval workflow</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">—</span></td>
+            <td><span class="doc-status status-soon">Coming Soon</span></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <div class="doc-file-icon">🤝</div>
+                <div>
+                  <a class="doc-link" href="#">VIP Retention Playbook</a>
+                  <div class="doc-link-sub">Touchpoint cadence, gifting standards and escalation</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="doc-version">—</span></td>
+            <td><span class="doc-status status-soon">Coming Soon</span></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- ── RIGHT SIDEBAR (TOC) ───────────────────────────────────────────────── -->
+  <aside class="sidebar-right">
+    <div class="toc-label">On This Page</div>
+    <a class="toc-link active" href="#casino"><span class="toc-dot casino"></span>Casino Operations</a>
+    <a class="toc-link" href="#marketing"><span class="toc-dot marketing"></span>Marketing</a>
+    <a class="toc-link" href="#payments"><span class="toc-dot payments"></span>Payments</a>
+    <a class="toc-link" href="#vip"><span class="toc-dot vip"></span>VIP</a>
+
+    <div class="toc-divider"></div>
+
+    <div class="toc-stat">
+      <div class="toc-stat-label">Total Documents</div>
+      <div class="toc-stat-val">12 live · 4 planned</div>
+    </div>
+    <div class="toc-stat">
+      <div class="toc-stat-label">Platform</div>
+      <div class="toc-stat-val">SoftSwiss</div>
+    </div>
+    <div class="toc-stat">
+      <div class="toc-stat-label">Version</div>
+      <div class="toc-stat-val">1.0 — Draft</div>
+    </div>
+    <div class="toc-stat">
+      <div class="toc-stat-label">Last Updated</div>
+      <div class="toc-stat-val">May 2026</div>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+  // Highlight active TOC + sidebar links on scroll
+  const sections = document.querySelectorAll('.dept-section');
+  const tocLinks = document.querySelectorAll('.toc-link');
+  const sideLinks = document.querySelectorAll('.sidebar-link');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        tocLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === `#${id}`));
+        sideLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === `#${id}`));
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
