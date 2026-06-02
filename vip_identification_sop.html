@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOP — VIP Player Identification</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f6f8fb; --surface:#ffffff; --border:#e2e7ef; --text:#1a2030; --muted:#6b7a94; --subtle:#f0f3f8;
+    --blue:#1248c9; --blue-bg:#eef3ff; --blue-bd:#c0d0f8; --blue-dot:#3b6ef0;
+    --green:#0a7c52; --green-bg:#eafaf3; --green-bd:#a3e0c5; --green-dot:#12b76a;
+    --amber:#a16207; --amber-bg:#fffbeb; --amber-bd:#fcd34d; --amber-dot:#f59e0b;
+    --red:#b91c1c; --red-bg:#fef2f2; --red-bd:#fca5a5; --red-dot:#ef4444;
+    --purple:#6d28d9; --purple-bg:#f3eeff; --purple-bd:#c9b0f4; --purple-dot:#8b5cf6;
+    --gold:#a16207; --gold-bg:#fffbeb; --gold-bd:#fcd34d; --gold-dot:#f59e0b;
+    --teal:#0e7490; --teal-bg:#ecfeff; --teal-bd:#a5f3fc; --teal-dot:#06b6d4;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
+  .layout{display:grid;grid-template-columns:230px 1fr 210px;min-height:100vh;max-width:1360px;margin:0 auto}
+
+  /* SIDEBAR */
+  .sidebar-left{border-right:1px solid var(--border);padding:32px 0;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .wiki-logo{padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:20px}
+  .wiki-logo a{text-decoration:none}
+  .wiki-logo-icon{font-size:26px;margin-bottom:4px;display:block}
+  .wiki-logo-title{font-family:'Lora',serif;font-size:16px;font-weight:700;color:var(--text)}
+  .wiki-logo-sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .sb-section{padding:0 12px;margin-bottom:20px}
+  .sb-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:0 8px;margin-bottom:4px}
+  .sb-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-size:12.5px;font-weight:500;color:var(--muted);text-decoration:none;transition:all .15s}
+  .sb-link:hover{background:var(--subtle);color:var(--text)}
+  .sb-link.active{background:var(--gold-bg);color:var(--gold);font-weight:600}
+  .sb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+  /* MAIN */
+  .main{padding:48px 56px;min-width:0}
+  .page-header{padding-bottom:28px;border-bottom:2px solid var(--border);margin-bottom:40px}
+  .page-breadcrumb{font-size:12px;color:var(--muted);margin-bottom:10px}
+  .page-breadcrumb a{color:var(--blue);text-decoration:none}
+  .page-title{font-family:'Lora',serif;font-size:34px;font-weight:700;color:var(--text);line-height:1.15;margin-bottom:12px}
+  .page-intro{font-size:14.5px;color:var(--muted);line-height:1.7;font-weight:300;max-width:640px;margin-bottom:18px}
+  .page-meta{display:flex;gap:18px;flex-wrap:wrap}
+  .page-meta-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+  .page-meta-item strong{color:var(--text);font-weight:600}
+
+  /* CALLOUT */
+  .callout{display:flex;gap:14px;padding:16px 18px;border-radius:10px;border:1.5px solid;margin-bottom:24px}
+  .callout.blue{background:var(--blue-bg);border-color:var(--blue-bd)}
+  .callout.green{background:var(--green-bg);border-color:var(--green-bd)}
+  .callout.amber{background:var(--amber-bg);border-color:var(--amber-bd)}
+  .callout.red{background:var(--red-bg);border-color:var(--red-bd)}
+  .callout.purple{background:var(--purple-bg);border-color:var(--purple-bd)}
+  .callout.gold{background:var(--gold-bg);border-color:var(--gold-bd)}
+  .callout.teal{background:var(--teal-bg);border-color:var(--teal-bd)}
+  .callout-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+  .callout-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+  .callout.blue .callout-label{color:var(--blue)}
+  .callout.green .callout-label{color:var(--green)}
+  .callout.amber .callout-label{color:var(--amber)}
+  .callout.red .callout-label{color:var(--red)}
+  .callout.purple .callout-label{color:var(--purple)}
+  .callout.gold .callout-label{color:var(--gold)}
+  .callout.teal .callout-label{color:var(--teal)}
+  .callout p{font-size:13.5px;color:var(--text);line-height:1.65}
+
+  /* SECTION */
+  .section{margin-bottom:56px;scroll-margin-top:24px}
+  .section-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid}
+  .section-header.blue{border-color:var(--blue-bd)}
+  .section-header.green{border-color:var(--green-bd)}
+  .section-header.amber{border-color:var(--amber-bd)}
+  .section-header.red{border-color:var(--red-bd)}
+  .section-header.purple{border-color:var(--purple-bd)}
+  .section-header.gold{border-color:var(--gold-bd)}
+  .section-header.teal{border-color:var(--teal-bd)}
+  .section-num{font-size:11px;font-weight:700;width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
+  .section-num.blue{background:var(--blue)}.section-num.green{background:var(--green)}.section-num.amber{background:var(--amber)}.section-num.red{background:var(--red)}.section-num.purple{background:var(--purple)}.section-num.gold{background:var(--gold)}.section-num.teal{background:var(--teal)}
+  .section-title{font-family:'Lora',serif;font-size:22px;font-weight:700;color:var(--text)}
+
+  /* TABLE */
+  .tbl-wrap{overflow-x:auto;border-radius:10px;border:1.5px solid var(--border);margin-bottom:20px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead tr{background:var(--subtle)}
+  thead th{padding:10px 16px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+  tbody tr:nth-child(even){background:var(--subtle)}
+  tbody tr:hover{background:var(--blue-bg)}
+  tbody tr:not(:last-child) td{border-bottom:1px solid var(--border)}
+  td{padding:11px 16px;vertical-align:top;line-height:1.55}
+  .sub-hdr td{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:9px 16px;color:#fff}
+  .sub-hdr.blue td{background:var(--blue)}.sub-hdr.green td{background:var(--green)}.sub-hdr.amber td{background:var(--amber)}.sub-hdr.purple td{background:var(--purple)}.sub-hdr.teal td{background:var(--teal)}.sub-hdr.red td{background:var(--red)}.sub-hdr.gold td{background:var(--gold)}
+
+  p.body{font-size:13.5px;color:var(--muted);line-height:1.7;margin-bottom:16px;font-weight:300}
+
+  /* BADGE */
+  .badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 9px;border-radius:12px}
+  .badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+  .badge-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+  .badge-amber{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd)}
+  .badge-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
+  .badge-purple{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-bd)}
+  .badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd)}
+  .badge-gold{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-bd)}
+
+  /* VIP MATRIX ─────────────────────────────────────────────────── */
+  .matrix-wrap{overflow-x:auto;border-radius:12px;border:1.5px solid var(--border);margin-bottom:24px}
+  .matrix{width:100%;border-collapse:collapse;font-size:12.5px}
+  .matrix thead tr{background:#1a2030}
+  .matrix thead th{padding:12px 14px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7);text-align:center;border-right:1px solid rgba(255,255,255,.06)}
+  .matrix thead th:first-child{text-align:left;width:200px}
+  .matrix thead th:last-child{border-right:none}
+  .matrix tbody tr:not(:last-child) td{border-bottom:1px solid var(--border)}
+  .matrix tbody td{padding:11px 14px;text-align:center;border-right:1px solid var(--border);vertical-align:middle}
+  .matrix tbody td:first-child{text-align:left;font-weight:600;color:var(--text);background:var(--subtle);border-right:2px solid var(--border)}
+  .matrix tbody td:last-child{border-right:none}
+  .matrix tbody tr:hover td{background:var(--blue-bg)}
+  .matrix tbody tr:hover td:first-child{background:var(--blue-bg)}
+
+  .signal-none{color:var(--muted);font-size:16px}
+  .signal-watch{color:var(--amber-dot);font-weight:700;font-size:13px}
+  .signal-flag{color:var(--purple-dot);font-weight:700;font-size:13px}
+  .signal-vip{color:var(--green-dot);font-weight:800;font-size:13px}
+  .signal-instant{color:#f59e0b;font-weight:800;font-size:13px}
+
+  /* SCORE CARD */
+  .score-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:24px}
+  .score-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:18px}
+  .score-card-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
+  .score-card-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px}
+  .score-card-desc{font-size:12.5px;color:var(--muted);line-height:1.55;margin-bottom:10px}
+  .score-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:5px;font-size:12px}
+  .score-bar-label{width:120px;color:var(--muted);flex-shrink:0}
+  .score-bar-track{flex:1;height:7px;background:var(--border);border-radius:3px;overflow:hidden}
+  .score-bar-fill{height:100%;border-radius:3px}
+  .score-bar-val{width:36px;text-align:right;font-weight:700;color:var(--text);font-size:11px}
+
+  /* TIER REVEAL CARDS */
+  .vip-tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+  .vip-tier-card{border-radius:12px;border:1.5px solid;overflow:hidden;transition:all .2s}
+  .vip-tier-card:hover{transform:translateY(-3px)}
+  .vt1{border-color:rgba(6,182,212,.3)}
+  .vt2{border-color:rgba(59,130,246,.3)}
+  .vt3{border-color:rgba(139,92,246,.3)}
+  .vt4{border-color:rgba(245,158,11,.3)}
+  .vip-tier-head{padding:16px;font-family:'Lora',serif}
+  .vt1 .vip-tier-head{background:linear-gradient(135deg,#0c1f2e,#1a3a4a)}
+  .vt2 .vip-tier-head{background:linear-gradient(135deg,#0d1a3c,#1a2e5a)}
+  .vt3 .vip-tier-head{background:linear-gradient(135deg,#1a0d2e,#2d1a4a)}
+  .vt4 .vip-tier-head{background:linear-gradient(135deg,#1a1200,#2d2000)}
+  .vip-tier-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;display:block}
+  .vt1 .vip-tier-label{color:#22d3ee}
+  .vt2 .vip-tier-label{color:#60a5fa}
+  .vt3 .vip-tier-label{color:#a78bfa}
+  .vt4 .vip-tier-label{color:#fbbf24}
+  .vip-tier-name{font-size:18px;font-weight:700;color:#fff}
+  .vip-tier-body{padding:14px 16px;background:var(--surface)}
+  .vip-tier-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px}
+  .vip-tier-row:last-child{border-bottom:none}
+  .vip-tier-row-label{color:var(--muted)}
+  .vip-tier-row-val{font-weight:700}
+  .vt1 .vip-tier-row-val{color:#22d3ee}
+  .vt2 .vip-tier-row-val{color:#60a5fa}
+  .vt3 .vip-tier-row-val{color:#a78bfa}
+  .vt4 .vip-tier-row-val{color:#fbbf24}
+
+  /* TIMELINE FLOW */
+  .timeline{display:flex;flex-direction:column;gap:0;margin-bottom:20px}
+  .tl-item{display:flex;gap:20px;position:relative}
+  .tl-item:not(:last-child)::before{content:'';position:absolute;left:18px;top:44px;width:2px;height:calc(100% + 0px);background:var(--border)}
+  .tl-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;z-index:1;border:2px solid}
+  .tl-dot.h1{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-bd)}
+  .tl-dot.h2{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-bd)}
+  .tl-dot.h3{background:var(--purple-bg);color:var(--purple);border-color:var(--purple-bd)}
+  .tl-dot.h4{background:var(--green-bg);color:var(--green);border-color:var(--green-bd)}
+  .tl-dot.h5{background:var(--gold-bg);color:var(--gold);border-color:var(--gold-bd)}
+  .tl-dot.h6{background:var(--teal-bg);color:var(--teal);border-color:var(--teal-bd)}
+  .tl-content{padding:6px 0 28px;flex:1}
+  .tl-timing{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:3px}
+  .tl-title{font-weight:700;font-size:14px;color:var(--text);margin-bottom:4px}
+  .tl-desc{font-size:13px;color:var(--muted);line-height:1.6}
+  .tl-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .tl-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;border:1px solid}
+  .tl-tag.vip{background:var(--gold-bg);color:var(--gold);border-color:var(--gold-bd)}
+  .tl-tag.crm{background:var(--green-bg);color:var(--green);border-color:var(--green-bd)}
+  .tl-tag.cs{background:var(--teal-bg);color:var(--teal);border-color:var(--teal-bd)}
+  .tl-tag.system{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-bd)}
+
+  /* RIGHT SIDEBAR */
+  .sidebar-right{border-left:1px solid var(--border);padding:48px 18px;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .toc-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  .toc-link{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--muted);text-decoration:none;padding:5px 0;transition:color .15s}
+  .toc-link:hover{color:var(--text)}.toc-link.active{color:var(--blue);font-weight:600}
+  .toc-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+  .toc-divider{height:1px;background:var(--border);margin:12px 0}
+  .toc-stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+  .toc-stat-val{font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;margin-top:1px}
+
+  /* MATRIX LEGEND */
+  .legend{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px;padding:14px 18px;background:var(--subtle);border-radius:8px;border:1px solid var(--border)}
+  .legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+  .legend-symbol{font-size:14px;font-weight:700}
+
+  @media(max-width:960px){.layout{grid-template-columns:1fr}.sidebar-left,.sidebar-right{display:none}.main{padding:28px 20px}.score-grid{grid-template-columns:1fr}.vip-tiers{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- LEFT SIDEBAR -->
+<aside class="sidebar-left">
+  <div class="wiki-logo"><a href="index.html"><span class="wiki-logo-icon">🃏</span><div class="wiki-logo-title">Casino Ops Wiki</div><div class="wiki-logo-sub">New Brand · v1.0 · 2026</div></a></div>
+  <div class="sb-section">
+    <div class="sb-label">VIP</div>
+    <a class="sb-link active" href="#"><span class="sb-dot" style="background:var(--gold-dot)"></span>VIP Identification SOP</a>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">On This Page</div>
+    <a class="sb-link" href="#overview"><span class="sb-dot" style="background:var(--muted)"></span>Overview</a>
+    <a class="sb-link" href="#signals"><span class="sb-dot" style="background:var(--amber-dot)"></span>Early Warning Signals</a>
+    <a class="sb-link" href="#matrix"><span class="sb-dot" style="background:var(--purple-dot)"></span>Identification Matrix</a>
+    <a class="sb-link" href="#scoring"><span class="sb-dot" style="background:var(--blue-dot)"></span>VIP Scoring System</a>
+    <a class="sb-link" href="#tiers"><span class="sb-dot" style="background:var(--gold-dot)"></span>VIP Tiers</a>
+    <a class="sb-link" href="#process"><span class="sb-dot" style="background:var(--green-dot)"></span>Identification Process</a>
+    <a class="sb-link" href="#outreach"><span class="sb-dot" style="background:var(--teal-dot)"></span>Initial Outreach</a>
+    <a class="sb-link" href="#onboarding"><span class="sb-dot" style="background:var(--green-dot)"></span>VIP Onboarding</a>
+    <a class="sb-link" href="#monitoring"><span class="sb-dot" style="background:var(--muted)"></span>Early Monitoring</a>
+    <a class="sb-link" href="#escalation"><span class="sb-dot" style="background:var(--red-dot)"></span>Escalation</a>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">Casino Ops</div>
+    <a class="sb-link" href="casino_manager_sop.html"><span class="sb-dot" style="background:var(--blue-dot)"></span>Casino Manager SOP</a>
+    <a class="sb-link" href="game_launch_sop.html"><span class="sb-dot" style="background:var(--blue-dot)"></span>Game Launch SOP</a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div class="page-header" id="overview">
+    <div class="page-breadcrumb"><a href="index.html">Casino Ops Wiki</a> › <a href="index.html#vip">VIP</a> › VIP Identification SOP</div>
+    <h1 class="page-title">SOP — VIP Player Identification</h1>
+    <p class="page-intro">Defines how the VIP team identifies newly registered players who exhibit high-value deposit patterns and qualifies them for VIP status. Includes the VIP Identification Matrix, scoring system, four-tier structure, outreach process and early monitoring standards.</p>
+    <div class="page-meta">
+      <div class="page-meta-item">📅 <strong>May 2026</strong></div>
+      <div class="page-meta-item">👤 Owner: <strong>VIP Manager</strong></div>
+      <div class="page-meta-item">🔄 Review: <strong>Quarterly</strong></div>
+      <div class="page-meta-item">⏱ Response SLA: <strong>2 hours from trigger</strong></div>
+    </div>
+  </div>
+
+  <div class="callout gold">
+    <div class="callout-icon">♛</div>
+    <div class="callout-body">
+      <div class="callout-label">Core Principle</div>
+      <p>A high-value player identified within their first 72 hours is worth many times more than one contacted at day 30. Speed of identification and quality of first contact are the two most commercially significant variables in a VIP player's lifetime value. This SOP is designed to ensure no high-value player goes unnoticed — and that when they are spotted, the response is fast, personalised and professional.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 1: EARLY WARNING SIGNALS -->
+  <div class="section" id="signals">
+    <div class="section-header amber">
+      <div class="section-num amber">01</div>
+      <div class="section-title">Early Warning Signals — What to Watch</div>
+    </div>
+    <p class="body">The system monitors all new registrations in real time for the following behavioural signals. Any single strong signal or combination of weaker signals should prompt a VIP team review. Signals are categorised by strength.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:220px">Signal</th><th style="width:30%">Description</th><th style="width:120px">Strength</th><th>Why It Matters</th></tr></thead>
+        <tbody>
+          <tr class="sub-hdr amber"><td colspan="4">DEPOSIT SIGNALS — PRIMARY INDICATORS</td></tr>
+          <tr><td style="font-weight:600">Single deposit ≥ A$500</td><td>First or any single deposit equals or exceeds A$500</td><td><span class="badge badge-red">🔴 Strong</span></td><td>Immediate indicator of high-value intent — most recreational players deposit A$20–150</td></tr>
+          <tr><td style="font-weight:600">Single deposit ≥ A$1,000</td><td>Any single deposit of A$1,000 or more</td><td><span class="badge badge-red">🚨 Critical</span></td><td>Automatic VIP review trigger — contact within 2 hours regardless of other factors</td></tr>
+          <tr><td style="font-weight:600">Total deposits ≥ A$1,000 within 24 hours</td><td>Cumulative deposit total reaches A$1,000 in first 24 hours, regardless of individual transaction size</td><td><span class="badge badge-red">🔴 Strong</span></td><td>High-frequency depositor — indicates serious intent and high potential LTV</td></tr>
+          <tr><td style="font-weight:600">Total deposits ≥ A$2,500 within 72 hours</td><td>Cumulative deposit total reaches A$2,500 in first 3 days</td><td><span class="badge badge-red">🚨 Critical</span></td><td>Confirmed high-value player — VIP onboarding should begin immediately</td></tr>
+          <tr><td style="font-weight:600">3+ deposits in first 24 hours</td><td>Player makes 3 or more separate deposits within their first 24 hours</td><td><span class="badge badge-amber">🟡 Moderate</span></td><td>High deposit frequency signals engaged, active player with appetite to spend</td></tr>
+          <tr><td style="font-weight:600">5+ deposits in first 72 hours</td><td>Player makes 5 or more separate deposits within their first 3 days</td><td><span class="badge badge-red">🔴 Strong</span></td><td>Very high frequency — combined with moderate deposit sizes this still signals a VIP candidate</td></tr>
+          <tr><td style="font-weight:600">Rapid repeat deposits (&lt;30 min apart)</td><td>Two or more deposits placed within 30 minutes of each other</td><td><span class="badge badge-amber">🟡 Moderate</span></td><td>Indicates a player who is actively engaged and topping up quickly — high session value</td></tr>
+          <tr class="sub-hdr purple"><td colspan="4">GAMEPLAY SIGNALS — SECONDARY INDICATORS</td></tr>
+          <tr><td style="font-weight:600">Playing at maximum stake on high-variance slots</td><td>Player consistently betting at or near the maximum stake setting on high-RTP / high-variance titles</td><td><span class="badge badge-red">🔴 Strong</span></td><td>High-stake gameplay signals risk appetite and budget depth — correlates strongly with high LTV</td></tr>
+          <tr><td style="font-weight:600">Live casino play at high limits</td><td>Player sitting at VIP Live tables or consistently at high-stake live dealer seats</td><td><span class="badge badge-red">🔴 Strong</span></td><td>Live casino high-limit players are disproportionately high contributors to NGR</td></tr>
+          <tr><td style="font-weight:600">Playing multiple game categories in first session</td><td>Player explores slots, live casino and table games in first 48 hours</td><td><span class="badge badge-amber">🟡 Moderate</span></td><td>Broad game exploration indicates an experienced player comfortable with casino products</td></tr>
+          <tr><td style="font-weight:600">High average bet size relative to deposit</td><td>Player's average bet is more than 2% of their total deposit per round</td><td><span class="badge badge-amber">🟡 Moderate</span></td><td>Aggressive staking pattern relative to bankroll suggests high-risk appetite</td></tr>
+          <tr><td style="font-weight:600">Extended session duration (&gt;2 hours)</td><td>Player plays for more than 2 hours in a single session within first 72 hours</td><td><span class="badge badge-amber">🟡 Moderate</span></td><td>Long sessions with high deposit totals signal a committed, experienced player</td></tr>
+          <tr class="sub-hdr teal"><td colspan="4">BEHAVIOURAL & ACCOUNT SIGNALS — SUPPORTING INDICATORS</td></tr>
+          <tr><td style="font-weight:600">Immediate withdrawal request (&gt;A$500)</td><td>Player requests a withdrawal within first 48 hours of registering</td><td><span class="badge badge-amber">🟡 Moderate</span></td><td>Players who win and withdraw quickly often return and deposit more — still worth VIP contact</td></tr>
+          <tr><td style="font-weight:600">No bonus claimed on registration</td><td>Player completes FTD without claiming the welcome bonus</td><td><span class="badge badge-amber">🟡 Moderate</span></td><td>Players who skip bonuses are often experienced gamblers who prefer clean play — low bonus cost, high value</td></tr>
+          <tr><td style="font-weight:600">Multiple payment methods on file</td><td>Player adds 2+ payment methods within first 48 hours</td><td><span class="badge badge-blue">🔵 Watch</span></td><td>Indicates prepared, intentional player — not a casual impulse depositor</td></tr>
+          <tr><td style="font-weight:600">Account fully verified within 24 hours</td><td>Player proactively submits KYC documents without being prompted</td><td><span class="badge badge-blue">🔵 Watch</span></td><td>Experienced players know verification is required for withdrawals — proactive submission signals intent to play and withdraw at scale</td></tr>
+          <tr><td style="font-weight:600">Contacts support proactively about deposit limits</td><td>Player contacts support asking about increasing their daily or monthly deposit limit</td><td><span class="badge badge-red">🔴 Strong</span></td><td>Explicit signal that the player intends to deposit more than current limits allow — immediate VIP review required</td></tr>
+          <tr><td style="font-weight:600">High-value device / browser profile</td><td>Player accesses via a high-end device, dedicated browser or consistent IP from a premium GEO</td><td><span class="badge badge-blue">🔵 Watch</span></td><td>Supporting context only — never used alone, but adds weight to other signals</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 2: IDENTIFICATION MATRIX -->
+  <div class="section" id="matrix">
+    <div class="section-header purple">
+      <div class="section-num purple">02</div>
+      <div class="section-title">VIP Identification Matrix</div>
+    </div>
+    <p class="body">The matrix maps combinations of deposit behaviour and gameplay signals to a recommended VIP response level. Read across the deposit behaviour rows and down the gameplay signal columns. The intersection defines the response — from Watch through to Instant VIP Activation.</p>
+
+    <div class="legend">
+      <span style="font-size:12px;font-weight:700;color:var(--text);margin-right:6px">Legend:</span>
+      <div class="legend-item"><span class="legend-symbol" style="color:var(--muted)">—</span> No action needed</div>
+      <div class="legend-item"><span class="legend-symbol signal-watch">WATCH</span> Monitor — flag for weekly review</div>
+      <div class="legend-item"><span class="legend-symbol signal-flag">FLAG</span> Flag for VIP team review within 24h</div>
+      <div class="legend-item"><span class="legend-symbol signal-vip">VIP</span> Initiate VIP contact within 4 hours</div>
+      <div class="legend-item"><span class="legend-symbol signal-instant">⚡ INSTANT</span> Immediate VIP contact — within 2 hours</div>
+    </div>
+
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>Deposit Behaviour ↓ / Gameplay Signal →</th>
+            <th>No notable gameplay signals</th>
+            <th>High avg bet vs deposit size</th>
+            <th>Extended session (&gt;2hrs)</th>
+            <th>High-limit live casino play</th>
+            <th>Max stake high-variance slots</th>
+            <th>Asks to raise deposit limit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>First deposit A$20–A$99 (standard)</td>
+            <td><span class="signal-none">—</span></td>
+            <td><span class="signal-none">—</span></td>
+            <td><span class="signal-none">—</span></td>
+            <td><span class="signal-watch">WATCH</span></td>
+            <td><span class="signal-watch">WATCH</span></td>
+            <td><span class="signal-flag">FLAG</span></td>
+          </tr>
+          <tr>
+            <td>First deposit A$100–A$249</td>
+            <td><span class="signal-none">—</span></td>
+            <td><span class="signal-watch">WATCH</span></td>
+            <td><span class="signal-watch">WATCH</span></td>
+            <td><span class="signal-flag">FLAG</span></td>
+            <td><span class="signal-flag">FLAG</span></td>
+            <td><span class="signal-vip">VIP</span></td>
+          </tr>
+          <tr>
+            <td>First deposit A$250–A$499</td>
+            <td><span class="signal-watch">WATCH</span></td>
+            <td><span class="signal-flag">FLAG</span></td>
+            <td><span class="signal-flag">FLAG</span></td>
+            <td><span class="signal-vip">VIP</span></td>
+            <td><span class="signal-vip">VIP</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+          </tr>
+          <tr>
+            <td>First deposit A$500–A$999</td>
+            <td><span class="signal-flag">FLAG</span></td>
+            <td><span class="signal-vip">VIP</span></td>
+            <td><span class="signal-vip">VIP</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+          </tr>
+          <tr>
+            <td>First deposit ≥ A$1,000</td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+          </tr>
+          <tr>
+            <td>3+ deposits in 24hrs · total &lt; A$500</td>
+            <td><span class="signal-watch">WATCH</span></td>
+            <td><span class="signal-flag">FLAG</span></td>
+            <td><span class="signal-flag">FLAG</span></td>
+            <td><span class="signal-vip">VIP</span></td>
+            <td><span class="signal-vip">VIP</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+          </tr>
+          <tr>
+            <td>3+ deposits in 24hrs · total A$500–A$999</td>
+            <td><span class="signal-flag">FLAG</span></td>
+            <td><span class="signal-vip">VIP</span></td>
+            <td><span class="signal-vip">VIP</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+          </tr>
+          <tr>
+            <td>3+ deposits in 24hrs · total ≥ A$1,000</td>
+            <td><span class="signal-vip">VIP</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+          </tr>
+          <tr>
+            <td>5+ deposits in 72hrs · any total</td>
+            <td><span class="signal-flag">FLAG</span></td>
+            <td><span class="signal-vip">VIP</span></td>
+            <td><span class="signal-vip">VIP</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+          </tr>
+          <tr>
+            <td>Total deposits ≥ A$2,500 within 72hrs</td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+          </tr>
+          <tr>
+            <td>No bonus claimed + any deposit ≥ A$200</td>
+            <td><span class="signal-watch">WATCH</span></td>
+            <td><span class="signal-flag">FLAG</span></td>
+            <td><span class="signal-flag">FLAG</span></td>
+            <td><span class="signal-vip">VIP</span></td>
+            <td><span class="signal-vip">VIP</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+          </tr>
+          <tr>
+            <td>Rapid repeat deposits (&lt;30 min apart, 2+)</td>
+            <td><span class="signal-watch">WATCH</span></td>
+            <td><span class="signal-flag">FLAG</span></td>
+            <td><span class="signal-vip">VIP</span></td>
+            <td><span class="signal-vip">VIP</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+            <td><span class="signal-instant">⚡ INSTANT</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout blue">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-body">
+        <div class="callout-label">Matrix Usage Rules</div>
+        <p>Always use the <strong>highest response level</strong> from any signal combination — never average them down. If a player triggers ⚡ INSTANT in any cell, that is the response regardless of other cells. The matrix is a minimum standard — VIP team members may escalate any player at their discretion if their instinct or experience suggests higher value potential. Document any discretionary escalations in the player notes.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: SCORING -->
+  <div class="section" id="scoring">
+    <div class="section-header blue">
+      <div class="section-num blue">03</div>
+      <div class="section-title">VIP Scoring System</div>
+    </div>
+    <p class="body">In addition to the matrix, each new player flagged for VIP review is given a VIP Score from 0–100. The score determines their initial VIP tier placement. It is calculated from five weighted components and updated monthly thereafter.</p>
+
+    <div class="score-grid">
+      <div class="score-card">
+        <div class="score-card-label">Weight: 35%</div>
+        <div class="score-card-title">Deposit Volume Score</div>
+        <div class="score-card-desc">Total deposits in first 7 days vs brand benchmarks. Scored against percentile distribution of all new players.</div>
+        <div class="score-bar-row"><span class="score-bar-label">≥ A$5,000 / 7 days</span><div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:linear-gradient(90deg,var(--green-dot),#34d399)"></div></div><span class="score-bar-val" style="color:var(--green)">100</span></div>
+        <div class="score-bar-row"><span class="score-bar-label">A$2,500–4,999</span><div class="score-bar-track"><div class="score-bar-fill" style="width:75%;background:linear-gradient(90deg,var(--blue-dot),#60a5fa)"></div></div><span class="score-bar-val" style="color:var(--blue)">75</span></div>
+        <div class="score-bar-row"><span class="score-bar-label">A$1,000–2,499</span><div class="score-bar-track"><div class="score-bar-fill" style="width:55%;background:linear-gradient(90deg,var(--purple-dot),#a78bfa)"></div></div><span class="score-bar-val" style="color:var(--purple)">55</span></div>
+        <div class="score-bar-row"><span class="score-bar-label">A$500–999</span><div class="score-bar-track"><div class="score-bar-fill" style="width:35%;background:linear-gradient(90deg,var(--amber-dot),#fbbf24)"></div></div><span class="score-bar-val" style="color:var(--amber)">35</span></div>
+      </div>
+
+      <div class="score-card">
+        <div class="score-card-label">Weight: 25%</div>
+        <div class="score-card-title">Deposit Frequency Score</div>
+        <div class="score-card-desc">Number of separate deposit transactions in first 7 days. Frequency combined with volume indicates committed, active play.</div>
+        <div class="score-bar-row"><span class="score-bar-label">10+ deposits</span><div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:linear-gradient(90deg,var(--green-dot),#34d399)"></div></div><span class="score-bar-val" style="color:var(--green)">100</span></div>
+        <div class="score-bar-row"><span class="score-bar-label">6–9 deposits</span><div class="score-bar-track"><div class="score-bar-fill" style="width:70%;background:linear-gradient(90deg,var(--blue-dot),#60a5fa)"></div></div><span class="score-bar-val" style="color:var(--blue)">70</span></div>
+        <div class="score-bar-row"><span class="score-bar-label">3–5 deposits</span><div class="score-bar-track"><div class="score-bar-fill" style="width:45%;background:linear-gradient(90deg,var(--amber-dot),#fbbf24)"></div></div><span class="score-bar-val" style="color:var(--amber)">45</span></div>
+        <div class="score-bar-row"><span class="score-bar-label">1–2 deposits</span><div class="score-bar-track"><div class="score-bar-fill" style="width:20%;background:linear-gradient(90deg,var(--red-dot),#f87171)"></div></div><span class="score-bar-val" style="color:var(--red)">20</span></div>
+      </div>
+
+      <div class="score-card">
+        <div class="score-card-label">Weight: 20%</div>
+        <div class="score-card-title">Stake Behaviour Score</div>
+        <div class="score-card-desc">Average bet size relative to deposit amount, and whether player seeks out high-limit tables or maximum-stake slots.</div>
+        <div class="score-bar-row"><span class="score-bar-label">Max stake / high-limit live</span><div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:linear-gradient(90deg,var(--green-dot),#34d399)"></div></div><span class="score-bar-val" style="color:var(--green)">100</span></div>
+        <div class="score-bar-row"><span class="score-bar-label">High stake (avg &gt;2% of dep)</span><div class="score-bar-track"><div class="score-bar-fill" style="width:70%;background:linear-gradient(90deg,var(--blue-dot),#60a5fa)"></div></div><span class="score-bar-val" style="color:var(--blue)">70</span></div>
+        <div class="score-bar-row"><span class="score-bar-label">Mid stake (avg 0.5–2%)</span><div class="score-bar-track"><div class="score-bar-fill" style="width:40%;background:linear-gradient(90deg,var(--amber-dot),#fbbf24)"></div></div><span class="score-bar-val" style="color:var(--amber)">40</span></div>
+        <div class="score-bar-row"><span class="score-bar-label">Low stake (&lt;0.5%)</span><div class="score-bar-track"><div class="score-bar-fill" style="width:15%;background:linear-gradient(90deg,var(--red-dot),#f87171)"></div></div><span class="score-bar-val" style="color:var(--red)">15</span></div>
+      </div>
+
+      <div class="score-card">
+        <div class="score-card-label">Weight: 12%</div>
+        <div class="score-card-title">Bonus Behaviour Score</div>
+        <div class="score-card-desc">Whether the player claimed a bonus on registration. Players who skip bonuses are typically experienced, lower-cost and higher-value.</div>
+        <div class="score-bar-row"><span class="score-bar-label">No bonus claimed</span><div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:linear-gradient(90deg,var(--green-dot),#34d399)"></div></div><span class="score-bar-val" style="color:var(--green)">100</span></div>
+        <div class="score-bar-row"><span class="score-bar-label">Claimed, completed wagering</span><div class="score-bar-track"><div class="score-bar-fill" style="width:60%;background:linear-gradient(90deg,var(--amber-dot),#fbbf24)"></div></div><span class="score-bar-val" style="color:var(--amber)">60</span></div>
+        <div class="score-bar-row"><span class="score-bar-label">Claimed, not completed wagering</span><div class="score-bar-track"><div class="score-bar-fill" style="width:25%;background:linear-gradient(90deg,var(--red-dot),#f87171)"></div></div><span class="score-bar-val" style="color:var(--red)">25</span></div>
+      </div>
+
+      <div class="score-card">
+        <div class="score-card-label">Weight: 8%</div>
+        <div class="score-card-title">Account Readiness Score</div>
+        <div class="score-card-desc">Proactive KYC submission, multiple payment methods on file, and contact preferences set. Experienced players prepare their accounts for high-volume play.</div>
+        <div class="score-bar-row"><span class="score-bar-label">KYC done + 2+ methods</span><div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:linear-gradient(90deg,var(--green-dot),#34d399)"></div></div><span class="score-bar-val" style="color:var(--green)">100</span></div>
+        <div class="score-bar-row"><span class="score-bar-label">KYC done or 2+ methods</span><div class="score-bar-track"><div class="score-bar-fill" style="width:60%;background:linear-gradient(90deg,var(--amber-dot),#fbbf24)"></div></div><span class="score-bar-val" style="color:var(--amber)">60</span></div>
+        <div class="score-bar-row"><span class="score-bar-label">Neither complete</span><div class="score-bar-track"><div class="score-bar-fill" style="width:20%;background:linear-gradient(90deg,var(--red-dot),#f87171)"></div></div><span class="score-bar-val" style="color:var(--red)">20</span></div>
+      </div>
+
+      <div class="score-card" style="background:var(--subtle);border-style:dashed">
+        <div class="score-card-label">Composite Score → VIP Tier</div>
+        <div class="score-card-title">Score Thresholds</div>
+        <div class="score-card-desc">VIP Score = sum of all weighted component scores. Determines initial tier placement and reviewed monthly.</div>
+        <div class="score-bar-row"><span class="score-bar-label" style="color:var(--amber);font-weight:700">80–100 → Diamond</span><div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:var(--amber-dot)"></div></div><span class="score-bar-val" style="color:var(--amber)">♛</span></div>
+        <div class="score-bar-row"><span class="score-bar-label" style="color:var(--purple);font-weight:700">65–79 → Platinum</span><div class="score-bar-track"><div class="score-bar-fill" style="width:75%;background:var(--purple-dot)"></div></div><span class="score-bar-val" style="color:var(--purple)">💎</span></div>
+        <div class="score-bar-row"><span class="score-bar-label" style="color:var(--blue);font-weight:700">50–64 → Gold</span><div class="score-bar-track"><div class="score-bar-fill" style="width:55%;background:var(--blue-dot)"></div></div><span class="score-bar-val" style="color:var(--blue)">🥇</span></div>
+        <div class="score-bar-row"><span class="score-bar-label" style="color:var(--teal);font-weight:700">35–49 → Silver</span><div class="score-bar-track"><div class="score-bar-fill" style="width:35%;background:var(--teal-dot)"></div></div><span class="score-bar-val" style="color:var(--teal)">🥈</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: VIP TIERS -->
+  <div class="section" id="tiers">
+    <div class="section-header gold">
+      <div class="section-num gold">04</div>
+      <div class="section-title">VIP Tier Structure</div>
+    </div>
+    <p class="body">Four VIP tiers, each with defined deposit thresholds, benefits and management standards. Initial tier is set by the VIP Score at identification. Tiers are reviewed monthly — players can move up or down based on activity.</p>
+
+    <div class="vip-tiers">
+      <div class="vip-tier-card vt1">
+        <div class="vip-tier-head">
+          <span class="vip-tier-label">Tier 01</span>
+          <div class="vip-tier-name">🥈 Silver VIP</div>
+        </div>
+        <div class="vip-tier-body">
+          <div class="vip-tier-row"><span class="vip-tier-row-label">VIP Score</span><span class="vip-tier-row-val">35–49</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">Monthly Deposit</span><span class="vip-tier-row-val">A$500–1,999</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">AM Response</span><span class="vip-tier-row-val">24 hours</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">Withdrawal Speed</span><span class="vip-tier-row-val">Priority same day</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">Deposit Limit Increase</span><span class="vip-tier-row-val">+25% standard</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">Birthday Bonus</span><span class="vip-tier-row-val">Yes — standard</span></div>
+        </div>
+      </div>
+
+      <div class="vip-tier-card vt2">
+        <div class="vip-tier-head">
+          <span class="vip-tier-label">Tier 02</span>
+          <div class="vip-tier-name">🥇 Gold VIP</div>
+        </div>
+        <div class="vip-tier-body">
+          <div class="vip-tier-row"><span class="vip-tier-row-label">VIP Score</span><span class="vip-tier-row-val">50–64</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">Monthly Deposit</span><span class="vip-tier-row-val">A$2,000–4,999</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">AM Response</span><span class="vip-tier-row-val">12 hours</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">Withdrawal Speed</span><span class="vip-tier-row-val">Priority &lt;4 hours</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">Deposit Limit Increase</span><span class="vip-tier-row-val">+50% standard</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">Birthday Bonus</span><span class="vip-tier-row-val">Yes — enhanced</span></div>
+        </div>
+      </div>
+
+      <div class="vip-tier-card vt3">
+        <div class="vip-tier-head">
+          <span class="vip-tier-label">Tier 03</span>
+          <div class="vip-tier-name">💎 Platinum VIP</div>
+        </div>
+        <div class="vip-tier-body">
+          <div class="vip-tier-row"><span class="vip-tier-row-label">VIP Score</span><span class="vip-tier-row-val">65–79</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">Monthly Deposit</span><span class="vip-tier-row-val">A$5,000–9,999</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">AM Response</span><span class="vip-tier-row-val">4 hours</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">Withdrawal Speed</span><span class="vip-tier-row-val">Instant (&lt;1 hour)</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">Deposit Limit Increase</span><span class="vip-tier-row-val">Custom limit set</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">Birthday Bonus</span><span class="vip-tier-row-val">Yes — bespoke</span></div>
+        </div>
+      </div>
+
+      <div class="vip-tier-card vt4">
+        <div class="vip-tier-head">
+          <span class="vip-tier-label">Tier 04</span>
+          <div class="vip-tier-name">♛ Diamond VIP</div>
+        </div>
+        <div class="vip-tier-body">
+          <div class="vip-tier-row"><span class="vip-tier-row-label">VIP Score</span><span class="vip-tier-row-val">80–100</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">Monthly Deposit</span><span class="vip-tier-row-val">A$10,000+</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">AM Response</span><span class="vip-tier-row-val">1 hour (24/7)</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">Withdrawal Speed</span><span class="vip-tier-row-val">Instant — priority</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">Deposit Limit Increase</span><span class="vip-tier-row-val">Unlimited (KYC)</span></div>
+          <div class="vip-tier-row"><span class="vip-tier-row-label">Birthday Bonus</span><span class="vip-tier-row-val">Yes — fully bespoke</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:220px">Benefit</th><th>Silver</th><th>Gold</th><th>Platinum</th><th>Diamond</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Dedicated VIP Account Manager</td><td>Shared AM</td><td>Dedicated AM</td><td>Dedicated Senior AM</td><td>Dedicated Senior AM (24/7)</td></tr>
+          <tr><td style="font-weight:600">Personalised Reload Bonus</td><td>Standard offer</td><td>Enhanced % match</td><td>Bespoke terms</td><td>Fully bespoke — no wagering</td></tr>
+          <tr><td style="font-weight:600">Cashback Offer</td><td>—</td><td>5% weekly cashback</td><td>10% weekly cashback</td><td>15% weekly cashback — bespoke terms</td></tr>
+          <tr><td style="font-weight:600">Withdrawal Limit</td><td>Standard daily limit</td><td>2× standard limit</td><td>Custom limit</td><td>No limit (KYC verified)</td></tr>
+          <tr><td style="font-weight:600">Payment Method Flexibility</td><td>Standard methods</td><td>Priority processing</td><td>Priority + bank wire</td><td>All methods + crypto priority</td></tr>
+          <tr><td style="font-weight:600">Event / Gift Invitations</td><td>—</td><td>Digital gifts</td><td>Physical gifts</td><td>Exclusive events + experience gifts</td></tr>
+          <tr><td style="font-weight:600">Advance Game Access</td><td>—</td><td>—</td><td>Early access to new titles</td><td>First access + studio previews</td></tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 5: IDENTIFICATION PROCESS -->
+  <div class="section" id="process">
+    <div class="section-header green">
+      <div class="section-num green">05</div>
+      <div class="section-title">Identification Process — Step by Step</div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:32px">#</th><th style="width:44%">Action</th><th style="width:18%">Who</th><th style="width:130px">Timing</th><th>Tool</th></tr></thead>
+        <tbody>
+          <tr class="sub-hdr blue"><td colspan="5">AUTOMATED DETECTION (System-triggered)</td></tr>
+          <tr><td style="font-weight:700;color:var(--blue)">1</td><td>Automated monitoring system checks all new registrations against matrix trigger thresholds every 15 minutes. Any player crossing a WATCH, FLAG or VIP threshold is tagged in the back office.</td><td style="font-weight:600;color:var(--blue)">System (automated)</td><td>Continuous · 15-min cycle</td><td>Back office alert rules</td></tr>
+          <tr><td style="font-weight:700;color:var(--blue)">2</td><td>Tagged players appear in the VIP team's daily watchlist dashboard — sorted by response priority (INSTANT → VIP → FLAG → WATCH). INSTANT tags also trigger a Telegram alert to the VIP Manager.</td><td style="font-weight:600;color:var(--blue)">System → VIP Mgr</td><td>Immediate on trigger</td><td>VIP Dashboard + Telegram</td></tr>
+          <tr class="sub-hdr green"><td colspan="5">VIP TEAM REVIEW (Human assessment)</td></tr>
+          <tr><td style="font-weight:700;color:var(--green)">3</td><td>VIP team member opens the flagged player profile — review all available data: deposit history, gameplay logs, game categories played, stake levels, bonus status, KYC status, withdrawal requests and any CS interactions.</td><td style="font-weight:600;color:var(--green)">VIP Team Member</td><td>Within 2 hours of tag</td><td>Back office player profile</td></tr>
+          <tr><td style="font-weight:700;color:var(--green)">4</td><td>Calculate the player's VIP Score using the five scoring components (Section 03). Document the score breakdown in the player notes. Cross-reference against the identification matrix to confirm response level.</td><td style="font-weight:600;color:var(--green)">VIP Team Member</td><td>During review</td><td>VIP Score sheet + back office</td></tr>
+          <tr><td style="font-weight:700;color:var(--green)">5</td><td>Check player against any existing records — is this a returning player using a new account? Cross-reference account history for any previous CS interactions, prior account activity or payment issues that should inform the VIP approach.</td><td style="font-weight:600;color:var(--green)">VIP Team Member</td><td>During review</td><td>Back office + CS notes</td></tr>
+          <tr><td style="font-weight:700;color:var(--green)">6</td><td>Confirm the VIP tier placement based on VIP Score. Document the tier decision with justification in the player notes. For INSTANT and VIP level players, obtain VIP Manager sign-off before first contact.</td><td style="font-weight:600;color:var(--green)">VIP Team Member + VIP Mgr</td><td>Before outreach</td><td>Player notes</td></tr>
+          <tr class="sub-hdr purple"><td colspan="5">VIP MANAGER OVERSIGHT</td></tr>
+          <tr><td style="font-weight:700;color:var(--purple)">7</td><td>VIP Manager reviews all INSTANT and VIP-level identifications before first contact is made. Reviews FLAG identifications in the daily morning briefing. All Diamond tier identifications require VIP Manager personal involvement in the outreach call.</td><td style="font-weight:600;color:var(--purple)">VIP Manager</td><td>Before outreach for INSTANT; daily AM briefing for FLAG</td><td>VIP watchlist + notes</td></tr>
+          <tr><td style="font-weight:700;color:var(--purple)">8</td><td>Record all identified VIP players in the VIP Register — include: player ID, registration date, trigger signals, VIP Score, tier assigned, date of first contact and outcome. Updated daily by VIP team.</td><td style="font-weight:600;color:var(--purple)">VIP Team</td><td>Same day as identification</td><td>VIP Register (shared doc)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 6: INITIAL OUTREACH -->
+  <div class="section" id="outreach">
+    <div class="section-header teal">
+      <div class="section-num teal">06</div>
+      <div class="section-title">Initial Outreach — First Contact Standards</div>
+    </div>
+    <p class="body">The first contact with a newly identified VIP is the most important interaction in the relationship. It sets the tone for everything that follows. It must feel personal, professional and valuable — never generic, pushy or automated.</p>
+
+    <div class="callout red">
+      <div class="callout-icon">🚫</div>
+      <div class="callout-body">
+        <div class="callout-label">What Not to Do</div>
+        <p>Never send an automated email as the first VIP contact. Never mention that you are contacting them because of a specific deposit amount — this can feel intrusive. Never make promises about benefits before the tier is confirmed and approved. </p>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:140px">Tier</th><th style="width:180px">Contact Method</th><th style="width:120px">Contact By</th><th style="width:120px">Timing</th><th>Message Tone &amp; Content</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-teal" style="background:var(--teal-bg);color:var(--teal);border-color:var(--teal-bd)">🥈 Silver</span></td><td>Personal email from named AM</td><td>VIP Team Member</td><td>Within 24 hours</td><td>Warm, welcoming introduction. Name the AM, acknowledge the player is a valued member, offer a personal reload or free spins. Invite to reply or use live chat for any needs.</td></tr>
+          <tr><td><span class="badge badge-blue">🥇 Gold</span></td><td>Personal email + follow-up live chat or WhatsApp</td><td>VIP Team Member</td><td>Within 12 hours</td><td>Personal introduction from named AM. Highlight their dedicated support access. Offer an enhanced reload bonus or cashback deal. Invite a short call or WhatsApp conversation if they prefer.</td></tr>
+          <tr><td><span class="badge badge-purple">💎 Platinum</span></td><td>Personal call or WhatsApp — email as follow-up</td><td>VIP Manager</td><td>Within 4 hours</td><td>Direct call from VIP Manager. Personalised — reference their preferred games if visible. Confirm their dedicated AM. Present a bespoke offer. Do not use a script — speak naturally and listen.</td></tr>
+          <tr><td><span class="badge badge-gold">♛ Diamond</span></td><td>Personal call from VIP Manager — mandatory</td><td>VIP Manager</td><td>Within 2 hours</td><td>Immediate personal call from VIP Manager. Full personalisation — know their game preferences, stake levels, any CS interactions before calling. No generic script. Listen first, offer second. Confirm same-day enhanced limits if KYC is complete.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px">Sample first-contact email — Gold VIP (adapt for each player):</p>
+    <div style="background:var(--subtle);border:1.5px solid var(--border);border-left:4px solid var(--blue-dot);border-radius:0 8px 8px 0;padding:18px 20px;margin-bottom:20px;font-size:13px;line-height:1.75;color:var(--text)">
+      <strong>Subject:</strong> Welcome to [Brand] — I'm your personal account manager, [Name]<br><br>
+      Hi [First Name],<br><br>
+      I'm [Name] from the [Brand] VIP team. I just wanted to reach out personally to welcome you and let you know that as one of our most valued players, you have direct access to me whenever you need anything — whether it's a question about your account, a withdrawal, or just a chat about what you'd like to see more of.<br><br>
+      I've set up a welcome gift for you — [personalised offer based on their game preference] — it'll be in your account by the time you read this. No obligations, just a thank you for choosing us.<br><br>
+      You can reach me anytime on this email or via live chat. I'm here to make sure your experience with us is always excellent.<br><br>
+      Best,<br>
+      [Name] — Your [Brand] Account Manager<br>
+      📧 [email] · 💬 Live Chat · 📱 [WhatsApp if Gold+]
+    </div>
+  </div>
+
+  <!-- SECTION 7: VIP ONBOARDING -->
+  <div class="section" id="onboarding">
+    <div class="section-header green">
+      <div class="section-num green">07</div>
+      <div class="section-title">VIP Onboarding — First 7 Days</div>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot h1">D0</div>
+        <div class="tl-content">
+          <div class="tl-timing">Day 0 — Identification Day</div>
+          <div class="tl-title">VIP Flagged · Score Calculated · Tier Assigned</div>
+          <div class="tl-desc">Player triggers matrix threshold. VIP Score calculated. Tier confirmed by VIP Manager. Player added to VIP Register. First contact made within tier SLA. Welcome offer activated in account.</div>
+          <div class="tl-tags"><span class="tl-tag vip">VIP Team</span><span class="tl-tag system">System</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot h2">D1</div>
+        <div class="tl-content">
+          <div class="tl-timing">Day 1 — First Follow-Up</div>
+          <div class="tl-title">Confirm Welcome Gift Received · Check Withdrawal If Applicable</div>
+          <div class="tl-desc">AM sends a brief follow-up to confirm the player received their welcome offer. If the player has made a withdrawal request, prioritise processing and confirm timeline. Check back office for any deposit or gameplay activity overnight — update VIP Score if significant new data.</div>
+          <div class="tl-tags"><span class="tl-tag vip">VIP Team</span><span class="tl-tag cs">CS</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot h3">D3</div>
+        <div class="tl-content">
+          <div class="tl-timing">Day 3 — Preference Check</div>
+          <div class="tl-title">Learn Preferences · Offer Personalised Recommendation</div>
+          <div class="tl-desc">AM reviews gameplay data — which game categories has the player spent most time in? What stake levels? Reach out with a personal recommendation — a new game, a live table they might enjoy, or a bespoke promotion based on observed preferences. This is the moment to demonstrate that VIP treatment is genuinely personal.</div>
+          <div class="tl-tags"><span class="tl-tag vip">VIP Team</span><span class="tl-tag crm">CRM</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot h4">D5</div>
+        <div class="tl-content">
+          <div class="tl-timing">Day 5 — Limit Review</div>
+          <div class="tl-title">Deposit Limit Increase · KYC Completion Check</div>
+          <div class="tl-desc">If player has not hit daily or monthly deposit limit, no action needed. If they have contacted CS about limits, AM proactively increases within tier allowance. Confirm KYC is complete — if not, AM personally guides the player through verification. Incomplete KYC blocks withdrawal processing and must be resolved.</div>
+          <div class="tl-tags"><span class="tl-tag vip">VIP Team</span><span class="tl-tag system">Back Office</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot h5">D7</div>
+        <div class="tl-content">
+          <div class="tl-timing">Day 7 — 7-Day Review</div>
+          <div class="tl-title">Updated VIP Score · Tier Confirmation · Weekly Summary to VIP Manager</div>
+          <div class="tl-desc">Full 7-day performance review. Recalculate VIP Score using 7 days of data. Confirm tier or upgrade if warranted. AM prepares a brief player summary for the VIP Manager — total deposits, game preferences, any issues resolved, relationship status, next planned contact. Log in VIP Register.</div>
+          <div class="tl-tags"><span class="tl-tag vip">VIP Manager</span><span class="tl-tag system">VIP Register</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 8: MONITORING -->
+  <div class="section" id="monitoring">
+    <div class="section-header teal">
+      <div class="section-num teal">08</div>
+      <div class="section-title">Early Period Monitoring Standards</div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:200px">Metric</th><th style="width:36%">What to Monitor</th><th style="width:18%">Frequency</th><th>Action if Notable Change</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Daily Deposit Total</td><td>Track against prior days and tier deposit benchmark. Flag any day with zero deposits after a strong start — this can signal frustration, payment issue or competitor attraction.</td><td>Daily</td><td>AM proactive check-in if zero deposits after 2 consecutive active days</td></tr>
+          <tr><td style="font-weight:600">Deposit Method Changes</td><td>Monitor if player switches payment method — e.g. card to crypto. May indicate payment friction that the VIP team can help resolve faster than standard CS.</td><td>Daily</td><td>AM contacts player to offer assistance if switch is accompanied by a failed attempt</td></tr>
+          <tr><td style="font-weight:600">Game Category Shifts</td><td>Track which game categories the player is spending time in. Significant shift (e.g. from slots to live casino) helps personalise offers and game recommendations.</td><td>Weekly</td><td>Update preference profile; adjust next planned offer accordingly</td></tr>
+          <tr><td style="font-weight:600">Withdrawal Requests</td><td>Monitor all withdrawal requests — VIP withdrawals must be prioritised over standard queue regardless of tier. Any withdrawal pending more than 4 hours for Gold+ requires AM intervention.</td><td>Real-time</td><td>AM escalates to payments team immediately if withdrawal is delayed beyond tier SLA</td></tr>
+          <tr><td style="font-weight:600">Bonus Claims and Wagering</td><td>Track whether VIP player has claimed a bonus and whether they are completing wagering requirements. VIP players on cashback or bespoke offers should not be defaulted into standard bonus flows.</td><td>Weekly</td><td>Proactively remove conflicting bonuses if VIP player is on a bespoke deal</td></tr>
+          <tr><td style="font-weight:600">CS Contact Volume</td><td>Any VIP player contacting standard CS more than once per week should be reviewed — it may signal a problem the AM should handle personally, or a gap in the VIP experience.</td><td>Weekly</td><td>AM reviews CS transcripts; contacts player directly to resolve if applicable</td></tr>
+
+          <tr><td style="font-weight:600">Competitor Activity Signals</td><td>Extended periods of low or no activity from a previously active VIP may indicate the player has moved to a competitor. AM to proactively reach out with a retention offer after 5 consecutive inactive days.</td><td>Daily</td><td>AM proactive personalised re-engagement after 5 days inactivity — bespoke offer, not automated</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+</main>
+
+<!-- RIGHT SIDEBAR -->
+<aside class="sidebar-right">
+  <div class="toc-label">On This Page</div>
+  <a class="toc-link" href="#overview"><span class="toc-dot" style="background:var(--muted)"></span>Overview</a>
+  <a class="toc-link" href="#signals"><span class="toc-dot" style="background:var(--amber-dot)"></span>Early Warning Signals</a>
+  <a class="toc-link" href="#matrix"><span class="toc-dot" style="background:var(--purple-dot)"></span>Identification Matrix</a>
+  <a class="toc-link" href="#scoring"><span class="toc-dot" style="background:var(--blue-dot)"></span>VIP Scoring System</a>
+  <a class="toc-link" href="#tiers"><span class="toc-dot" style="background:var(--gold-dot)"></span>VIP Tiers</a>
+  <a class="toc-link" href="#process"><span class="toc-dot" style="background:var(--green-dot)"></span>Identification Process</a>
+  <a class="toc-link" href="#outreach"><span class="toc-dot" style="background:var(--teal-dot)"></span>Initial Outreach</a>
+  <a class="toc-link" href="#onboarding"><span class="toc-dot" style="background:var(--green-dot)"></span>VIP Onboarding</a>
+  <a class="toc-link" href="#monitoring"><span class="toc-dot" style="background:var(--muted)"></span>Monitoring</a>
+  <div class="toc-divider"></div>
+  <div class="toc-stat-label">Response SLA</div><div class="toc-stat-val">2 hours (INSTANT)</div>
+  <div class="toc-stat-label">VIP Tiers</div><div class="toc-stat-val">Silver · Gold · Platinum · Diamond</div>
+  <div class="toc-stat-label">Score Components</div><div class="toc-stat-val">5 weighted factors</div>
+  <div class="toc-stat-label">Onboarding Window</div><div class="toc-stat-val">7 days</div>
+  <div class="toc-stat-label">Tier Reviews</div><div class="toc-stat-val">Monthly</div>
+</aside>
+</div>
+
+<script>
+  const ids=['overview','signals','matrix','scoring','tiers','process','outreach','onboarding','monitoring','escalation'];
+  const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting)document.querySelectorAll('.toc-link').forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+en.target.id))})},{rootMargin:'-20% 0px -70% 0px'});
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el)});
+</script>
+</body>
+</html>
